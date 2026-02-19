@@ -166,12 +166,12 @@
     "lead_time_months": "3\u201312"
   },
   "class_velocity": {
-    "velocity_smooth": 16.4,
+    "velocity_smooth": 15.26,
     "year": 2026,
     "month": 2
   },
   "sexual_velocity": {
-    "velocity_smooth": 0.51,
+    "velocity_smooth": -0.09,
     "year": 2026,
     "month": 2
   },
@@ -180,8 +180,8 @@
     "ucdp_conflicts": 61
   },
   "system": {
-    "export_ts": 1771476408,
-    "freshness_sec": 447,
+    "export_ts": 1771477046,
+    "freshness_sec": 4,
     "data_source": "PRIMARY",
     "backup_active": false,
     "confidence_pct": 95,
@@ -194,7 +194,7 @@
       "anomaly_score": 21.2,
       "validation_ok": true,
       "suppress_display": false,
-      "timestamp": 1771476408
+      "timestamp": 1771477046
     },
     "deep_sources": {
       "glopop_s": {
@@ -389,6 +389,24 @@
         },
         "gini": 38.3,
         "gini_year": 2022
+      },
+      {
+        "iso": "NER",
+        "risk_score": 44.0,
+        "probability_2030": "low",
+        "drivers": [
+          "insufficient data"
+        ],
+        "confidence_pct": 60.0,
+        "data_used": {
+          "WDI": true,
+          "GLOPOP-S": false,
+          "ISSP": true,
+          "GBCD": false,
+          "UCDP": true
+        },
+        "gini": 32.9,
+        "gini_year": 2021
       }
     ],
     "top_10_risk": [
@@ -519,24 +537,6 @@
         "gini_year": 2023
       },
       {
-        "iso": "ZMB",
-        "risk_score": 44.4,
-        "probability_2030": "low",
-        "drivers": [
-          "extreme Gini (51.5)"
-        ],
-        "confidence_pct": 60.0,
-        "data_used": {
-          "WDI": true,
-          "GLOPOP-S": false,
-          "ISSP": false,
-          "GBCD": true,
-          "UCDP": true
-        },
-        "gini": 51.5,
-        "gini_year": 2022
-      },
-      {
         "iso": "AGO",
         "risk_score": 44.4,
         "probability_2030": "low",
@@ -553,6 +553,24 @@
         },
         "gini": 51.3,
         "gini_year": 2018
+      },
+      {
+        "iso": "ZMB",
+        "risk_score": 44.4,
+        "probability_2030": "low",
+        "drivers": [
+          "extreme Gini (51.5)"
+        ],
+        "confidence_pct": 60.0,
+        "data_used": {
+          "WDI": true,
+          "GLOPOP-S": false,
+          "ISSP": false,
+          "GBCD": true,
+          "UCDP": true
+        },
+        "gini": 51.5,
+        "gini_year": 2022
       },
       {
         "iso": "SGP",
@@ -584,8 +602,8 @@
   },
   "ticker_full": {
     "l1_harm": 6.57,
-    "l1_class": 16.4,
-    "l1_sexual": 0.51,
+    "l1_class": 15.26,
+    "l1_sexual": -0.09,
     "gini": null,
     "sti": 675.2,
     "conflicts": 61,
