@@ -188,6 +188,16 @@ def main():
     except Exception:
         pass
 
+    # Country risk data (from cerebro_risk_engine)
+    country_risk = {}
+    try:
+        cr_path = SCRIPT_DIR / "cerebro_data" / "country_risk_data.json"
+        if cr_path.exists():
+            with open(cr_path) as f:
+                country_risk = json.load(f)
+    except Exception:
+        pass
+
     data = {
         "harm_clock": {
             "latest_year": int(df.index[-1]),
@@ -245,6 +255,7 @@ def main():
             },
             "deep_sources": {k: {"live": v.get("live"), "ring": v.get("ring"), "confidence": v.get("confidence")} for k, v in deep_sources.items()},
         },
+        "country_risk": country_risk,
         "ticker_full": {},
     }
     aux = data["aux_indicators"]
@@ -292,6 +303,7 @@ def main():
         offline = {
             "harm_clock": data["harm_clock"],
             "apogees": data["apogees"],
+            "country_risk": data.get("country_risk", {}),
             "raw_series": {str(k): v for k, v in df_full[["clock_position_10pt", "velocity", "acceleration", "saddle_score"]].round(4).to_dict(orient="index").items()},
             "indicators": data["indicators"],
             "ring_b_loaded": data["ring_b_loaded"],

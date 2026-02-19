@@ -12,6 +12,9 @@ echo ""
 echo ">>> Running deep data loader (GLOPOP-S, ISSP, GBCD, WDI, etc.)..."
 python3 cerebro_deep_data_loader.py || true
 echo ""
+echo ">>> Running country risk engine (WDI Gini + deep data)..."
+python3 cerebro_risk_engine.py || true
+echo ""
 echo ">>> Running Phase 2 pipeline (PRIMARY→BACKUP chain)..."
 python3 cerebro_pipeline.py || python3 cerebro_trends_loader.py || true
 echo ""
