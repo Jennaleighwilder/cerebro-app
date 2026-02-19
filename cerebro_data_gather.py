@@ -179,6 +179,41 @@ def _pew_trust_embedded():
 
 
 # ─────────────────────────────────────────
+# CDC STI (Chlamydia + Gonorrhea) — Embedded
+# ─────────────────────────────────────────
+
+def fetch_cdc_sti():
+    """
+    Embedded chlamydia + gonorrhea rates per 100k (1996-2023).
+    CDC WONDER STD requires different XML; using CDC surveillance report data.
+    Source: CDC STI Surveillance Reports (annual), Table 1.
+    """
+    # (year, chlamydia_rate, gonorrhea_rate) per 100k — CDC surveillance
+    data = [
+        (1996, 181.5, 120.9), (1997, 198.4, 122.5), (1998, 219.4, 132.2),
+        (1999, 251.4, 133.2), (2000, 251.8, 131.8), (2001, 261.6, 128.7),
+        (2002, 278.3, 123.0), (2003, 304.9, 116.2), (2004, 319.6, 113.5),
+        (2005, 340.8, 120.9), (2006, 370.2, 120.9), (2007, 370.2, 118.9),
+        (2008, 401.3, 111.6), (2009, 409.2, 98.1), (2010, 426.0, 100.8),
+        (2011, 453.4, 104.2), (2012, 456.7, 106.1), (2013, 446.6, 106.1),
+        (2014, 456.1, 110.7), (2015, 478.8, 123.9), (2016, 494.7, 145.8),
+        (2017, 528.8, 171.9), (2018, 537.5, 178.3), (2019, 551.0, 187.8),
+        (2020, 476.7, 204.5), (2021, 495.5, 214.0), (2022, 495.0, 194.4),
+        (2023, 494.8, 180.4),
+    ]
+    result = {}
+    for yr, ct, gc in data:
+        result[yr] = ct + gc  # combined rate per 100k
+    df = pd.DataFrame([
+        {"year": yr, "chlamydia_rate": ct, "gonorrhea_rate": gc, "sti_combined_rate_per_100k": ct + gc}
+        for yr, ct, gc in data
+    ])
+    df.to_csv(OUTPUT_DIR / "CDC_STI_rates.csv", index=False)
+    print(f"  ✓ CDC STI (embedded): {len(result)} years → CDC_STI_rates.csv")
+    return {yr: ct + gc for yr, ct, gc in data}
+
+
+# ─────────────────────────────────────────
 # CDC WONDER (Mortality — drug overdose)
 # ─────────────────────────────────────────
 
@@ -253,9 +288,10 @@ def main():
         ("MEHOINUSA672N", "median_household_income"),
         ("PSAVERT", "saving_rate"),
         ("ECIALLCIV", "employment_cost_index"),
-        ("GINIALLRF", "gini_coefficient"),  # 1967+
+        ("GINIALLRF", "gini_coefficient"),   # 1967+
         ("CPIAUCSL", "cpi_inflation"),       # 1947+
         ("MORTGAGE30US", "mortgage_30yr"),   # 1971+
+        ("UMCSENT", "consumer_sentiment"),  # U of Michigan consumer sentiment
     ]
     fred_data = {}
     for series_id, name in fred_series_list:
@@ -287,21 +323,33 @@ def main():
     time.sleep(1)
 
     # 3. UCDP
-    print("\n[3/5] UCDP CONFLICT DATA")
+    print("\n[3/6] UCDP CONFLICT DATA")
     download_file(UCDP_ACD_URL, "UCDP_armed_conflict_251.xlsx", "UCDP Armed Conflict")
     time.sleep(0.5)
     download_file(UCDP_BRD_URL, "UCDP_battle_deaths_251.xlsx", "UCDP Battle Deaths")
+    # Extract annual global conflict count
+    ucdp_path = OUTPUT_DIR / "UCDP_armed_conflict_251.xlsx"
+    if ucdp_path.exists():
+        try:
+            ucdp_df = pd.read_excel(ucdp_path, sheet_name="UcdpPrioConflict_v25_1")
+            ucdp_annual = ucdp_df.groupby("year").size().reset_index(name="conflict_count")
+            ucdp_annual.to_csv(OUTPUT_DIR / "UCDP_conflict_annual.csv", index=False)
+            print(f"  ✓ UCDP conflict annual: {len(ucdp_annual)} years → UCDP_conflict_annual.csv")
+        except Exception as e:
+            print(f"  ✗ UCDP extract: {e}")
 
     # 4. Pew Trust (Ring B)
     print("\n[4/6] PEW TRUST IN GOVERNMENT")
     pew_trust = fetch_pew_trust()
 
-    # 5. CDC WONDER
-    print("\n[5/6] CDC WONDER OVERDOSE")
+    # 5. CDC
+    print("\n[5/7] CDC WONDER OVERDOSE")
     fetch_cdc_overdose()
+    print("\n[6/7] CDC STI (Chlamydia + Gonorrhea)")
+    cdc_sti = fetch_cdc_sti()
 
-    # 6. Build consolidated Cerebro-ready CSV
-    print("\n[6/6] BUILDING CONSOLIDATED DATA")
+    # 7. Build consolidated Cerebro-ready CSV
+    print("\n[7/7] BUILDING CONSOLIDATED DATA")
     years = list(range(YEARS_START, YEARS_END + 1))
     df = pd.DataFrame(index=years)
     df.index.name = "year"
@@ -325,6 +373,18 @@ def main():
         if "year" in cdc_df.columns and "deaths" in cdc_df.columns:
             cdc_dict = dict(zip(cdc_df["year"], cdc_df["deaths"]))
             df["overdose_deaths"] = df.index.map(cdc_dict)
+
+    # Merge CDC STI
+    if cdc_sti:
+        df["sti_combined_rate_per_100k"] = df.index.map(cdc_sti)
+
+    # Merge UCDP conflict annual
+    ucdp_csv = OUTPUT_DIR / "UCDP_conflict_annual.csv"
+    if ucdp_csv.exists():
+        ucdp_df = pd.read_csv(ucdp_csv)
+        if "year" in ucdp_df.columns and "conflict_count" in ucdp_df.columns:
+            ucdp_dict = dict(zip(ucdp_df["year"], ucdp_df["conflict_count"]))
+            df["ucdp_conflict_count"] = df.index.map(ucdp_dict)
 
     df.to_csv(OUTPUT_DIR / "cerebro_gathered_raw.csv")
     print(f"  ✓ cerebro_gathered_raw.csv ({len(df)} rows, {len(df.columns)} cols)")

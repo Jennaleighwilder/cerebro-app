@@ -108,5 +108,30 @@
     "incarceration": 350,
     "overdose_rate": 32.0
   },
-  "ring_b_loaded": true
+  "ring_b_loaded": true,
+  "cultural_velocity": {
+    "cultural_velocity": 15.38,
+    "cultural_velocity_smooth": 7.6,
+    "reform_index": 10.0,
+    "punitive_index": 13.0,
+    "year": 2026,
+    "month": 2,
+    "lead_time_months": "3\u201312"
+  },
+  "class_velocity": {
+    "velocity_smooth": 15.89,
+    "year": 2026,
+    "month": 2
+  },
+  "sexual_velocity": {
+    "velocity_smooth": -0.11,
+    "year": 2026,
+    "month": 2
+  },
+  "aux_indicators": {
+    "gini": 0.456,
+    "consumer_sentiment": 57.6,
+    "sti_rate": 675.2,
+    "ucdp_conflicts": 61
+  }
 }

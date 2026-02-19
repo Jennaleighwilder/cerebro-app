@@ -9,6 +9,9 @@ echo ""
 echo ">>> Running GSS loader (if .dta/.sav/.sas7bdat present)..."
 python3 cerebro_gss_loader.py || true
 echo ""
+echo ">>> Running L1 Google Trends cultural velocity..."
+python3 cerebro_trends_loader.py || true
+echo ""
 echo ">>> Running phase1 harm clock ingest..."
 python3 cerebro_phase1_ingest.py
 echo ""
