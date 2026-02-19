@@ -1,0 +1,6 @@
+cerebro_data/GLOPOP-S/
+cerebro_data/world_development_indicators.csv
+GBCD/
+.venv/
+__pycache__/
+*.pyc
