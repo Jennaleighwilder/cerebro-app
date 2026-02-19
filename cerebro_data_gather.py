@@ -25,7 +25,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 OUTPUT_DIR = SCRIPT_DIR / "cerebro_data"
 OUTPUT_DIR.mkdir(exist_ok=True)
 
-FRED_API_KEY = "18e03c2d5084c1978ee44e4d0378f464"
+FRED_API_KEY = os.environ.get("FRED_API_KEY", "")
 FRED_BASE = "https://api.stlouisfed.org/fred/series/observations"
 WB_BASE = "https://api.worldbank.org/v2"
 YEARS_START = 1960
@@ -50,6 +50,9 @@ print("=" * 70)
 
 def fred_series(series_id, start=YEARS_START, end=YEARS_END):
     """Pull annual data from FRED. Returns dict {year: value}."""
+    if not FRED_API_KEY:
+        print(f"  ✗ FRED {series_id}: FRED_API_KEY not set (add to Vercel env vars)")
+        return {}
     params = {
         "series_id": series_id,
         "api_key": FRED_API_KEY,

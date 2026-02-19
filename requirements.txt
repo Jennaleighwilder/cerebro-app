@@ -3,3 +3,4 @@ pandas>=1.5.0
 openpyxl>=3.0.0
 pyreadstat>=1.2.0
 pytrends>=5.0.0
+pycountry>=23.0.0

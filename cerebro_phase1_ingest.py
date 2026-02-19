@@ -31,7 +31,7 @@ warnings.filterwarnings('ignore')
 # CONFIGURATION
 # ─────────────────────────────────────────
 
-FRED_API_KEY = "18e03c2d5084c1978ee44e4d0378f464"
+FRED_API_KEY = os.environ.get("FRED_API_KEY", "")
 FRED_BASE = "https://api.stlouisfed.org/fred/series/observations"
 WB_BASE = "https://api.worldbank.org/v2"
 
@@ -50,6 +50,9 @@ print("=" * 60)
 
 def fred_series(series_id, api_key=FRED_API_KEY, start=str(YEARS_START), end=str(YEARS_END)):
     """Pull annual data from FRED. Returns dict {year: value}."""
+    if not api_key:
+        print(f"  ✗ FRED {series_id} failed: FRED_API_KEY not set")
+        return {}
     params = {
         "series_id": series_id,
         "api_key": api_key,

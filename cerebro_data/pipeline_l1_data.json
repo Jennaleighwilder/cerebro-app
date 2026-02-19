@@ -1,20 +1,20 @@
 {
   "cultural_velocity": {
-    "cultural_velocity": 24.23,
-    "cultural_velocity_smooth": 9.27,
-    "reform_index": 10.3,
-    "punitive_index": 12.7,
+    "cultural_velocity": 10.12,
+    "cultural_velocity_smooth": 6.57,
+    "reform_index": 10.0,
+    "punitive_index": 13.3,
     "year": 2026,
     "month": 2,
     "lead_time_months": "3\u201312"
   },
   "class_velocity": {
-    "velocity_smooth": 15.89,
+    "velocity_smooth": 16.36,
     "year": 2026,
     "month": 2
   },
   "sexual_velocity": {
-    "velocity_smooth": -0.11,
+    "velocity_smooth": 0.51,
     "year": 2026,
     "month": 2
   }

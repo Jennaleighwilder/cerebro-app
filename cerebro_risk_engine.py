@@ -153,31 +153,81 @@ def _load_issp_redistribution():
         return {}
 
 
+def _country_to_iso3(name):
+    """Map GBCD country name to ISO3. Returns None if not found."""
+    if not name or not str(name).strip():
+        return None
+    name = str(name).strip()
+    # Common GBCD name variants
+    aliases = {
+        "United States of America": "USA", "United States": "USA",
+        "United Kingdom": "GBR", "UK": "GBR",
+        "South Korea": "KOR", "Republic of Korea": "KOR",
+        "North Korea": "PRK", "Democratic People's Republic of Korea": "PRK",
+        "Russia": "RUS", "Russian Federation": "RUS",
+        "Vietnam": "VNM", "Viet Nam": "VNM",
+        "Iran": "IRN", "Iran, Islamic Republic of": "IRN",
+        "Republic of Serbia": "SRB", "Serbia": "SRB",
+        "Czech Republic": "CZE", "Czechia": "CZE",
+        "Burma": "MMR", "Myanmar": "MMR",
+        "Democratic Republic of the Congo": "COD", "DR Congo": "COD",
+        "Republic of the Congo": "COG", "Congo": "COG",
+        "United Republic of Tanzania": "TZA", "Tanzania": "TZA",
+        "Ivory Coast": "CIV", "Cote d'Ivoire": "CIV",
+        "Swaziland": "SWZ", "eSwatini": "SWZ",
+        "Laos": "LAO", "Lao People's Democratic Republic": "LAO",
+        "East Timor": "TLS", "Timor-Leste": "TLS",
+        "Cape Verde": "CPV", "Cabo Verde": "CPV",
+        "Antigua & Barbuda ": "ATG", "Antigua and Barbuda": "ATG",
+        "The Bahamas": "BHS", "Bahamas": "BHS",
+        "Macedonia": "MKD", "North Macedonia": "MKD",
+        "Palestine": "PSE", "State of Palestine": "PSE",
+        "Hong Kong": "HKG", "Macau": "MAC", "Macao": "MAC",
+        "Taiwan": "TWN", "Republic of China": "TWN",
+    }
+    if name in aliases:
+        return aliases[name]
+    try:
+        import pycountry
+        c = pycountry.countries.search_fuzzy(name)
+        if c:
+            return c[0].alpha_3
+    except Exception:
+        pass
+    return None
+
+
 def _load_gbcd_sentiment():
-    """Load GBCD migration narrative sentiment by origin country."""
-    gbcd_dir = SCRIPT_DIR / "GBCD" or OUTPUT_DIR / "GBCD"
+    """Load GBCD brain drain by origin country (5.Geographical heterogeneity data)."""
+    gbcd_dir = SCRIPT_DIR / "GBCD"
+    if not gbcd_dir.exists():
+        gbcd_dir = OUTPUT_DIR / "GBCD"
     if not gbcd_dir.exists():
         return {}
     try:
         import pandas as pd
-        files = list(gbcd_dir.rglob("*.csv"))
-        if not files:
+        # Prefer brain_drain (emigration = risk proxy for origin country)
+        drain_path = gbcd_dir / "5.Geographical heterogeneity" / "data" / "count_brain_drain.csv"
+        if not drain_path.exists():
+            candidates = list(gbcd_dir.rglob("count_brain_drain.csv")) + list(gbcd_dir.rglob("country_brain_gain.csv"))
+            drain_path = candidates[0] if candidates else None
+        if not drain_path or not drain_path.exists():
             return {}
-        df = pd.read_csv(files[0], nrows=2000)
-        # origin/destination, sentiment, volume
-        origin_col = next((c for c in df.columns if "origin" in c.lower() or "from" in c.lower() or "country" in c.lower()), None)
-        if not origin_col:
+        df = pd.read_csv(drain_path, header=None, names=["country", "count"])
+        df["count"] = pd.to_numeric(df["count"], errors="coerce").fillna(0)
+        # Normalize: high brain drain -> high migration_negativity (0-100)
+        total = df["count"].sum()
+        if total <= 0:
             return {}
-        # Negativity proxy: if sentiment col exists, else use volume as risk proxy
-        sent_col = next((c for c in df.columns if "sentiment" in c.lower() or "tone" in c.lower()), None)
         out = {}
-        for iso, grp in df.groupby(origin_col):
-            iso3 = str(iso)[:3].upper()
-            if sent_col and sent_col in grp.columns:
-                neg = 100 - (grp[sent_col].mean() + 1) * 50 if grp[sent_col].mean() else 50
-            else:
-                neg = min(100, len(grp) / 20)  # volume proxy
-            out[iso3] = {"migration_negativity": min(100, max(0, neg))}
+        for _, row in df.iterrows():
+            iso = _country_to_iso3(row["country"])
+            if not iso:
+                continue
+            # Scale by share of global drain; cap at 100
+            share = row["count"] / total * 100
+            neg = min(100, share * 2)  # countries with >50% share cap at 100
+            out[iso] = {"migration_negativity": round(min(100, max(0, neg)), 1)}
         return out
     except Exception as e:
         print(f"  ✗ GBCD: {e}")
@@ -225,6 +275,32 @@ def _load_ucdp_trend():
     return {}
 
 
+def _to_iso3(iso):
+    """Normalize to 3-char ISO for consistent lookup. Handles 2-char from ISSP."""
+    if not iso or iso == "_global" or len(iso) >= 3:
+        return iso
+    # ISSP sometimes yields 2-char or name fragments (e.g. JA from Japan)
+    m = {"US": "USA", "DE": "DEU", "GB": "GBR", "VE": "VEN", "AR": "ARG", "JP": "JPN", "JA": "JPN",
+         "CH": "CHE", "CN": "CHN", "IN": "IND", "FR": "FRA", "IT": "ITA", "RU": "RUS", "BR": "BRA",
+         "MX": "MEX", "AU": "AUS", "CA": "CAN", "ES": "ESP", "PL": "POL", "NL": "NLD", "SE": "SWE",
+         "NO": "NOR", "KR": "KOR", "TR": "TUR", "ZA": "ZAF", "GR": "GRC", "PT": "PRT", "HU": "HUN",
+         "RO": "ROU", "CZ": "CZE", "AT": "AUT", "BE": "BEL", "IE": "IRL", "NZ": "NZL", "SG": "SGP",
+         "IL": "ISR", "AE": "ARE", "SA": "SAU", "CL": "CHL", "CO": "COL", "PE": "PER", "EG": "EGY",
+         "NG": "NGA", "PK": "PAK", "IR": "IRN", "TH": "THA", "UA": "UKR", "ID": "IDN", "PH": "PHL",
+         "VN": "VNM", "MY": "MYS", "BD": "BGD", "RS": "SRB", "BG": "BGR", "HR": "HRV", "SK": "SVK",
+         "GE": "GEO", "JE": "JEY", "SW": "SWE", "CR": "CRI", "SP": "ESP", "PO": "POL", "UN": "USA"}
+    if iso.upper() in m:
+        return m[iso.upper()]
+    try:
+        import pycountry
+        c = pycountry.countries.get(alpha_2=iso.upper())
+        if c:
+            return c.alpha_3
+    except Exception:
+        pass
+    return iso.upper()
+
+
 def _normalize(val, lo=0, hi=100):
     """Normalize value to 0-100 scale."""
     if val is None:
@@ -240,28 +316,33 @@ def compute_risk_scores():
     gbcd = _load_gbcd_sentiment()
     ucdp = _load_ucdp_trend()
 
-    # Countries: union of all with data
-    all_iso = set(FOCUS_COUNTRIES) | set(wb.keys()) | set(glopop.keys()) | set(issp.keys()) | set(gbcd.keys()) | set(ucdp.keys())
-    all_iso.discard("")
+    # Countries: union of all with data; normalize to ISO3 for consistent lookup
+    raw = set(FOCUS_COUNTRIES) | set(wb.keys()) | set(glopop.keys()) | set(issp.keys()) | set(gbcd.keys()) | set(ucdp.keys())
+    all_iso = set()
+    for x in raw:
+        if x and x != "_global":
+            all_iso.add(_to_iso3(x) if len(x) < 3 else x.upper())
 
     results = []
     for iso in all_iso:
         if iso == "_global":
             continue
+        # Lookup keys: try both 2-char and 3-char (ISSP uses 2-char)
+        iso2 = iso[:2] if len(iso) == 3 else iso
         # Get values (use _global as fallback for some)
-        gini = wb.get(iso, {}).get("gini") or wb.get("WLD", {}).get("gini")
-        gini_year = wb.get(iso, {}).get("year") or wb.get("WLD", {}).get("year")
+        gini = (wb.get(iso) or wb.get(iso2) or {}).get("gini") or (wb.get("WLD") or {}).get("gini")
+        gini_year = (wb.get(iso) or wb.get(iso2) or {}).get("year") or (wb.get("WLD") or {}).get("year")
 
-        glopop_c = glopop.get(iso) or glopop.get("_global", {})
+        glopop_c = glopop.get(iso) or glopop.get(iso2) or glopop.get("_global", {})
         pol = glopop_c.get("polarization") or glopop_c.get("top10_share", 50)
 
-        issp_c = issp.get(iso) or issp.get("_global", {})
+        issp_c = issp.get(iso) or issp.get(iso2) or issp.get("_global", {})
         redist = issp_c.get("redistribution_demand", 50)
 
-        gbcd_c = gbcd.get(iso) or {}
+        gbcd_c = gbcd.get(iso) or gbcd.get(iso2) or {}
         mig_neg = gbcd_c.get("migration_negativity", 50)
 
-        ucdp_c = ucdp.get(iso) or ucdp.get("_global", {})
+        ucdp_c = ucdp.get(iso) or ucdp.get(iso2) or ucdp.get("_global", {})
         ucdp_tr = ucdp_c.get("ucdp_trend", 50)
 
         # Risk formula

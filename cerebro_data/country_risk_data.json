@@ -1,18 +1,54 @@
 {
   "top_10_unequal": [
     {
-      "iso": "ZMB",
-      "risk_score": 51.9,
+      "iso": "COL",
+      "risk_score": 45.3,
       "probability_2030": "medium",
       "drivers": [
-        "extreme Gini (51.5)"
+        "extreme Gini (53.9)"
       ],
-      "confidence_pct": 40.0,
+      "confidence_pct": 60.0,
       "data_used": {
         "WDI": true,
         "GLOPOP-S": false,
         "ISSP": false,
-        "GBCD": false,
+        "GBCD": true,
+        "UCDP": true
+      },
+      "gini": 53.9,
+      "gini_year": 2023
+    },
+    {
+      "iso": "BRA",
+      "risk_score": 45.0,
+      "probability_2030": "low",
+      "drivers": [
+        "extreme Gini (51.6)"
+      ],
+      "confidence_pct": 60.0,
+      "data_used": {
+        "WDI": true,
+        "GLOPOP-S": false,
+        "ISSP": false,
+        "GBCD": true,
+        "UCDP": true
+      },
+      "gini": 51.6,
+      "gini_year": 2023
+    },
+    {
+      "iso": "ZMB",
+      "risk_score": 44.4,
+      "probability_2030": "low",
+      "drivers": [
+        "extreme Gini (51.5)"
+      ],
+      "confidence_pct": 60.0,
+      "data_used": {
+        "WDI": true,
+        "GLOPOP-S": false,
+        "ISSP": false,
+        "GBCD": true,
         "UCDP": true
       },
       "gini": 51.5,
@@ -20,17 +56,17 @@
     },
     {
       "iso": "AGO",
-      "risk_score": 51.9,
-      "probability_2030": "medium",
+      "risk_score": 44.4,
+      "probability_2030": "low",
       "drivers": [
         "extreme Gini (51.3)"
       ],
-      "confidence_pct": 40.0,
+      "confidence_pct": 60.0,
       "data_used": {
         "WDI": true,
         "GLOPOP-S": false,
         "ISSP": false,
-        "GBCD": false,
+        "GBCD": true,
         "UCDP": true
       },
       "gini": 51.3,
@@ -38,79 +74,25 @@
     },
     {
       "iso": "ZWE",
-      "risk_score": 51.6,
-      "probability_2030": "medium",
+      "risk_score": 44.1,
+      "probability_2030": "low",
       "drivers": [
         "extreme Gini (50.3)"
       ],
-      "confidence_pct": 40.0,
+      "confidence_pct": 60.0,
       "data_used": {
         "WDI": true,
         "GLOPOP-S": false,
         "ISSP": false,
-        "GBCD": false,
+        "GBCD": true,
         "UCDP": true
       },
       "gini": 50.3,
       "gini_year": 2019
     },
     {
-      "iso": "HND",
-      "risk_score": 50.5,
-      "probability_2030": "medium",
-      "drivers": [
-        "extreme Gini (46.8)"
-      ],
-      "confidence_pct": 40.0,
-      "data_used": {
-        "WDI": true,
-        "GLOPOP-S": false,
-        "ISSP": false,
-        "GBCD": false,
-        "UCDP": true
-      },
-      "gini": 46.8,
-      "gini_year": 2023
-    },
-    {
-      "iso": "CRI",
-      "risk_score": 50.5,
-      "probability_2030": "medium",
-      "drivers": [
-        "extreme Gini (46.7)"
-      ],
-      "confidence_pct": 40.0,
-      "data_used": {
-        "WDI": true,
-        "GLOPOP-S": false,
-        "ISSP": false,
-        "GBCD": false,
-        "UCDP": true
-      },
-      "gini": 46.7,
-      "gini_year": 2023
-    },
-    {
-      "iso": "GTM",
-      "risk_score": 50.0,
-      "probability_2030": "medium",
-      "drivers": [
-        "extreme Gini (45.2)"
-      ],
-      "confidence_pct": 40.0,
-      "data_used": {
-        "WDI": true,
-        "GLOPOP-S": false,
-        "ISSP": false,
-        "GBCD": false,
-        "UCDP": true
-      },
-      "gini": 45.2,
-      "gini_year": 2023
-    },
-    {
-      "iso": "COD",
-      "risk_score": 49.9,
+      "iso": "TUR",
+      "risk_score": 49.8,
       "probability_2030": "medium",
       "drivers": [
         "insufficient data"
@@ -123,12 +105,30 @@
         "GBCD": false,
         "UCDP": true
       },
-      "gini": 44.7,
-      "gini_year": 2020
+      "gini": 44.5,
+      "gini_year": 2022
     },
     {
-      "iso": "PRY",
-      "risk_score": 49.7,
+      "iso": "USA",
+      "risk_score": 49.4,
+      "probability_2030": "medium",
+      "drivers": [
+        "insufficient data"
+      ],
+      "confidence_pct": 60.0,
+      "data_used": {
+        "WDI": true,
+        "GLOPOP-S": false,
+        "ISSP": false,
+        "GBCD": true,
+        "UCDP": true
+      },
+      "gini": 41.8,
+      "gini_year": 2023
+    },
+    {
+      "iso": "XKX",
+      "risk_score": 48.0,
       "probability_2030": "medium",
       "drivers": [
         "insufficient data"
@@ -141,17 +141,17 @@
         "GBCD": false,
         "UCDP": true
       },
-      "gini": 44.2,
-      "gini_year": 2023
+      "gini": 38.3,
+      "gini_year": 2022
     }
   ],
   "top_10_risk": [
     {
-      "iso": "AGO",
-      "risk_score": 51.9,
+      "iso": "TUR",
+      "risk_score": 49.8,
       "probability_2030": "medium",
       "drivers": [
-        "extreme Gini (51.3)"
+        "insufficient data"
       ],
       "confidence_pct": 40.0,
       "data_used": {
@@ -161,15 +161,69 @@
         "GBCD": false,
         "UCDP": true
       },
-      "gini": 51.3,
-      "gini_year": 2018
+      "gini": 44.5,
+      "gini_year": 2022
     },
     {
-      "iso": "ZMB",
-      "risk_score": 51.9,
+      "iso": "USA",
+      "risk_score": 49.4,
       "probability_2030": "medium",
       "drivers": [
-        "extreme Gini (51.5)"
+        "insufficient data"
+      ],
+      "confidence_pct": 60.0,
+      "data_used": {
+        "WDI": true,
+        "GLOPOP-S": false,
+        "ISSP": false,
+        "GBCD": true,
+        "UCDP": true
+      },
+      "gini": 41.8,
+      "gini_year": 2023
+    },
+    {
+      "iso": "TA",
+      "risk_score": 49.1,
+      "probability_2030": "medium",
+      "drivers": [
+        "insufficient data"
+      ],
+      "confidence_pct": 40.0,
+      "data_used": {
+        "WDI": false,
+        "GLOPOP-S": false,
+        "ISSP": true,
+        "GBCD": false,
+        "UCDP": true
+      },
+      "gini": null,
+      "gini_year": null
+    },
+    {
+      "iso": "KO",
+      "risk_score": 49.0,
+      "probability_2030": "medium",
+      "drivers": [
+        "insufficient data"
+      ],
+      "confidence_pct": 40.0,
+      "data_used": {
+        "WDI": false,
+        "GLOPOP-S": false,
+        "ISSP": true,
+        "GBCD": false,
+        "UCDP": true
+      },
+      "gini": null,
+      "gini_year": null
+    },
+    {
+      "iso": "XKX",
+      "risk_score": 48.0,
+      "probability_2030": "medium",
+      "drivers": [
+        "insufficient data"
       ],
       "confidence_pct": 40.0,
       "data_used": {
@@ -177,150 +231,96 @@
         "GLOPOP-S": false,
         "ISSP": false,
         "GBCD": false,
+        "UCDP": true
+      },
+      "gini": 38.3,
+      "gini_year": 2022
+    },
+    {
+      "iso": "COL",
+      "risk_score": 45.3,
+      "probability_2030": "medium",
+      "drivers": [
+        "extreme Gini (53.9)"
+      ],
+      "confidence_pct": 60.0,
+      "data_used": {
+        "WDI": true,
+        "GLOPOP-S": false,
+        "ISSP": false,
+        "GBCD": true,
+        "UCDP": true
+      },
+      "gini": 53.9,
+      "gini_year": 2023
+    },
+    {
+      "iso": "BRA",
+      "risk_score": 45.0,
+      "probability_2030": "low",
+      "drivers": [
+        "extreme Gini (51.6)"
+      ],
+      "confidence_pct": 60.0,
+      "data_used": {
+        "WDI": true,
+        "GLOPOP-S": false,
+        "ISSP": false,
+        "GBCD": true,
+        "UCDP": true
+      },
+      "gini": 51.6,
+      "gini_year": 2023
+    },
+    {
+      "iso": "ZMB",
+      "risk_score": 44.4,
+      "probability_2030": "low",
+      "drivers": [
+        "extreme Gini (51.5)"
+      ],
+      "confidence_pct": 60.0,
+      "data_used": {
+        "WDI": true,
+        "GLOPOP-S": false,
+        "ISSP": false,
+        "GBCD": true,
         "UCDP": true
       },
       "gini": 51.5,
       "gini_year": 2022
     },
     {
-      "iso": "ZWE",
-      "risk_score": 51.6,
-      "probability_2030": "medium",
+      "iso": "AGO",
+      "risk_score": 44.4,
+      "probability_2030": "low",
       "drivers": [
-        "extreme Gini (50.3)"
+        "extreme Gini (51.3)"
       ],
-      "confidence_pct": 40.0,
+      "confidence_pct": 60.0,
       "data_used": {
         "WDI": true,
         "GLOPOP-S": false,
         "ISSP": false,
-        "GBCD": false,
+        "GBCD": true,
         "UCDP": true
       },
-      "gini": 50.3,
-      "gini_year": 2019
+      "gini": 51.3,
+      "gini_year": 2018
     },
     {
-      "iso": "ZAF",
-      "risk_score": 51.5,
-      "probability_2030": "medium",
+      "iso": "SGP",
+      "risk_score": 44.3,
+      "probability_2030": "low",
       "drivers": [
         "insufficient data"
       ],
-      "confidence_pct": 20.0,
+      "confidence_pct": 40.0,
       "data_used": {
         "WDI": false,
         "GLOPOP-S": false,
         "ISSP": false,
-        "GBCD": false,
-        "UCDP": true
-      },
-      "gini": null,
-      "gini_year": null
-    },
-    {
-      "iso": "VE",
-      "risk_score": 50.6,
-      "probability_2030": "medium",
-      "drivers": [
-        "insufficient data"
-      ],
-      "confidence_pct": 40.0,
-      "data_used": {
-        "WDI": false,
-        "GLOPOP-S": false,
-        "ISSP": true,
-        "GBCD": false,
-        "UCDP": true
-      },
-      "gini": null,
-      "gini_year": null
-    },
-    {
-      "iso": "CRI",
-      "risk_score": 50.5,
-      "probability_2030": "medium",
-      "drivers": [
-        "extreme Gini (46.7)"
-      ],
-      "confidence_pct": 40.0,
-      "data_used": {
-        "WDI": true,
-        "GLOPOP-S": false,
-        "ISSP": false,
-        "GBCD": false,
-        "UCDP": true
-      },
-      "gini": 46.7,
-      "gini_year": 2023
-    },
-    {
-      "iso": "HND",
-      "risk_score": 50.5,
-      "probability_2030": "medium",
-      "drivers": [
-        "extreme Gini (46.8)"
-      ],
-      "confidence_pct": 40.0,
-      "data_used": {
-        "WDI": true,
-        "GLOPOP-S": false,
-        "ISSP": false,
-        "GBCD": false,
-        "UCDP": true
-      },
-      "gini": 46.8,
-      "gini_year": 2023
-    },
-    {
-      "iso": "AR",
-      "risk_score": 50.3,
-      "probability_2030": "medium",
-      "drivers": [
-        "insufficient data"
-      ],
-      "confidence_pct": 40.0,
-      "data_used": {
-        "WDI": false,
-        "GLOPOP-S": false,
-        "ISSP": true,
-        "GBCD": false,
-        "UCDP": true
-      },
-      "gini": null,
-      "gini_year": null
-    },
-    {
-      "iso": "JA",
-      "risk_score": 50.1,
-      "probability_2030": "medium",
-      "drivers": [
-        "insufficient data"
-      ],
-      "confidence_pct": 40.0,
-      "data_used": {
-        "WDI": false,
-        "GLOPOP-S": false,
-        "ISSP": true,
-        "GBCD": false,
-        "UCDP": true
-      },
-      "gini": null,
-      "gini_year": null
-    },
-    {
-      "iso": "DE",
-      "risk_score": 50.1,
-      "probability_2030": "medium",
-      "drivers": [
-        "insufficient data"
-      ],
-      "confidence_pct": 40.0,
-      "data_used": {
-        "WDI": false,
-        "GLOPOP-S": false,
-        "ISSP": true,
-        "GBCD": false,
+        "GBCD": true,
         "UCDP": true
       },
       "gini": null,
@@ -332,7 +332,7 @@
     "WDI": true,
     "GLOPOP-S": false,
     "ISSP": true,
-    "GBCD": false,
+    "GBCD": true,
     "UCDP": true
   }
 }

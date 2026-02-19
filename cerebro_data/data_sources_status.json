@@ -1,11 +1,14 @@
 {
   "deep_sources": {
     "glopop_s": {
-      "live": false,
+      "live": true,
       "ring": "A",
       "confidence": 92,
-      "data": null,
-      "error": "Download from https://doi.org/10.7910/DVN/KJC3RH, use read_synthpop_data.py from github.com/VU-IVM/GLOPOP-S",
+      "data": {
+        "n_synthpop_files": 1723,
+        "format": "synthpop"
+      },
+      "error": null,
       "clocks": [
         "class",
         "harm",
@@ -29,11 +32,14 @@
       ]
     },
     "gbcd": {
-      "live": false,
+      "live": true,
       "ring": "L2",
       "confidence": 82,
-      "data": null,
-      "error": "Clone: git clone https://github.com/Computational-social-science/GBCD.git",
+      "data": {
+        "rows_sampled": 225,
+        "file": "count_brain_drain.csv"
+      },
+      "error": null,
       "clocks": [
         "class",
         "evil"
@@ -51,11 +57,25 @@
       ]
     },
     "wdi": {
-      "live": false,
+      "live": true,
       "ring": "A",
       "confidence": 90,
-      "data": null,
-      "error": "Download from Kaggle: umitka/world-development-indicators, save to cerebro_data/",
+      "data": {
+        "columns_sample": [
+          "FREQ",
+          "FREQ_LABEL",
+          "REF_AREA",
+          "REF_AREA_LABEL",
+          "INDICATOR",
+          "INDICATOR_LABEL",
+          "SEX",
+          "SEX_LABEL",
+          "AGE",
+          "AGE_LABEL"
+        ],
+        "file": "world_development_indicators.csv"
+      },
+      "error": null,
       "clocks": [
         "class",
         "evil",
@@ -109,7 +129,10 @@
     }
   },
   "rings_loaded": {
-    "A": [],
+    "A": [
+      "glopop_s",
+      "wdi"
+    ],
     "B": [
       "issp"
     ],
@@ -117,6 +140,8 @@
       "ucdp_ged"
     ],
     "L1": [],
-    "L2": []
+    "L2": [
+      "gbcd"
+    ]
   }
 }

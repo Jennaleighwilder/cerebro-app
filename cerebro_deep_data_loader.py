@@ -60,12 +60,17 @@ def load_glopop_s():
     glopop_dir = OUTPUT_DIR / "GLOPOP-S"
     paths = list(OUTPUT_DIR.glob("GLOPOP-S*.csv")) + list(OUTPUT_DIR.glob("glopop*.csv"))
     if glopop_dir.exists():
-        paths = list(glopop_dir.rglob("*.csv")) + list(glopop_dir.rglob("*.bin"))  # binary format
+        paths = list(glopop_dir.rglob("*.csv")) + list(glopop_dir.rglob("*.bin")) + list(glopop_dir.rglob("*.dat.gz"))
     if not paths:
         return None, "Download from https://doi.org/10.7910/DVN/KJC3RH, use read_synthpop_data.py from github.com/VU-IVM/GLOPOP-S"
     try:
         import pandas as pd
-        df = pd.read_csv(paths[0])
+        p0 = paths[0]
+        if p0.suffix == ".gz" or ".dat.gz" in str(p0):
+            # Synthpop binary format — count files as proxy for 7.3B individuals
+            n_files = len(list(glopop_dir.rglob("*.dat.gz"))) if glopop_dir.exists() else 1
+            return {"n_synthpop_files": n_files, "format": "synthpop"}, None
+        df = pd.read_csv(p0)
         # Expect: region, income, wealth, education, household_type, etc.
         if df.empty or len(df) < 100:
             return None, "GLOPOP-S file too small"
@@ -123,14 +128,14 @@ def load_gbcd():
         return None, "Clone: git clone https://github.com/Computational-social-science/GBCD.git"
     try:
         import pandas as pd
-        # GBCD structure varies; look for main data files
-        files = list(gbcd_dir.rglob("*.csv")) + list(gbcd_dir.rglob("*.json"))
+        # Prefer brain drain/gain data (5.Geographical heterogeneity)
+        pref = list(gbcd_dir.rglob("count_brain_drain.csv")) + list(gbcd_dir.rglob("country_brain_gain.csv"))
+        files = pref if pref else list(gbcd_dir.rglob("*.csv")) + list(gbcd_dir.rglob("*.json"))
         if not files:
             return None, "GBCD dir exists but no CSV/JSON found"
-        # Sample first file for row count
         f = files[0]
         if f.suffix == ".csv":
-            df = pd.read_csv(f, nrows=1000)
+            df = pd.read_csv(f, header=None, nrows=500) if "brain" in f.name.lower() else pd.read_csv(f, nrows=500)
         else:
             import json
             with open(f) as fp:
@@ -146,8 +151,10 @@ def load_gbcd():
 # ─────────────────────────────────────────
 
 def load_nasa_socio():
-    """Load NASA socioeconomic if available."""
-    paths = list(OUTPUT_DIR.glob("NASA*.csv")) + list(OUTPUT_DIR.glob("INFORM*.csv")) + list(OUTPUT_DIR.glob("SEDAC*.csv"))
+    """Load NASA socioeconomic if available (SEDAC, INFORM, LGII Gini)."""
+    paths = (list(OUTPUT_DIR.glob("NASA*.csv")) + list(OUTPUT_DIR.glob("INFORM*.csv"))
+             + list(OUTPUT_DIR.glob("SEDAC*.csv")) + list(OUTPUT_DIR.glob("*LGII*.csv"))
+             + list(OUTPUT_DIR.glob("*social*vulnerability*.csv")))
     if not paths:
         return None, "Download from https://www.earthdata.nasa.gov/topics/human-dimensions/socioeconomics/data-access-tools"
     try:
@@ -164,7 +171,8 @@ def load_nasa_socio():
 
 def load_wdi():
     """Load WDI if available. Kaggle: umitka/world-development-indicators"""
-    paths = list(OUTPUT_DIR.glob("WDI*.csv")) + list(OUTPUT_DIR.glob("world_development*.csv")) + list(OUTPUT_DIR.glob("wdidata*.csv"))
+    paths = (list(OUTPUT_DIR.glob("WDI*.csv")) + list(OUTPUT_DIR.glob("world_development*.csv"))
+             + list(OUTPUT_DIR.glob("wdidata*.csv")) + list(OUTPUT_DIR.glob("*world*development*.csv")))
     if not paths:
         return None, "Download from Kaggle: umitka/world-development-indicators, save to cerebro_data/"
     try:
@@ -205,7 +213,7 @@ def load_ucdp_ged():
 
 def load_acled():
     """Load ACLED if available."""
-    paths = list(OUTPUT_DIR.glob("ACLED*.csv")) + list(OUTPUT_DIR.glob("acled*.csv"))
+    paths = list(OUTPUT_DIR.glob("ACLED*.csv")) + list(OUTPUT_DIR.glob("acled*.csv")) + list(OUTPUT_DIR.glob("*acled*.csv"))
     if not paths:
         return None, "Export from acleddata.com/data-export-tool, save to cerebro_data/"
     try:
@@ -222,7 +230,8 @@ def load_acled():
 
 def load_freedom_house():
     """Load Freedom House disaggregated if available."""
-    paths = list(OUTPUT_DIR.glob("Freedom*.csv")) + list(OUTPUT_DIR.glob("freedom*.csv")) + list(OUTPUT_DIR.glob("FH*.csv"))
+    paths = (list(OUTPUT_DIR.glob("Freedom*.csv")) + list(OUTPUT_DIR.glob("freedom*.csv"))
+             + list(OUTPUT_DIR.glob("FH*.csv")) + list(OUTPUT_DIR.glob("*freedom*house*.csv")))
     if not paths:
         return None, "Download from freedomhouse.org/report/freedom-world"
     try:
@@ -238,8 +247,8 @@ def load_freedom_house():
 # ─────────────────────────────────────────
 
 def load_unhcr():
-    """Load UNHCR microdata if available."""
-    paths = list(OUTPUT_DIR.glob("UNHCR*.csv")) + list(OUTPUT_DIR.glob("unhcr*.csv"))
+    """Load UNHCR microdata if available (e.g. SENS Nepal)."""
+    paths = list(OUTPUT_DIR.glob("UNHCR*.csv")) + list(OUTPUT_DIR.glob("unhcr*.csv")) + list(OUTPUT_DIR.glob("*SENS*.csv"))
     if not paths:
         return None, "Download from microdata.unhcr.org"
     try:
