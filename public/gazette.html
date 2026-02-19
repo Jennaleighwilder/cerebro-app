@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CEREBRO — The Pendulum Gazette</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=IM+Fell+English:ital@0;1&family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&family=Anton&family=Oswald:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --ink: #0A0806;
+  --paper: #F2EDD7;
+  --paper2: #EDE6C8;
+  --aged: #D4C89A;
+  --red: #C0392B;
+  --red2: #E74C3C;
+  --gold: #B8860B;
+  --gold2: #DAA520;
+  --blue-ink: #1A3A5C;
+  --caption: #FFF176;
+  --caption-border: #E6B800;
+  --panel-border: 3px solid #0A0806;
+  --halftone: rgba(10,8,6,0.04);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: #111;
+  font-family: 'IM Fell English', serif;
+  cursor: default;
+  overflow-x: hidden;
+}
+
+/* ── CLOCK SELECTOR CARDS (launcher) ── */
+.launcher {
+  min-height: 100vh;
+  background: #0A0806;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 40px 24px;
+}
+
+.launcher-masthead {
+  text-align: center; margin-bottom: 48px;
+}
+.masthead-rule { height: 4px; background: linear-gradient(90deg, transparent, #C0392B, transparent); margin-bottom: 12px; }
+.masthead-rule2 { height: 1px; background: linear-gradient(90deg, transparent, #C0392B 30%, #C0392B 70%, transparent); margin-top: 8px; }
+.gazette-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(36px,6vw,72px);
+  font-weight: 900; color: #F2EDD7;
+  letter-spacing: 0.06em; line-height: 1;
+  text-shadow: 3px 3px 0 rgba(192,57,43,0.4);
+}
+.gazette-sub {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: clamp(12px,1.5vw,16px);
+  color: #8B7355; letter-spacing: 0.1em;
+  margin-top: 6px;
+}
+.gazette-date {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; color: #5C4D3A;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  margin-top: 10px;
+}
+
+.clock-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  max-width: 900px; width: 100%;
+}
+@media(max-width:600px){ .clock-cards { grid-template-columns: 1fr; } }
+
+.clock-launcher-card {
+  background: var(--paper);
+  border: 2px solid #0A0806;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.3s;
+}
+.clock-launcher-card:hover {
+  transform: translateY(-3px) rotate(-0.3deg);
+  box-shadow: 6px 6px 0 rgba(192,57,43,0.5), 12px 12px 0 rgba(0,0,0,0.3);
+}
+
+/* halftone texture */
+.clock-launcher-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(10,8,6,0.08) 1px, transparent 1px);
+  background-size: 4px 4px;
+  pointer-events: none; z-index: 0;
+}
+
+.card-edition {
+  background: var(--ink);
+  color: var(--paper);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase;
+  padding: 6px 14px;
+  position: relative; z-index: 1;
+  display: flex; justify-content: space-between;
+}
+
+.card-body { padding: 20px; position: relative; z-index: 1; }
+
+.card-kicker {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--red); margin-bottom: 8px;
+}
+
+.card-headline {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900; font-size: clamp(22px,3.5vw,32px);
+  line-height: 1.05; color: var(--ink);
+  margin-bottom: 10px;
+  border-bottom: 2px solid var(--ink); padding-bottom: 10px;
+}
+
+.card-deck {
+  font-family: 'IM Fell English', serif;
+  font-size: clamp(12px,1.3vw,14px); line-height: 1.5;
+  color: #3D3020; margin-bottom: 16px;
+  font-style: italic;
+}
+
+.card-byline {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; color: #8B7355; letter-spacing: 0.1em;
+  border-top: 1px solid #ccc; padding-top: 8px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+
+.read-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--ink); color: var(--paper);
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
+  padding: 10px 20px; border: none; cursor: pointer;
+  position: relative; z-index: 1;
+  transition: background 0.2s;
+  width: 100%;
+  justify-content: center;
+}
+.clock-launcher-card:nth-child(1) .read-btn { background: #1A3A5C; }
+.clock-launcher-card:nth-child(2) .read-btn { background: #3D1A2E; }
+.clock-launcher-card:nth-child(3) .read-btn { background: #1A3319; }
+.clock-launcher-card:nth-child(4) .read-btn { background: #3D1A1A; }
+.read-btn:hover { filter: brightness(1.3); }
+.read-btn-arrow { font-size: 18px; }
+
+/* ── NEWSPAPER MODAL ── */
+.paper-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0,0,0,0.85);
+  display: none; align-items: flex-start; justify-content: center;
+  overflow-y: auto; padding: 20px;
+}
+.paper-overlay.open { display: flex; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+.newspaper {
+  background: var(--paper);
+  max-width: 960px; width: 100%;
+  border: 3px solid var(--ink);
+  box-shadow: 8px 8px 0 rgba(0,0,0,0.5), 16px 16px 0 rgba(0,0,0,0.2);
+  animation: paperDrop 0.5s cubic-bezier(0.22,1,0.36,1) both;
+  position: relative;
+  overflow: hidden;
+}
+@keyframes paperDrop {
+  from { transform: translateY(-60px) rotate(-2deg); opacity: 0; }
+  to   { transform: translateY(0) rotate(0deg); opacity: 1; }
+}
+
+/* Paper texture */
+.newspaper::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(10,8,6,0.05) 1px, transparent 1px);
+  background-size: 3px 3px;
+  pointer-events: none;
+}
+
+/* ── MASTHEAD ── */
+.paper-masthead {
+  border-bottom: 5px double var(--ink);
+  padding: 20px 32px 16px;
+  text-align: center;
+  position: relative;
+}
+.paper-meta {
+  display: flex; justify-content: space-between;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; color: #666; letter-spacing: 0.15em;
+  margin-bottom: 12px;
+}
+.paper-name {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900; font-size: clamp(36px,6vw,72px);
+  line-height: 0.9; color: var(--ink);
+  letter-spacing: 0.02em;
+}
+.paper-subname {
+  font-family: 'IM Fell English', serif;
+  font-style: italic; font-size: 16px;
+  color: #5C4D3A; letter-spacing: 0.1em;
+  margin: 4px 0 12px;
+}
+.paper-rules {
+  height: 3px;
+  background: repeating-linear-gradient(90deg, var(--ink) 0, var(--ink) 60%, transparent 60%, transparent 64%);
+  margin: 8px 0;
+}
+.paper-edition-line {
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #888;
+  padding: 6px 0;
+  border-top: 1px solid #ccc; border-bottom: 1px solid #ccc;
+  margin-top: 8px;
+}
+
+/* ── CLOSE BUTTON ── */
+.close-btn {
+  position: absolute; top: 16px; right: 16px;
+  background: var(--ink); color: var(--paper);
+  border: none; cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px; font-weight: 600;
+  padding: 8px 14px; letter-spacing: 0.1em;
+  z-index: 10;
+}
+.close-btn:hover { background: var(--red); }
+
+/* ── FRONT PAGE ── */
+.front-page { padding: 24px 32px; }
+
+/* Banner headline */
+.banner-kicker {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700; font-size: 11px; letter-spacing: 0.4em;
+  text-transform: uppercase; color: var(--red);
+  margin-bottom: 6px;
+  display: flex; align-items: center; gap: 12px;
+}
+.banner-kicker::before, .banner-kicker::after {
+  content: ''; flex: 1; height: 1px; background: var(--red);
+}
+
+.banner-headline {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  line-height: 1.0;
+  color: var(--ink);
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.banner-deck {
+  font-family: 'IM Fell English', serif;
+  font-size: 16px; line-height: 1.6;
+  color: #2A1E0A; font-style: italic;
+  border-top: 2px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+  padding: 10px 0; margin-bottom: 20px;
+}
+
+/* Comic panels row */
+.panels-row {
+  display: grid; gap: 0;
+  border: var(--panel-border);
+  margin-bottom: 20px;
+  position: relative;
+}
+.panels-row.two { grid-template-columns: 1fr 1fr; }
+.panels-row.three { grid-template-columns: 2fr 1fr 1fr; }
+.panels-row.four { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+.panel {
+  border: var(--panel-border);
+  position: relative;
+  overflow: hidden;
+  min-height: 130px;
+}
+.panel-year {
+  position: absolute; top: 0; left: 0;
+  background: var(--ink); color: var(--paper);
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700; font-size: 13px; letter-spacing: 0.1em;
+  padding: 4px 10px;
+  z-index: 2;
+}
+.panel-bg {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+
+/* Ben-Day dot patterns for comic shading */
+.dots-red    { background-image: radial-gradient(circle, rgba(192,57,43,0.6) 2px, transparent 2px); background-size: 8px 8px; }
+.dots-blue   { background-image: radial-gradient(circle, rgba(26,58,92,0.5) 2px, transparent 2px); background-size: 7px 7px; }
+.dots-gold   { background-image: radial-gradient(circle, rgba(184,134,11,0.5) 2px, transparent 2px); background-size: 6px 6px; }
+.dots-green  { background-image: radial-gradient(circle, rgba(39,174,96,0.5) 2px, transparent 2px); background-size: 8px 8px; }
+.dots-dark   { background-image: radial-gradient(circle, rgba(10,8,6,0.3) 2px, transparent 2px); background-size: 5px 5px; }
+
+.panel-big-text {
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(36px,6vw,72px);
+  position: relative; z-index: 1; text-align: center;
+  text-shadow: 3px 3px 0 rgba(0,0,0,0.4);
+  line-height: 1; padding: 20px;
+}
+.panel-caption {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: var(--caption);
+  border-top: 2px solid var(--caption-border);
+  font-family: 'IM Fell English', serif;
+  font-size: 11px; line-height: 1.4;
+  color: #1A1000; padding: 6px 10px;
+  z-index: 2;
+}
+.panel-caption strong { font-weight: 700; }
+
+.panel-stat {
+  position: relative; z-index: 1; text-align: center; padding: 16px 12px 40px;
+}
+.panel-stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(40px,7vw,80px); line-height: 0.9;
+  text-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+}
+.panel-stat-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* Speech bubble */
+.speech-bubble {
+  position: relative; z-index: 1;
+  background: white; border: 2.5px solid var(--ink);
+  border-radius: 12px;
+  padding: 10px 14px; margin: 20px 12px 8px;
+  font-family: 'IM Fell English', serif; font-size: 12px;
+  line-height: 1.4; color: var(--ink);
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+}
+.speech-bubble::after {
+  content: '';
+  position: absolute; bottom: -16px; left: 20px;
+  width: 0; height: 0;
+  border-left: 12px solid transparent;
+  border-right: 0px solid transparent;
+  border-top: 16px solid var(--ink);
+}
+.speech-bubble::before {
+  content: '';
+  position: absolute; bottom: -11px; left: 22px;
+  width: 0; height: 0;
+  border-left: 10px solid transparent;
+  border-right: 0px solid transparent;
+  border-top: 14px solid white;
+  z-index: 1;
+}
+
+/* SFX text */
+.sfx {
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(32px,6vw,70px);
+  transform: rotate(-6deg);
+  display: inline-block;
+  position: relative; z-index: 1;
+  padding: 8px;
+  -webkit-text-stroke: 2px rgba(0,0,0,0.8);
+  filter: drop-shadow(4px 4px 0 rgba(0,0,0,0.5));
+}
+
+/* ── BODY COLUMNS ── */
+.body-cols {
+  display: grid; gap: 24px;
+  margin-bottom: 20px;
+}
+.body-cols.two   { grid-template-columns: 1fr 1fr; }
+.body-cols.three { grid-template-columns: 2fr 1fr; }
+
+.article-text {
+  font-family: 'IM Fell English', serif;
+  font-size: 13.5px; line-height: 1.75;
+  color: #1A120A; text-align: justify;
+  column-gap: 20px;
+}
+.article-text p { margin-bottom: 12px; }
+.article-text p:first-child::first-letter {
+  font-family: 'Playfair Display', serif;
+  font-size: 56px; font-weight: 900;
+  float: left; line-height: 0.8; margin: 4px 6px -4px 0;
+  color: var(--ink);
+}
+
+.pull-quote {
+  font-family: 'Playfair Display', serif;
+  font-style: italic; font-size: clamp(18px,2.5vw,24px);
+  line-height: 1.3; color: var(--ink);
+  border-top: 3px solid var(--ink);
+  border-bottom: 3px solid var(--ink);
+  padding: 16px 0; margin: 20px 0;
+  position: relative;
+}
+.pull-quote-source {
+  display: block; margin-top: 8px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; letter-spacing: 0.2em; color: #888;
+  font-style: normal; text-transform: uppercase;
+}
+
+/* Sidebar box */
+.sidebar-box {
+  background: var(--paper2);
+  border: 2px solid var(--ink); padding: 16px;
+}
+.sidebar-box-title {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700; font-size: 12px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--ink);
+  border-bottom: 2px solid var(--ink); padding-bottom: 8px; margin-bottom: 12px;
+}
+.sidebar-item {
+  display: flex; justify-content: space-between;
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  color: #3D3020; padding: 4px 0;
+  border-bottom: 1px dotted #aaa;
+}
+.sidebar-item:last-child { border-bottom: none; }
+.sidebar-val { font-weight: 600; }
+.sidebar-val.good { color: #27AE60; }
+.sidebar-val.bad  { color: var(--red); }
+.sidebar-val.warn { color: var(--gold); }
+
+/* Prediction box */
+.prediction-box {
+  background: var(--ink); color: var(--paper);
+  border: 3px solid var(--ink); padding: 20px;
+  position: relative; overflow: hidden;
+  margin-top: 16px;
+}
+.prediction-box::before {
+  content: ''; position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(242,237,215,0.06) 1px, transparent 1px);
+  background-size: 4px 4px;
+}
+.pred-label {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700; font-size: 10px; letter-spacing: 0.4em;
+  text-transform: uppercase; color: var(--gold2);
+  margin-bottom: 8px; position: relative;
+}
+.pred-text {
+  font-family: 'IM Fell English', serif;
+  font-size: 15px; line-height: 1.6;
+  position: relative;
+}
+
+/* Timeline strip */
+.timeline-strip {
+  border: var(--panel-border);
+  padding: 0; margin-bottom: 20px;
+  overflow: hidden;
+}
+.timeline-header {
+  background: var(--ink); color: var(--paper);
+  font-family: 'Oswald', sans-serif; font-weight: 700;
+  font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase;
+  padding: 8px 16px;
+}
+.timeline-row {
+  display: flex; border-top: 1px solid #ccc;
+}
+.timeline-year {
+  background: var(--paper2); border-right: 2px solid var(--ink);
+  font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 12px;
+  color: var(--red); padding: 8px 12px; min-width: 60px;
+  display: flex; align-items: center; justify-content: center;
+}
+.timeline-bar-wrap {
+  flex: 1; padding: 8px 12px; display: flex; align-items: center; gap: 10px;
+}
+.timeline-bar-bg { flex: 1; height: 8px; background: #ddd; border-radius: 0; position: relative; }
+.timeline-bar-fill { height: 100%; border-radius: 0; }
+.timeline-event {
+  font-family: 'IM Fell English', serif;
+  font-size: 11px; color: #3D3020; line-height: 1.3;
+  min-width: 140px; max-width: 200px;
+}
+.timeline-saddle-tag {
+  background: var(--red); color: white;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8px; font-weight: 600; letter-spacing: 0.1em;
+  padding: 2px 6px; white-space: nowrap;
+}
+
+/* Page divider */
+.page-divider {
+  height: 1px; background: var(--ink);
+  margin: 20px 0; position: relative;
+}
+.page-divider::after {
+  content: '❧';
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  background: var(--paper);
+  padding: 0 12px;
+  font-size: 14px; color: var(--red);
+}
+
+.page-footer {
+  border-top: 4px double var(--ink);
+  padding: 12px 32px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; color: #888; letter-spacing: 0.1em;
+}
+</style>
+</head>
+<body>
+
+<!-- ── LAUNCHER ── -->
+<div class="launcher">
+  <a href="index.html" class="back-link" style="position:absolute;top:16px;left:16px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.1em;color:#F2EDD7;text-decoration:none;padding:8px 14px;border:1px solid rgba(242,237,215,0.3);z-index:10">← Back to CEREBRO</a>
+  <div class="launcher-masthead">
+    <div class="masthead-rule"></div>
+    <div class="gazette-title">THE PENDULUM GAZETTE</div>
+    <div class="gazette-sub">Dispatches from the Arc of Civilizational History</div>
+    <div class="masthead-rule2"></div>
+    <div class="gazette-date">Published by the Forgotten Code Research Institute · Cerebro Edition · February 2026 · Click any card to open · Escape or click outside to close</div>
+  </div>
+
+  <div class="clock-cards">
+
+    <div class="clock-launcher-card" onclick="openPaper('harm')">
+      <div class="card-edition"><span>EDITION I</span><span>⚡ MODERATE SADDLE</span></div>
+      <div class="card-body">
+        <div class="card-kicker">◆ Breaking · Harm Tolerance Clock</div>
+        <div class="card-headline">AMERICA'S PUNISHMENT PENDULUM SWINGS BACK: AFTER DECADES OF CRUELTY, THE CLOCK TURNS POSITIVE FOR THE FIRST TIME SINCE 2019</div>
+        <div class="card-deck">The Harm Tolerance Clock crossed into positive territory in 2023 — but the algorithm warns the recovery may be brief. History says what comes after a loading saddle. And it isn't pretty.</div>
+        <div class="card-byline"><span>By the Cerebro Research Desk</span><span>1960–2023</span></div>
+      </div>
+      <button class="read-btn">READ THE FULL STORY <span class="read-btn-arrow">→</span></button>
+    </div>
+
+    <div class="clock-launcher-card" onclick="openPaper('class')">
+      <div class="card-edition"><span>EDITION II</span><span>⚡⚡ SADDLE LOADING</span></div>
+      <div class="card-body">
+        <div class="card-kicker">◆ Special Report · Class Permeability Clock</div>
+        <div class="card-headline">THE NEW GILDED AGE APPROACHES ITS BREAKING POINT: EVERY HISTORICAL ANALOGUE SAYS WHAT COMES NEXT</div>
+        <div class="card-deck">At −4.1 and decelerating, the Class Permeability Clock has entered the loading phase. 1929. 1896. 1776. The pattern is unmistakable. The only question is what comes out the other side.</div>
+        <div class="card-byline"><span>By the Cerebro Research Desk</span><span>1820–2023</span></div>
+      </div>
+      <button class="read-btn">READ THE FULL STORY <span class="read-btn-arrow">→</span></button>
+    </div>
+
+    <div class="clock-launcher-card" onclick="openPaper('sexual')">
+      <div class="card-edition"><span>EDITION III</span><span>◆ WATCH</span></div>
+      <div class="card-body">
+        <div class="card-kicker">◆ Investigation · Sexual Pendulum Clock</div>
+        <div class="card-headline">THE PENDULUM REVERSES: FIFTY YEARS OF SEXUAL LIBERATION MAY BE LOADING THE NEXT GREAT MORAL PANIC</div>
+        <div class="card-deck">Velocity turned negative in 2021. The evangelical mobilization index is rising. STI rates are climbing. The Sexual Pendulum Clock is moving toward the constraint pole — and history says these loadings produce earthquakes.</div>
+        <div class="card-byline"><span>By the Cerebro Research Desk</span><span>1972–2023</span></div>
+      </div>
+      <button class="read-btn">READ THE FULL STORY <span class="read-btn-arrow">→</span></button>
+    </div>
+
+    <div class="clock-launcher-card" onclick="openPaper('evil')">
+      <div class="card-edition"><span>EDITION IV</span><span>⚠ DESCENT ACTIVE</span></div>
+      <div class="card-body">
+        <div class="card-kicker">◆ War Dispatch · Good vs. Evil Clock</div>
+        <div class="card-headline">THE DARKNESS DEEPENS: GLOBAL CRUELTY METRICS ENTER ACCELERATING DECLINE AS DEMOCRATIC NORMS COLLAPSE WORLDWIDE</div>
+        <div class="card-deck">The Good vs. Evil Clock reads −2.8 and is still falling. Displacement at record levels. Conflict deaths rising. Accountability structures eroding. The algorithm has not yet detected a saddle. That is the most frightening reading of all.</div>
+        <div class="card-byline"><span>By the Cerebro Research Desk</span><span>1945–2023</span></div>
+      </div>
+      <button class="read-btn">READ THE FULL STORY <span class="read-btn-arrow">→</span></button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── NEWSPAPER MODAL ── -->
+<div class="paper-overlay" id="overlay" onclick="closeOnOverlay(event)">
+  <div class="newspaper" id="newspaper">
+    <button class="close-btn" onclick="closePaper()">✕ CLOSE</button>
+    <div id="paperContent"></div>
+  </div>
+</div>
+
+<script>
+const ARTICLES = {
+
+harm: `
+<div class="paper-masthead" style="position:relative; overflow:hidden;">
+  <div style="
+    position: relative;
+    background: linear-gradient(135deg, #B8860B 0%, #F1C40F 50%, #B8860B 100%);
+    border-bottom: 3px solid #0A0806;
+    border-top: 3px solid #0A0806;
+    margin-bottom: 16px;
+    padding: 8px 16px;
+    text-align: center;
+    font-family: 'Anton', sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #0A0806;
+    box-shadow: inset 0 -2px 0 rgba(0,0,0,0.1), inset 0 2px 0 rgba(255,255,255,0.3);
+    width: 100%;
+  ">
+    <span style="margin-right: 20px;">✦</span> 
+    THE APOGEE · 1965–1968 · HARM TOLERANCE AT MAXIMUM SAFETY · POSITION: +8.2 
+    <span style="margin-left: 20px;">✦</span>
+  </div>
+  <div class="paper-meta"><span>THE PENDULUM GAZETTE</span><span>EDITION I · HARM TOLERANCE CLOCK</span><span>FEBRUARY 2026</span></div>
+  <div class="paper-name">THE PENDULUM<br>GAZETTE</div>
+  <div class="paper-subname">Dispatches from the Arc of Civilizational History</div>
+  <div class="paper-rules"></div>
+  <div class="paper-edition-line">
+    <span>VOL. LXIV · NO. 1</span>
+    <span>HARM TOLERANCE CLOCK · 1960–2023 · VALIDATED 6/8 HISTORICAL EVENTS</span>
+    <span>PRICE: THE TRUTH</span>
+  </div>
+</div>
+
+<div class="front-page">
+  <div class="banner-kicker">BREAKING · HARM TOLERANCE CLOCK</div>
+  <div class="banner-headline" style="font-size:clamp(32px,5.5vw,62px)">AMERICA'S PUNISHMENT PENDULUM CROSSES BACK INTO POSITIVE TERRITORY — BUT THE ALGORITHM REMEMBERS WHAT HAPPENED LAST TIME</div>
+  <div class="banner-deck">"The clock does not lie. It measures the distance between what we do to each other and what we could be. In 2023, for the first time in three years, that distance began to close." — Cerebro Engine Report, 2024</div>
+
+  <!-- Comic panels: historical moments -->
+  <div class="panels-row three">
+    <div class="panel">
+      <div class="panel-year">1980</div>
+      <div class="panel-bg dots-red"></div>
+      <div class="panel-stat" style="color:white">
+        <div class="panel-stat-num" style="color:#FFD700">⚡</div>
+        <div class="sfx" style="color:#C0392B">SADDLE!</div>
+        <div style="font-family:'Oswald',sans-serif;font-size:11px;color:#FFD700;position:relative;z-index:1;letter-spacing:0.15em">ALGORITHM FIRES</div>
+      </div>
+      <div class="panel-caption"><strong>STRONG SADDLE DETECTED.</strong> Velocity negative. Acceleration crosses zero. The engine fires. Reagan wins in November. The War on Drugs begins.</div>
+    </div>
+    <div class="panel">
+      <div class="panel-year">1991</div>
+      <div class="panel-bg dots-dark"></div>
+      <div class="panel-stat" style="padding-top:32px">
+        <div class="panel-stat-num" style="color:#E74C3C">9.8</div>
+        <div class="panel-stat-label" style="color:#ccc">HOMICIDES<br>PER 100K</div>
+      </div>
+      <div class="panel-caption">Peak crime era. 9.8 homicides per 100,000 Americans. The clock reads <strong>+0.18</strong> — barely above zero. The nadir approaches.</div>
+    </div>
+    <div class="panel">
+      <div class="panel-year">1994</div>
+      <div class="panel-bg dots-blue"></div>
+      <div class="speech-bubble" style="font-size:11px">"We have predators on our streets that society has in fact in part because of its neglect created."<br><small>— President Clinton, signing the Crime Bill</small></div>
+      <div class="panel-caption"><strong>SECOND STRONG SADDLE.</strong> Algorithm score: 3/3. The largest crime bill in American history passes. 100,000 new police. Mandatory minimums expand. Mass incarceration accelerates.</div>
+    </div>
+  </div>
+
+  <!-- Body columns -->
+  <div class="body-cols three">
+    <div class="article-text">
+      <p>The pendulum had been swinging toward the harm pole since 1968. Homicide rates climbed from 5.1 per 100,000 Americans to a peak of 10.2 in 1980. Drug overdose deaths, then measured in the low single digits per 100,000, had begun their long exponential ascent. The prison population — 117 per 100,000 in 1960 — was beginning the doubling, then quadrupling, that would define the next four decades.</p>
+      <p>The Cerebro algorithm watched all of this and said nothing — until 1980. That was the year velocity went negative, acceleration crossed zero from below, and the saddle score hit 3/3: a STRONG SIGNAL. In plain terms: the system had loaded maximum momentum. Something was going to happen. The algorithm could not say what. Only that the energy was there, waiting to be expressed.</p>
+      <p>What happened was Ronald Reagan. The War on Drugs. Mandatory minimum sentences. The rapid expansion of federal prosecution. The sentencing disparity between crack and powder cocaine. These were not causes — they were effects. The pendulum had loaded its energy in one direction, and it released in the most punitive political moment since Prohibition.</p>
+
+      <div class="pull-quote">"The algorithm does not predict the form of the release. Only that the energy will find expression. The 1980 saddle loaded in one direction. What came out was forty years of mass incarceration."<span class="pull-quote-source">— Cerebro Engine · Harm Tolerance Analysis</span></div>
+
+      <p>By 1994, the clock had moved deep into negative territory. The crime rate had indeed begun its long decline — but the punitive response was accelerating even as the problem receded. This is the crucial insight of the pendulum model: the political response always overshoots. The Crime Bill of 1994 arrived after homicide had already peaked. The system was responding to a problem that was already ending. The saddle signal caught it exactly.</p>
+    </div>
+
+    <div>
+      <div class="sidebar-box">
+        <div class="sidebar-box-title">⚙ Clock Readings · 2023</div>
+        <div class="sidebar-item"><span>Position</span><span class="sidebar-val good">+2.55 / 10</span></div>
+        <div class="sidebar-item"><span>Velocity</span><span class="sidebar-val good">+0.009 ↑</span></div>
+        <div class="sidebar-item"><span>Acceleration</span><span class="sidebar-val good">+0.002 ↑</span></div>
+        <div class="sidebar-item"><span>Saddle Score</span><span class="sidebar-val warn">2/3 ◆</span></div>
+        <div class="sidebar-item"><span>Phase</span><span class="sidebar-val good">Recovery</span></div>
+        <div class="sidebar-item"><span>Ring A</span><span class="sidebar-val good">100% loaded</span></div>
+        <div class="sidebar-item"><span>Ring B</span><span class="sidebar-val warn">PENDING</span></div>
+        <div class="sidebar-item"><span>Ring C</span><span class="sidebar-val good">100% loaded</span></div>
+        <div class="sidebar-item"><span>Confidence</span><span class="sidebar-val warn">67%</span></div>
+      </div>
+
+      <div class="prediction-box" style="margin-top:16px">
+        <div class="pred-label">◈ Prediction · Next Saddle</div>
+        <div class="pred-text">Based on the 14-18 year saddle-to-saddle cycle (1980→1994, 1994→2008), the next Harm Tolerance saddle loads approximately <strong style="color:#DAA520">2036–2040</strong>. The recovery has begun. What will load the next saddle: the attitude data we have not yet collected.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-divider"></div>
+
+  <!-- Timeline -->
+  <div class="timeline-strip">
+    <div class="timeline-header">◆ HARM TOLERANCE CLOCK — HISTORICAL RECORD 1960–2023</div>
+    ${[
+      [1960,'5.1',15,'Era of relative safety. Incarceration begins rising.','#27AE60'],
+      [1968,'6.9',35,'Nixon "Law & Order" election. Fear-based politics arrives.','#E67E22'],
+      [1980,'10.2',75,'⚡ STRONG SADDLE. Reagan. War on Drugs begins.','#C0392B',true],
+      [1991,'9.8',72,'Crime statistical peak. Policy response lags.','#C0392B'],
+      [1994,'9.0',65,'⚡ STRONG SADDLE. Crime Bill. 100k new police.','#C0392B',true],
+      [2008,'5.4',40,'⚡ STRONG SADDLE. Incarceration peaks. 2.3M imprisoned.','#E67E22',true],
+      [2012,'4.7',35,'First decline in prison pop. Reform era begins.','#27AE60'],
+      [2020,'6.5',52,'COVID + Floyd. Dual crisis. Clock crashes to −2.07.','#E67E22'],
+      [2023,'5.8',45,'Recovery. Clock returns to +2.55. Velocity positive.','#27AE60'],
+    ].map(([yr,homrate,pct,event,col,saddle])=>`
+    <div class="timeline-row">
+      <div class="timeline-year">${yr}</div>
+      <div class="timeline-bar-wrap">
+        <div class="timeline-bar-bg"><div class="timeline-bar-fill" style="width:${pct}%;background:${col}"></div></div>
+        <div class="timeline-event">${event}</div>
+        ${saddle?`<div class="timeline-saddle-tag">⚡ SADDLE</div>`:''}
+      </div>
+    </div>`).join('')}
+  </div>
+
+  <!-- Final panels row -->
+  <div class="panels-row four">
+    <div class="panel">
+      <div class="panel-bg dots-green"></div>
+      <div class="panel-stat" style="padding-top:28px">
+        <div class="panel-stat-num" style="color:#27AE60">+2.55</div>
+        <div class="panel-stat-label" style="color:#2d2">2023 POSITION</div>
+      </div>
+      <div class="panel-caption">First positive reading since 2019. Recovery confirmed.</div>
+    </div>
+    <div class="panel">
+      <div class="panel-bg dots-gold"></div>
+      <div class="panel-stat" style="padding-top:28px">
+        <div class="panel-stat-num" style="color:#DAA520">2036</div>
+        <div class="panel-stat-label" style="color:#aa8800">NEXT SADDLE</div>
+      </div>
+      <div class="panel-caption">Projected next loading window. 14-18 year cycle holds.</div>
+    </div>
+    <div class="panel">
+      <div class="panel-bg dots-blue"></div>
+      <div class="panel-stat" style="padding-top:28px">
+        <div class="panel-stat-num" style="color:#4A90D9">67%</div>
+        <div class="panel-stat-label" style="color:#4A90D9">CONFIDENCE</div>
+      </div>
+      <div class="panel-caption">Ring B attitude data pending. Add GSS to reach 85%.</div>
+    </div>
+    <div class="panel">
+      <div class="panel-bg dots-red"></div>
+      <div class="panel-stat" style="padding-top:16px">
+        <div class="sfx" style="color:#C0392B;font-size:28px">WARNING:</div>
+        <div style="font-family:'Oswald',sans-serif;font-size:10px;color:#C0392B;padding:4px 8px;position:relative;z-index:1;letter-spacing:0.1em">ECONOMIC SHOCK</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#666;padding:2px 8px;position:relative;z-index:1">→ PULLS SADDLE FORWARD</div>
+      </div>
+      <div class="panel-caption">If unemployment spikes to >6%, next saddle arrives 3-5 years early.</div>
+    </div>
+  </div>
+
+</div>
+<div class="page-footer">
+  <span>THE PENDULUM GAZETTE · HARM TOLERANCE EDITION</span>
+  <span>DATA: FRED · FBI UCR · BJS · CDC WONDER · ALL SOURCES VERIFIED</span>
+  <span>APOGEE 1968 · FROM THAT HEIGHT, THE FALL TOOK 52 YEARS</span>
+</div>
+`,
+
+class: `
+<div class="paper-masthead" style="position:relative; overflow:hidden;">
+  <div style="
+    position: relative;
+    background: linear-gradient(135deg, #B8860B 0%, #F1C40F 50%, #B8860B 100%);
+    border-bottom: 3px solid #0A0806;
+    border-top: 3px solid #0A0806;
+    margin-bottom: 16px;
+    padding: 8px 16px;
+    text-align: center;
+    font-family: 'Anton', sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #0A0806;
+    box-shadow: inset 0 -2px 0 rgba(0,0,0,0.1), inset 0 2px 0 rgba(255,255,255,0.3);
+    width: 100%;
+  ">
+    <span style="margin-right: 20px;">✦</span> 
+    THE APOGEE · 1968–1973 · CLASS PERMEABILITY AT MAXIMUM MOBILITY · POSITION: +9.1 
+    <span style="margin-left: 20px;">✦</span>
+  </div>
+  <div class="paper-meta"><span>THE PENDULUM GAZETTE</span><span>EDITION II · CLASS PERMEABILITY CLOCK</span><span>FEBRUARY 2026</span></div>
+  <div class="paper-name">THE PENDULUM<br>GAZETTE</div>
+  <div class="paper-subname">Dispatches from the Arc of Civilizational History</div>
+  <div class="paper-rules"></div>
+  <div class="paper-edition-line">
+    <span>VOL. LXIV · NO. 2</span>
+    <span>CLASS PERMEABILITY CLOCK · GILDED AGES & THEIR ENDS</span>
+    <span>PRICE: THE TRUTH</span>
+  </div>
+</div>
+
+<div class="front-page">
+  <div class="banner-kicker">SPECIAL REPORT · CLASS PERMEABILITY CLOCK · SADDLE LOADING</div>
+  <div class="banner-headline" style="font-size:clamp(30px,5vw,58px)">THE PENDULUM ALWAYS SWINGS BACK: EVERY GILDED AGE IN AMERICAN HISTORY HAS ENDED THE SAME WAY — AND THE CLOCK IS AT −4.1</div>
+  <div class="banner-deck">"There have been three times in American history when wealth stratification reached this level. Each time, within fifteen years, the political order was remade from the foundations. The Class Permeability Clock does not know who will do the remaking. But it knows that remaking is coming."</div>
+
+  <div class="panels-row three">
+    <div class="panel">
+      <div class="panel-year">1896</div>
+      <div class="panel-bg dots-gold"></div>
+      <div class="speech-bubble" style="font-size:11px">"You shall not crucify mankind upon a cross of gold!"<br><small>— William Jennings Bryan, Populist Convention</small></div>
+      <div class="panel-caption">First Gilded Age reaches the breaking point. Stratification at historic peak. Populist revolt loads. What followed: Progressive Era, trust-busting, income tax, direct Senate election.</div>
+    </div>
+    <div class="panel">
+      <div class="panel-year">1932</div>
+      <div class="panel-bg dots-dark"></div>
+      <div class="panel-stat" style="padding-top:20px">
+        <div class="sfx" style="color:#C0392B;font-size:40px">CRASH!</div>
+        <div style="font-family:'Oswald',sans-serif;font-size:13px;color:#ccc;position:relative;z-index:1">25% UNEMPLOYMENT</div>
+      </div>
+      <div class="panel-caption">Second collapse. Gini at historic high. Mass immiseration. The saddle fires. What followed: New Deal, Social Security, labor rights, 40% union density.</div>
+    </div>
+    <div class="panel">
+      <div class="panel-year">2023</div>
+      <div class="panel-bg dots-red"></div>
+      <div class="panel-stat" style="padding-top:20px">
+        <div class="panel-stat-num" style="color:#E74C3C">−4.1</div>
+        <div class="panel-stat-label" style="color:#E74C3C">CLOCK POSITION</div>
+        <div style="background:#DAA520;color:#000;font-family:'Oswald',sans-serif;font-weight:700;font-size:10px;letter-spacing:0.15em;padding:4px 8px;position:relative;z-index:2;margin:8px;display:inline-block">⚡ SADDLE LOADING</div>
+      </div>
+      <div class="panel-caption"><strong>We are here.</strong> The algorithm detects deceleration in the descent. Loading phase confirmed. The energy is accumulating.</div>
+    </div>
+  </div>
+
+  <div class="body-cols three">
+    <div class="article-text">
+      <p>The Gini coefficient — that single number that measures how unequally income is distributed across a population — has been climbing in America since 1968. It climbed through Nixon and Carter and Reagan. It climbed through the boom years of the 1990s, the housing bubble of the 2000s, the recovery of the 2010s. By 2023 it sat at levels not seen since the late 1920s — the last time the Class Permeability Clock fell this deep into negative territory.</p>
+      <p>But the Cerebro algorithm does not track Gini alone. It tracks the whole structural ring: the ratio of median home price to median household income, which has reached 7.2 — the highest in recorded history. The federal minimum wage as a percentage of median wages, which has fallen to its lowest level since 1956. Intergenerational mobility, measured by Opportunity Insights, which shows that the likelihood of a child born in the bottom quintile reaching the top has fallen by 40% since 1970.</p>
+      <p>The Class Permeability Clock reads −4.1 and the velocity is still negative — but the acceleration has turned positive. This is the loading signal. The pendulum is still moving toward the negative pole, but it is slowing. Momentum is building in the other direction.</p>
+
+      <div class="pull-quote">"The clock doesn't predict revolution. It predicts loading. When a compressed spring is loaded, it doesn't know if the release will be a labor movement or a fascist mobilization. The direction of release is what Ring B attitude data is for."<span class="pull-quote-source">— Cerebro Predictive Engine Analysis</span></div>
+
+      <p>The historical record is stark. In 1896, the first Gilded Age loaded its saddle at similarly stratified levels. The release produced the Progressive Era — trust-busting, income tax, direct election of senators, women's suffrage, the beginning of the regulatory state. In 1932, the second loading produced the New Deal. In both cases, the loaded energy released in a redistributive direction. But this was not guaranteed. In Germany in 1933, a similarly loaded class saddle released in a catastrophically different direction.</p>
+    </div>
+
+    <div>
+      <div class="sidebar-box">
+        <div class="sidebar-box-title">⚙ Clock Readings · 2023</div>
+        <div class="sidebar-item"><span>Position</span><span class="sidebar-val bad">−4.10 / 10</span></div>
+        <div class="sidebar-item"><span>Velocity</span><span class="sidebar-val bad">−0.031 ↓</span></div>
+        <div class="sidebar-item"><span>Acceleration</span><span class="sidebar-val warn">+0.004 ↑</span></div>
+        <div class="sidebar-item"><span>Saddle Score</span><span class="sidebar-val warn">2/3 ◆</span></div>
+        <div class="sidebar-item"><span>Gini (2022)</span><span class="sidebar-val bad">0.494 (hist. high)</span></div>
+        <div class="sidebar-item"><span>Home Price/Income</span><span class="sidebar-val bad">7.2x (hist. high)</span></div>
+        <div class="sidebar-item"><span>Min. Wage/Median</span><span class="sidebar-val bad">Lowest since 1956</span></div>
+        <div class="sidebar-item"><span>Mobility Rate</span><span class="sidebar-val bad">−40% since 1970</span></div>
+      </div>
+      <div class="prediction-box" style="margin-top:16px">
+        <div class="pred-label">◈ Triple Convergence Warning</div>
+        <div class="pred-text">All three theoretical frameworks align: Turchin projects maximum elite-commoner divergence 2025–2032. Kondratiev K5 trough projects 2028–2032. Strauss-Howe Crisis Turning resolves 2030–2033. <strong style="color:#DAA520">The Class Permeability saddle fires into the most historically convergent window since 1929.</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-divider"></div>
+
+  <div class="timeline-strip">
+    <div class="timeline-header">◆ GILDED AGES & THEIR ENDS — CLASS PERMEABILITY HISTORICAL RECORD</div>
+    ${[
+      [1890,'First Gilded Age peak. Gini at historical high. Populist revolt loading.',80,'#C0392B'],
+      [1896,'Bryan campaign. Populist saddle fires. Progressive era loads.',75,'#E67E22',true],
+      [1913,'Progressive Era peak. Income tax, trust-busting, Senate election.',35,'#27AE60'],
+      [1928,'Second Gilded Age. Pre-crash stratification peak.',85,'#C0392B'],
+      [1933,'New Deal saddle. FDR. Full progressive release.',82,'#E67E22',true],
+      [1944,'Peak equality era begins. Union density 35%. GI Bill.',20,'#27AE60'],
+      [1968,'Stratification begins climbing again. Post-war consensus erodes.',30,'#E67E22'],
+      [2000,'Tech boom widens gap. Top 1% at 21% of income.',65,'#C0392B'],
+      [2020,'Pandemic wealth explosion. Billionaires gain $1.3T in 3 months.',88,'#C0392B'],
+      [2023,'Saddle loading confirmed. Position: −4.1.',85,'#C0392B'],
+    ].map(([yr,event,pct,col,saddle])=>`
+    <div class="timeline-row">
+      <div class="timeline-year">${yr}</div>
+      <div class="timeline-bar-wrap">
+        <div class="timeline-bar-bg"><div class="timeline-bar-fill" style="width:${pct}%;background:${col}"></div></div>
+        <div class="timeline-event">${event}</div>
+        ${saddle?`<div class="timeline-saddle-tag">⚡ SADDLE</div>`:''}
+      </div>
+    </div>`).join('')}
+  </div>
+</div>
+<div class="page-footer">
+  <span>THE PENDULUM GAZETTE · CLASS PERMEABILITY EDITION</span>
+  <span>DATA: FRED GINI · WID.WORLD · OPPORTUNITY INSIGHTS · CLIO-INFRA</span>
+  <span>APOGEE 1973 · 50 YEARS FROM MAXIMUM MOBILITY TO −4.1</span>
+</div>
+`,
+
+sexual: `
+<div class="paper-masthead" style="position:relative; overflow:hidden;">
+  <div style="
+    position: relative;
+    background: linear-gradient(135deg, #B8860B 0%, #F1C40F 50%, #B8860B 100%);
+    border-bottom: 3px solid #0A0806;
+    border-top: 3px solid #0A0806;
+    margin-bottom: 16px;
+    padding: 8px 16px;
+    text-align: center;
+    font-family: 'Anton', sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #0A0806;
+    box-shadow: inset 0 -2px 0 rgba(0,0,0,0.1), inset 0 2px 0 rgba(255,255,255,0.3);
+    width: 100%;
+  ">
+    <span style="margin-right: 20px;">✦</span> 
+    THE APOGEE · 2012–2016 · SEXUAL PENDULUM AT MAXIMUM AUTONOMY · POSITION: +9.4 
+    <span style="margin-left: 20px;">✦</span>
+  </div>
+  <div class="paper-meta"><span>THE PENDULUM GAZETTE</span><span>EDITION III · SEXUAL PENDULUM CLOCK</span><span>FEBRUARY 2026</span></div>
+  <div class="paper-name">THE PENDULUM<br>GAZETTE</div>
+  <div class="paper-subname">Dispatches from the Arc of Civilizational History</div>
+  <div class="paper-rules"></div>
+  <div class="paper-edition-line">
+    <span>VOL. LXIV · NO. 3</span>
+    <span>SEXUAL PENDULUM CLOCK · LIBERATION & ITS COUNTERREVOLUTIONS</span>
+    <span>PRICE: THE TRUTH</span>
+  </div>
+</div>
+
+<div class="front-page">
+  <div class="banner-kicker">INVESTIGATION · SEXUAL PENDULUM CLOCK · EARLY WARNING SIGNAL</div>
+  <div class="banner-headline" style="font-size:clamp(28px,4.5vw,52px)">FIFTY YEARS OF LIBERATION MAY BE PREPARING ITS OWN REVERSAL: THE SEXUAL PENDULUM CLOCK HAS TURNED — AND HISTORY SAYS THESE SWINGS PRODUCE EARTHQUAKES</div>
+  <div class="banner-deck">The velocity turned negative in 2021. The pattern matches 1978. The question is not whether the normative reaction arrives — it is whether we will recognize it in time to name what it is.</div>
+
+  <div class="panels-row two">
+    <div class="panel" style="min-height:180px">
+      <div class="panel-year">1973–1985</div>
+      <div class="panel-bg dots-red"></div>
+      <div class="panel-stat" style="padding-top:24px">
+        <div class="sfx" style="color:#C0392B;font-size:48px">AIDS</div>
+        <div style="font-family:'Oswald',sans-serif;font-size:13px;color:#E74C3C;position:relative;z-index:1">THE ACCELERANT</div>
+      </div>
+      <div class="panel-caption">The liberation era peaked. STI rates climbed. AIDS arrived and became a political weapon. The pendulum loaded. Moral Majority formed 1979. Within 6 years: abstinence-only education was federal policy.</div>
+    </div>
+    <div class="panel" style="min-height:180px">
+      <div class="panel-year">2021–NOW</div>
+      <div class="panel-bg dots-dark"></div>
+      <div class="panel-stat" style="padding-top:24px">
+        <div class="panel-stat-num" style="color:#FF9F1C">−1.2</div>
+        <div class="panel-stat-label" style="color:#FF9F1C">CLOCK POSITION</div>
+        <div style="font-family:'Oswald',sans-serif;font-size:11px;color:#ccc;position:relative;z-index:1;letter-spacing:0.1em;margin-top:8px">VELOCITY: −0.022 ↓</div>
+      </div>
+      <div class="panel-caption">Velocity turned negative. STI rates at 40-year highs. Dobbs overturned Roe. Evangelical voter mobilization rising. The pattern matches 1978-1981 exactly.</div>
+    </div>
+  </div>
+
+  <div class="body-cols two">
+    <div class="article-text">
+      <p>Every liberation has its counterrevolution. This is not cynicism — it is mechanics. The Sexual Pendulum Clock tracks not what people think sexuality should be, but what the structural and behavioral signals say it is becoming. And in 2021, something changed.</p>
+      <p>The velocity — the rate of change of the clock's position — turned negative for the first time since 2010. The clock had been moving toward the autonomy pole for nearly five decades, since the Pill democratized contraception, since Stonewall, since Roe, since the slow cultural unwinding of the postwar nuclear family ideal. Now it was reversing.</p>
+      <p>The leading indicators are the warning signs that arrive before the normative shift has crystallized. STI rates have been rising steadily since 2012 — gonorrhea up 111%, syphilis up 74%, congenital syphilis up 755% in a decade. This is the same epidemiological pressure that preceded the 1980s reaction. Evangelical political mobilization, measured by voter registration drives and political action committee formation, has risen sharply since 2016. The Dobbs decision in 2022 was not a cause — it was an effect of loading pressure that had been building for a decade.</p>
+
+      <div class="pull-quote">"The liberation era did not end because it failed. It ended because pendulums do not stop at the top of their arc. The question for the next decade is: how hard does it swing back, and who is ready for it?"<span class="pull-quote-source">— Cerebro Predictive Engine · Sexual Pendulum Analysis</span></div>
+
+      <p>The GSS data — when we get it — will tell us whether normative attitudes have already shifted or whether they are still ahead of the behavioral signal. This is the crucial distinction: in 1978, the behavioral loading preceded the attitudinal shift by about three years. The moral panic crystallized in 1981-1983. If the pattern holds, we are currently in the behavioral loading phase, with the normative crystallization arriving 2024-2027. This is not certain. It is a pattern match. But the algorithm's track record on pattern matching is 6 for 8.</p>
+    </div>
+    <div>
+      <div class="sidebar-box">
+        <div class="sidebar-box-title">⚙ Clock Readings · 2023</div>
+        <div class="sidebar-item"><span>Position</span><span class="sidebar-val warn">−1.20 / 10</span></div>
+        <div class="sidebar-item"><span>Velocity</span><span class="sidebar-val bad">−0.022 ↓</span></div>
+        <div class="sidebar-item"><span>Acceleration</span><span class="sidebar-val bad">−0.008 ↓</span></div>
+        <div class="sidebar-item"><span>Phase</span><span class="sidebar-val warn">Loading</span></div>
+        <div class="sidebar-item"><span>STI Rate Trend</span><span class="sidebar-val bad">↑ 40-yr high</span></div>
+        <div class="sidebar-item"><span>Dobbs (2022)</span><span class="sidebar-val bad">Constraint signal</span></div>
+        <div class="sidebar-item"><span>Ring B Status</span><span class="sidebar-val warn">⚠ CRITICAL GAP</span></div>
+        <div class="sidebar-item"><span>Confidence</span><span class="sidebar-val bad">LOW (45%)</span></div>
+      </div>
+      <div class="prediction-box" style="margin-top:16px">
+        <div class="pred-label">◈ Critical Data Warning</div>
+        <div class="pred-text">This clock has the least Ring B data loaded of all four. The behavioral signal is clear. The normative direction is uncertain. <strong style="color:#DAA520">Adding GSS PREMARSX and HOMOSEX variables is the single highest-value data collection action for this clock.</strong> Without it, we cannot distinguish between a loading reversal and a temporary oscillation.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-divider"></div>
+
+  <div class="panels-row four">
+    <div class="panel">
+      <div class="panel-bg dots-blue"></div>
+      <div class="panel-stat" style="padding-top:24px">
+        <div class="panel-stat-num" style="color:#4A90D9">1972</div>
+        <div class="panel-stat-label" style="color:#4A90D9">GSS BEGINS</div>
+      </div>
+      <div class="panel-caption">General Social Survey starts tracking sexual attitudes. First baseline: 26% say premarital sex "not wrong at all."</div>
+    </div>
+    <div class="panel">
+      <div class="panel-bg dots-green"></div>
+      <div class="panel-stat" style="padding-top:24px">
+        <div class="panel-stat-num" style="color:#27AE60">70%</div>
+        <div class="panel-stat-label" style="color:#27AE60">BY 2016</div>
+      </div>
+      <div class="panel-caption">Peak permissiveness. 70% say premarital sex not wrong. Same-sex acceptance at 60%. The apex of the liberation arc.</div>
+    </div>
+    <div class="panel">
+      <div class="panel-bg dots-red"></div>
+      <div class="panel-stat" style="padding-top:24px">
+        <div class="sfx" style="color:#C0392B;font-size:36px">DOBBS</div>
+      </div>
+      <div class="panel-caption">2022. Roe overturned. The single largest legal constraint signal in 50 years. The pendulum accelerates.</div>
+    </div>
+    <div class="panel">
+      <div class="panel-bg dots-gold"></div>
+      <div class="panel-stat" style="padding-top:24px">
+        <div class="panel-stat-num" style="color:#DAA520">2027</div>
+        <div class="panel-stat-label" style="color:#DAA520">WATCH DATE</div>
+      </div>
+      <div class="panel-caption">Projected normative crystallization window, based on 1978 analogue (+3 years lag). Alert period begins 2025.</div>
+    </div>
+  </div>
+
+</div>
+<div class="page-footer">
+  <span>THE PENDULUM GAZETTE · SEXUAL PENDULUM EDITION</span>
+  <span>DATA: CDC STI SURVEILLANCE · GSS (PENDING) · GUTTMACHER · MAP</span>
+  <span>APOGEE 2016 · 7 YEARS FROM MAXIMUM AUTONOMY TO VELOCITY REVERSAL</span>
+</div>
+`,
+
+evil: `
+<div class="paper-masthead" style="position:relative; overflow:hidden;">
+  <div style="
+    position: relative;
+    background: linear-gradient(135deg, #B8860B 0%, #F1C40F 50%, #B8860B 100%);
+    border-bottom: 3px solid #0A0806;
+    border-top: 3px solid #0A0806;
+    margin-bottom: 16px;
+    padding: 8px 16px;
+    text-align: center;
+    font-family: 'Anton', sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #0A0806;
+    box-shadow: inset 0 -2px 0 rgba(0,0,0,0.1), inset 0 2px 0 rgba(255,255,255,0.3);
+    width: 100%;
+  ">
+    <span style="margin-right: 20px;">✦</span> 
+    THE APOGEE · 1998–2003 · GOOD VS. EVIL AT MAXIMUM ACCOUNTABILITY · POSITION: +7.8 
+    <span style="margin-left: 20px;">✦</span>
+  </div>
+  <div class="paper-meta"><span>THE PENDULUM GAZETTE</span><span>EDITION IV · GOOD VS. EVIL CLOCK</span><span>FEBRUARY 2026</span></div>
+  <div class="paper-name">THE PENDULUM<br>GAZETTE</div>
+  <div class="paper-subname">Dispatches from the Arc of Civilizational History</div>
+  <div class="paper-rules"></div>
+  <div class="paper-edition-line">
+    <span>VOL. LXIV · NO. 4</span>
+    <span>GOOD VS. EVIL CLOCK · THE DESCENT INTO DARKNESS</span>
+    <span>PRICE: THE TRUTH</span>
+  </div>
+</div>
+
+<div class="front-page">
+  <div class="banner-kicker">WAR DISPATCH · GOOD VS. EVIL CLOCK · NO SADDLE DETECTED</div>
+  <div class="banner-headline" style="font-size:clamp(28px,4.5vw,52px)">THE CLOCK IS AT −2.8 AND STILL FALLING: THE MOST FRIGHTENING READING IS NOT THE NUMBER — IT IS THE ABSENCE OF A SADDLE SIGNAL</div>
+  <div class="banner-deck">"When the Harm Tolerance Clock reaches negative extremes, the saddle at least tells you momentum is loading for change. When the Good vs. Evil Clock falls and the saddle does not fire — that is when historians later write about 'how it was possible that no one saw it coming.'"</div>
+
+  <div class="panels-row three">
+    <div class="panel" style="min-height:160px">
+      <div class="panel-year">1945</div>
+      <div class="panel-bg dots-blue"></div>
+      <div class="panel-stat" style="padding-top:20px">
+        <div class="sfx" style="color:#1A3A5C;font-size:30px">NEVER AGAIN</div>
+      </div>
+      <div class="panel-caption">The institutional architecture of human protection built from the rubble of the worst catastrophe in history: UN, Geneva Conventions, Universal Declaration, Nuremberg Principles. The clock climbs.</div>
+    </div>
+    <div class="panel" style="min-height:160px">
+      <div class="panel-year">1990–2005</div>
+      <div class="panel-bg dots-red"></div>
+      <div class="panel-stat" style="padding-top:20px">
+        <div class="sfx" style="color:#C0392B;font-size:32px">RWANDA.<br>SREBRENICA.</div>
+      </div>
+      <div class="panel-caption">The post-Cold War optimism collides with the reality of normalized atrocity. 800,000 in 100 days. The "Never Again" institutions fail their first real test.</div>
+    </div>
+    <div class="panel" style="min-height:160px">
+      <div class="panel-year">2016–NOW</div>
+      <div class="panel-bg dots-dark"></div>
+      <div class="panel-stat" style="padding-top:20px">
+        <div class="panel-stat-num" style="color:#E74C3C">−2.8</div>
+        <div class="panel-stat-label" style="color:#E74C3C">& FALLING</div>
+      </div>
+      <div class="panel-caption">Democratic backsliding accelerating globally. Displacement at record 117M. Conflict deaths rising. The algorithm scans for a saddle. It finds nothing. The descent continues.</div>
+    </div>
+  </div>
+
+  <div class="body-cols two">
+    <div class="article-text">
+      <p>The Good vs. Evil Clock measures something that the other clocks do not: the global willingness to visit cruelty upon other human beings, and the institutional capacity to stop it. It is the most alarming of the four clocks in the Cerebro system — not because its reading is the most negative, but because it has no saddle signal.</p>
+      <p>The other three clocks all show loading dynamics — moments where the descending momentum is decelerating, where the energy is accumulating for a potential reversal. The Harm Tolerance Clock is already in recovery. The Class Permeability Clock has a moderate saddle signal. The Sexual Pendulum has a loading indicator. The Good vs. Evil Clock shows only continued descent, with velocity negative and acceleration also negative: the fall is accelerating, not decelerating.</p>
+      <p>The behavioral indicators are unambiguous. UNHCR counts 117.3 million forcibly displaced people worldwide — the highest number in recorded history, and higher in absolute terms than the entire population of the United States during World War II. ACLED data shows that organized political violence is spreading to regions that were previously relatively stable. Freedom House's global democracy scores have fallen for 17 consecutive years.</p>
+
+      <div class="pull-quote">"The most dangerous moment is not when the clock is at −10. It is when it is at −3, still falling, with no saddle in sight, and the institutions that should be decelerating it are themselves under attack."<span class="pull-quote-source">— Cerebro Predictive Engine · Good vs. Evil Analysis</span></div>
+
+      <p>The historical analogue that the algorithm finds most concerning is not 1939 — that was a saddle moment, a loaded system releasing in a catastrophic direction. The analogue is 1936: the year before the release, when the descent was still underway, when the League of Nations was failing, when Abyssinia had been annexed, when the Spanish Civil War was beginning. The year when the institutions were still nominally intact but had ceased to function. In 1936, the saddle had not yet fired. The worst was still coming.</p>
+    </div>
+    <div>
+      <div class="sidebar-box">
+        <div class="sidebar-box-title">⚙ Clock Readings · 2023</div>
+        <div class="sidebar-item"><span>Position</span><span class="sidebar-val bad">−2.80 / 10</span></div>
+        <div class="sidebar-item"><span>Velocity</span><span class="sidebar-val bad">−0.018 ↓</span></div>
+        <div class="sidebar-item"><span>Acceleration</span><span class="sidebar-val bad">−0.006 ↓</span></div>
+        <div class="sidebar-item"><span>Saddle Signal</span><span class="sidebar-val bad">NONE DETECTED</span></div>
+        <div class="sidebar-item"><span>Displaced (2023)</span><span class="sidebar-val bad">117M (record)</span></div>
+        <div class="sidebar-item"><span>Democracy Score</span><span class="sidebar-val bad">−17yr streak</span></div>
+        <div class="sidebar-item"><span>Data Loaded</span><span class="sidebar-val warn">40% (low)</span></div>
+        <div class="sidebar-item"><span>Confidence</span><span class="sidebar-val bad">LOW (35%)</span></div>
+      </div>
+      <div class="prediction-box" style="margin-top:16px;border-left:4px solid #E74C3C">
+        <div class="pred-label" style="color:#E74C3C">⚠ No Saddle Detected</div>
+        <div class="pred-text">This is the most data-sparse clock. Ring A is only 40% loaded. ACLED and UCDP data collection would significantly change this reading. <strong style="color:#DAA520">The absence of a saddle signal here is the most urgent single data gap in the entire Cerebro system.</strong> We need the Good vs. Evil data before we can say whether this is a 1936 moment or a 1946 recovery loading.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-divider"></div>
+
+  <div class="timeline-strip">
+    <div class="timeline-header">◆ THE LONG ARC OF HUMAN CRUELTY — GOOD VS. EVIL HISTORICAL RECORD</div>
+    ${[
+      [1945,'WWII ends. UN Charter. Universal Declaration. Nuremberg. The peak.',15,'#27AE60'],
+      [1948,'Genocide Convention signed. First international criminal accountability.',18,'#27AE60'],
+      [1965,'Vietnam escalation. The post-war consensus begins to crack.',35,'#E67E22'],
+      [1975,'Khmer Rouge. 2M dead. No international response.',65,'#C0392B'],
+      [1991,'Gulf War "humanitarian intervention" era begins. Brief optimism.',30,'#27AE60'],
+      [1994,'Rwanda. 800,000 in 100 days. "Never Again" fails.',80,'#C0392B'],
+      [2003,'Iraq War. International law framework under stress.',60,'#C0392B'],
+      [2015,'Syrian displacement. 65M displaced globally. Record at time.',70,'#C0392B'],
+      [2022,'Ukraine invasion. Gaza crisis begins. Record displacement.',82,'#C0392B'],
+      [2023,'117M displaced. Democracy scores: 17th consecutive decline.',85,'#C0392B'],
+    ].map(([yr,event,pct,col,saddle])=>`
+    <div class="timeline-row">
+      <div class="timeline-year">${yr}</div>
+      <div class="timeline-bar-wrap">
+        <div class="timeline-bar-bg"><div class="timeline-bar-fill" style="width:${pct}%;background:${col}"></div></div>
+        <div class="timeline-event">${event}</div>
+        ${saddle?`<div class="timeline-saddle-tag">⚡ SADDLE</div>`:''}
+      </div>
+    </div>`).join('')}
+  </div>
+
+  <div class="panels-row two">
+    <div class="panel" style="min-height:120px">
+      <div class="panel-bg dots-dark"></div>
+      <div class="panel-stat" style="padding-top:20px">
+        <div class="panel-stat-num" style="color:#E74C3C">117M</div>
+        <div class="panel-stat-label" style="color:#E74C3C">DISPLACED 2023</div>
+      </div>
+      <div class="panel-caption">More forcibly displaced people alive today than at any point in recorded history. More than the entire US population during World War II.</div>
+    </div>
+    <div class="panel" style="min-height:120px">
+      <div class="panel-bg dots-gold"></div>
+      <div class="speech-bubble" style="font-size:12px">The most urgent task: add ACLED + UCDP data to this clock. Without it, we cannot see the saddle when it forms. And we need to see it forming.</div>
+      <div class="panel-caption"><strong>Data priority: CRITICAL.</strong> This clock's predictions are the least reliable and the most consequential. Collect the data.</div>
+    </div>
+  </div>
+
+</div>
+<div class="page-footer">
+  <span>THE PENDULUM GAZETTE · GOOD VS. EVIL EDITION</span>
+  <span>DATA: FREEDOM HOUSE · UNHCR · ACLED (PENDING) · UCDP (PENDING)</span>
+  <span>APOGEE 2003 · 20 YEARS OF DESCENT · NO SADDLE DETECTED</span>
+</div>
+`
+};
+
+function openPaper(id) {
+  document.getElementById('paperContent').innerHTML = ARTICLES[id];
+  const overlay = document.getElementById('overlay');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  // Scroll to top of newspaper
+  overlay.scrollTop = 0;
+}
+
+function closePaper() {
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeOnOverlay(e) {
+  if (e.target === document.getElementById('overlay')) closePaper();
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closePaper(); });
+</script>
+</body>
+</html>
