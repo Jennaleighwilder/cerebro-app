@@ -1,0 +1,112 @@
+{
+  "harm_clock": {
+    "latest_year": 2022,
+    "position": 0.77,
+    "velocity": 0.1107,
+    "acceleration": 0.0746,
+    "saddle_score": 2,
+    "saddle_label": "MODERATE SADDLE",
+    "ring_B_pct": 32.0,
+    "ring_A_pct": 17.0,
+    "ring_C_pct": -29.0
+  },
+  "raw_series": {
+    "2008": {
+      "clock_position_10pt": 0.8511,
+      "velocity": 0.0622,
+      "acceleration": 0.0468,
+      "saddle_score": 2.0
+    },
+    "2009": {
+      "clock_position_10pt": -4.112,
+      "velocity": -0.183,
+      "acceleration": -0.0839,
+      "saddle_score": 1.0
+    },
+    "2010": {
+      "clock_position_10pt": -0.904,
+      "velocity": 0.0168,
+      "acceleration": 0.0367,
+      "saddle_score": 2.0
+    },
+    "2011": {
+      "clock_position_10pt": -4.5271,
+      "velocity": -0.1793,
+      "acceleration": -0.0805,
+      "saddle_score": 1.0
+    },
+    "2012": {
+      "clock_position_10pt": -0.3099,
+      "velocity": 0.1267,
+      "acceleration": 0.1032,
+      "saddle_score": 2.0
+    },
+    "2013": {
+      "clock_position_10pt": -3.5607,
+      "velocity": -0.0886,
+      "acceleration": -0.0351,
+      "saddle_score": 1.0
+    },
+    "2014": {
+      "clock_position_10pt": 0.6019,
+      "velocity": 0.171,
+      "acceleration": 0.1167,
+      "saddle_score": 2.0
+    },
+    "2015": {
+      "clock_position_10pt": -3.3336,
+      "velocity": -0.1008,
+      "acceleration": -0.0758,
+      "saddle_score": 1.0
+    },
+    "2016": {
+      "clock_position_10pt": 0.8482,
+      "velocity": 0.147,
+      "acceleration": 0.0785,
+      "saddle_score": 2.0
+    },
+    "2017": {
+      "clock_position_10pt": -3.0569,
+      "velocity": -0.122,
+      "acceleration": -0.0976,
+      "saddle_score": 1.0
+    },
+    "2018": {
+      "clock_position_10pt": 1.7968,
+      "velocity": 0.171,
+      "acceleration": 0.0906,
+      "saddle_score": 2.0
+    },
+    "2019": {
+      "clock_position_10pt": -2.5451,
+      "velocity": -0.1131,
+      "acceleration": -0.0867,
+      "saddle_score": 1.0
+    },
+    "2020": {
+      "clock_position_10pt": -4.3671,
+      "velocity": -0.0437,
+      "acceleration": 0.0261,
+      "saddle_score": 3.0
+    },
+    "2021": {
+      "clock_position_10pt": -3.7393,
+      "velocity": -0.1845,
+      "acceleration": -0.1185,
+      "saddle_score": 1.0
+    },
+    "2022": {
+      "clock_position_10pt": 0.7747,
+      "velocity": 0.1107,
+      "acceleration": 0.0746,
+      "saddle_score": 2.0
+    }
+  },
+  "indicators": {
+    "unemployment": 3.7,
+    "homicide_rate": 6.3,
+    "incarceration": 350,
+    "overdose_rate": 32.0
+  },
+  "ring_b_loaded": true
+}

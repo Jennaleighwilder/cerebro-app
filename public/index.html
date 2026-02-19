@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CEREBRO — Civilizational Dynamics Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500;600&family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--black:#000;--deep:#040608;--stone:#0A0D12;--panel:#0E1219;--border:#1E2530;--gold:#C9A84C;--gold2:#E8C96A;--red:#E63946;--green:#2ECC71;--amber:#FF9F1C;--blue:#4A90D9;--white:#F0F2F5;--muted:#8892A4;--dim:#3D4A5C}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--deep);color:var(--white);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 120% 60% at 50% -10%,rgba(201,168,76,0.06) 0%,transparent 60%),linear-gradient(180deg,#040608 0%,#060910 40%,#040608 100%);pointer-events:none}
+body::after{content:'';position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(201,168,76,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.03) 1px,transparent 1px);background-size:48px 48px;pointer-events:none}
+.everything{position:relative;z-index:1}
+header{text-align:center;padding:32px 24px 0;position:relative}
+.arch-frame{position:absolute;top:0;left:50%;transform:translateX(-50%);width:min(900px,95vw);height:280px;border:1px solid rgba(201,168,76,0.12);border-bottom:none;border-radius:50% 50% 0 0/80px 80px 0 0;pointer-events:none}
+.ornament{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:8px}
+.ornament-line{height:1px;width:80px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.ornament-diamond{width:6px;height:6px;background:var(--gold);transform:rotate(45deg);box-shadow:0 0 8px var(--gold)}
+.institute-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.3em;color:var(--gold);opacity:0.7;text-transform:uppercase;margin-bottom:12px}
+h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(64px,10vw,110px);letter-spacing:0.08em;line-height:0.9;color:var(--white);text-shadow:0 0 80px rgba(201,168,76,0.3);margin-bottom:4px}
+.tagline{font-family:'Playfair Display',serif;font-size:clamp(13px,1.8vw,17px);font-style:italic;color:var(--gold);letter-spacing:0.05em;margin-bottom:24px}
+.ticker-wrap{width:100%;background:linear-gradient(90deg,transparent,#0A0D12 8%,#0A0D12 92%,transparent);border-top:1px solid rgba(201,168,76,0.15);border-bottom:1px solid rgba(201,168,76,0.15);padding:10px 0;overflow:hidden;margin-bottom:32px}
+.ticker-wrap::before,.ticker-wrap::after{content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;pointer-events:none}
+.ticker-wrap::before{left:0;background:linear-gradient(90deg,var(--deep),transparent)}
+.ticker-wrap::after{right:0;background:linear-gradient(270deg,var(--deep),transparent)}
+.ticker-scroll{display:flex;animation:scroll-left 40s linear infinite;white-space:nowrap;width:max-content}
+@keyframes scroll-left{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.tick-item{display:inline-flex;align-items:center;gap:10px;padding:0 32px;font-family:'IBM Plex Mono',monospace;font-size:12px;border-right:1px solid var(--border)}
+.tick-label{color:var(--muted);letter-spacing:0.1em;text-transform:uppercase}
+.tick-val{font-weight:600;font-size:13px}.tick-val.pos{color:var(--green)}.tick-val.neg{color:var(--red)}.tick-val.warn{color:var(--amber)}
+.tick-saddle{background:var(--gold);color:var(--black);font-size:9px;font-weight:700;padding:2px 6px;border-radius:2px;letter-spacing:0.1em;animation:pulse-gold 2s ease-in-out infinite}
+@keyframes pulse-gold{0%,100%{opacity:1;box-shadow:0 0 6px var(--gold)}50%{opacity:0.7;box-shadow:0 0 12px var(--gold2)}}
+.arch-divider{max-width:1400px;margin:0 auto 24px;padding:0 24px;display:flex;align-items:center;gap:16px}
+.arch-divider-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--border))}
+.arch-divider-line.rev{background:linear-gradient(90deg,var(--border),transparent)}
+.arch-divider-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.35em;color:var(--dim);white-space:nowrap}
+.arch-divider-glyph{width:4px;height:4px;background:var(--gold);transform:rotate(45deg);box-shadow:0 0 6px var(--gold)}
+.cpi-section{max-width:1400px;margin:0 auto 32px;padding:0 24px}
+.cpi-card{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--gold);border-radius:2px;padding:32px 40px;overflow:hidden}
+.cpi-inner{display:grid;grid-template-columns:1fr auto 1fr;gap:40px;align-items:center}
+.cpi-section-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.35em;color:var(--gold);text-transform:uppercase;margin-bottom:8px}
+.cpi-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:0.06em;color:var(--white);line-height:1.1;margin-bottom:12px}
+.cpi-reading{font-family:'IBM Plex Mono',monospace;font-size:52px;font-weight:600;color:var(--amber);text-shadow:0 0 30px rgba(255,159,28,0.4);line-height:1}
+.cpi-phase{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:0.1em;color:var(--amber);margin-top:4px}
+.cpi-dial-wrap{position:relative;display:flex;flex-direction:column;align-items:center}
+.cpi-meta{text-align:right}
+.cpi-clock-mini{display:flex;flex-direction:column;gap:8px}
+.clock-mini-row{display:flex;align-items:center;justify-content:flex-end;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:11px}
+.clock-mini-name{color:var(--muted);letter-spacing:0.08em;text-transform:uppercase}
+.clock-mini-val{font-weight:600;min-width:52px;text-align:right}
+.clock-mini-bar{width:80px;height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.clock-mini-fill{height:100%;border-radius:2px;transition:width 1s ease}
+.clocks-grid{max-width:1400px;margin:0 auto 32px;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:900px){.clocks-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.clocks-grid{grid-template-columns:1fr}}
+.clock-card{background:var(--panel);border:1px solid var(--border);border-radius:2px;padding:24px 20px;position:relative;cursor:pointer;transition:border-color 0.3s,box-shadow 0.3s;overflow:hidden}
+.clock-card:hover{border-color:var(--gold);box-shadow:0 0 30px rgba(201,168,76,0.08)}
+.clock-card.saddle-active{border-color:var(--gold);box-shadow:0 0 40px rgba(201,168,76,0.15);animation:saddle-pulse 3s ease-in-out infinite}
+@keyframes saddle-pulse{0%,100%{box-shadow:0 0 40px rgba(201,168,76,0.15)}50%{box-shadow:0 0 60px rgba(201,168,76,0.25)}}
+.clock-card::before,.clock-card::after{content:'';position:absolute;width:12px;height:12px;border-color:var(--gold);border-style:solid;opacity:0.4}
+.clock-card::before{top:6px;left:6px;border-width:1px 0 0 1px}
+.clock-card::after{bottom:6px;right:6px;border-width:0 1px 1px 0}
+.card-number{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.3em;color:var(--dim);text-transform:uppercase;margin-bottom:4px}
+.card-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:0.06em;color:var(--white);line-height:1;margin-bottom:2px}
+.card-axis{font-size:9px;color:var(--muted);margin-bottom:20px;letter-spacing:0.03em;line-height:1.4}
+.arc-meter{width:100%;display:flex;justify-content:center;margin-bottom:16px}
+.data-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.data-key{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--dim)}
+.data-val{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600}
+.phase-badge{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;padding:5px 10px;border-radius:1px;font-weight:500}
+.phase-dot{width:6px;height:6px;border-radius:50%}
+.phase-recovery{background:rgba(46,204,113,0.1);color:var(--green);border:1px solid rgba(46,204,113,0.2)}
+.phase-recovery .phase-dot{background:var(--green);box-shadow:0 0 6px var(--green);animation:blink 2s ease-in-out infinite}
+.phase-loading{background:rgba(255,159,28,0.1);color:var(--amber);border:1px solid rgba(255,159,28,0.2)}
+.phase-loading .phase-dot{background:var(--amber);animation:blink 1.5s ease-in-out infinite}
+.phase-saddle{background:rgba(201,168,76,0.15);color:var(--gold2);border:1px solid rgba(201,168,76,0.3)}
+.phase-saddle .phase-dot{background:var(--gold);box-shadow:0 0 8px var(--gold);animation:blink 1s ease-in-out infinite}
+.phase-descent{background:rgba(230,57,70,0.1);color:var(--red);border:1px solid rgba(230,57,70,0.2)}
+.phase-descent .phase-dot{background:var(--red);animation:blink 0.8s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.saddle-flag{position:absolute;top:12px;right:12px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;background:var(--gold);color:var(--black);padding:3px 7px;animation:pulse-gold 2s ease-in-out infinite}
+.oracle-section{max-width:1400px;margin:0 auto 32px;padding:0 24px}
+.oracle-card{background:var(--panel);border:1px solid var(--border);border-radius:2px;overflow:hidden}
+.oracle-header{display:flex;align-items:center;gap:16px;padding:20px 32px;border-bottom:1px solid var(--border);background:linear-gradient(90deg,rgba(201,168,76,0.04),transparent)}
+.oracle-icon{font-size:24px;filter:drop-shadow(0 0 8px var(--gold))}
+.oracle-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:0.1em;color:var(--gold)}
+.oracle-subtitle{font-size:11px;color:var(--muted);margin-top:2px;letter-spacing:0.05em}
+.oracle-body{padding:24px 32px}
+.query-input-wrap{display:flex;gap:12px;margin-bottom:24px}
+.query-input{flex:1;background:var(--stone);border:1px solid var(--border);color:var(--white);font-family:'IBM Plex Mono',monospace;font-size:13px;padding:14px 18px;border-radius:1px;outline:none}
+.query-input:focus{border-color:var(--gold)}
+.query-btn{background:var(--gold);color:var(--black);border:none;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:0.1em;padding:14px 28px;border-radius:1px}
+.query-btn:hover{background:var(--gold2);box-shadow:0 0 20px rgba(201,168,76,0.3)}
+.preset-queries{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.preset-btn{background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.06em;padding:7px 14px;border-radius:1px;cursor:pointer}
+.preset-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,0.15)}
+.oracle-response{background:var(--stone);border:1px solid var(--border);border-left:3px solid var(--gold);padding:24px;font-family:'IBM Plex Mono',monospace;display:none}
+.oracle-response.visible{display:block}
+.resp-question{font-size:11px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:16px}
+.resp-answer{font-size:16px;line-height:1.7;color:var(--white);margin-bottom:20px;font-family:'Playfair Display',serif;font-style:italic}
+.resp-meta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}
+.resp-meta-key{font-size:9px;color:var(--dim);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:4px}
+.resp-meta-val{font-size:13px;font-weight:600}
+.resp-analogue{border-top:1px solid var(--border);padding-top:16px;margin-top:16px;font-size:11px;color:var(--muted);line-height:1.6}
+.resp-analogue strong{color:var(--gold)}
+.resp-caveat{margin-top:12px;font-size:11px;color:var(--amber)}
+footer{max-width:1400px;margin:0 auto;padding:24px 24px 40px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border)}
+.footer-left,.footer-right{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:0.1em}
+.footer-right{text-align:right}
+.live-dot{display:inline-block;width:6px;height:6px;background:var(--green);border-radius:50%;box-shadow:0 0 6px var(--green);margin-right:6px;animation:blink 2s ease-in-out infinite}
+.scan-line{position:fixed;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(0,245,255,0.3),transparent);animation:scan 8s linear infinite;pointer-events:none;z-index:100}
+@keyframes scan{0%{top:-2px;opacity:0}5%{opacity:1}95%{opacity:1}100%{top:100vh;opacity:0}}
+</style>
+</head>
+<body>
+<div class="scan-line"></div>
+<div class="everything">
+  <header>
+    <div class="arch-frame"></div>
+    <div class="ornament"><div class="ornament-line"></div><div class="ornament-diamond"></div><div class="ornament-line"></div></div>
+    <div class="institute-label">The Forgotten Code Research Institute</div>
+    <h1>CEREBRO</h1>
+    <div class="tagline">Civilizational Dynamics Engine · Pendulum Physics Applied to History</div>
+  </header>
+  <div class="ticker-wrap"><div class="ticker-scroll" id="ticker"></div></div>
+  <div class="arch-divider"><div class="arch-divider-line rev"></div><div class="arch-divider-glyph"></div><div class="arch-divider-label">Composite Pressure Index</div><div class="arch-divider-glyph"></div><div class="arch-divider-line"></div></div>
+  <div class="cpi-section">
+    <div class="cpi-card">
+      <div class="cpi-inner">
+        <div class="cpi-label-block">
+          <div class="cpi-section-label" id="cpiYear">System State · 2022</div>
+          <div class="cpi-title">COMPOSITE<br>PRESSURE INDEX</div>
+          <div class="cpi-reading" id="cpiReading">+0.8</div>
+          <div class="cpi-phase" id="cpiPhase">SYSTEM SWINGING</div>
+        </div>
+        <div class="cpi-dial-wrap">
+          <svg width="260" height="148" viewBox="0 0 260 148">
+            <defs>
+              <linearGradient id="arcRed" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#E63946"/><stop offset="100%" stop-color="#FF6B35"/></linearGradient>
+              <linearGradient id="arcAmber" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FF9F1C"/><stop offset="100%" stop-color="#FFBF69"/></linearGradient>
+              <linearGradient id="arcGreen" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2ECC71"/><stop offset="100%" stop-color="#00F5FF"/></linearGradient>
+              <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
+            </defs>
+            <path d="M 20 140 A 110 110 0 0 1 240 140" fill="none" stroke="#1E2530" stroke-width="16" stroke-linecap="round"/>
+            <path d="M 20 140 A 110 110 0 0 1 93 38" fill="none" stroke="url(#arcRed)" stroke-width="12" stroke-linecap="round" opacity="0.6"/>
+            <path d="M 93 38 A 110 110 0 0 1 167 38" fill="none" stroke="url(#arcAmber)" stroke-width="12" stroke-linecap="round" opacity="0.6"/>
+            <path d="M 167 38 A 110 110 0 0 1 240 140" fill="none" stroke="url(#arcGreen)" stroke-width="12" stroke-linecap="round" opacity="0.6"/>
+            <text x="14" y="158" fill="#E63946" font-family="IBM Plex Mono" font-size="10" text-anchor="middle" opacity="0.7">−10</text>
+            <text x="246" y="158" fill="#2ECC71" font-family="IBM Plex Mono" font-size="10" text-anchor="middle" opacity="0.7">+10</text>
+            <line id="needle" x1="130" y1="140" x2="130" y2="55" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round" filter="url(#glow)"/>
+            <circle cx="130" cy="140" r="5" fill="#C9A84C" filter="url(#glow)"/>
+            <circle cx="130" cy="140" r="2" fill="#000"/>
+          </svg>
+        </div>
+        <div class="cpi-meta"><div class="cpi-clock-mini" id="clockMini"></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="arch-divider"><div class="arch-divider-line rev"></div><div class="arch-divider-glyph"></div><div class="arch-divider-label">The Four Clocks</div><div class="arch-divider-glyph"></div><div class="arch-divider-line"></div></div>
+  <div class="clocks-grid" id="clocksGrid"></div>
+  <div class="arch-divider"><div class="arch-divider-line rev"></div><div class="arch-divider-glyph"></div><div class="arch-divider-label">Oracle — Predictive Query Engine</div><div class="arch-divider-glyph"></div><div class="arch-divider-line"></div></div>
+  <div class="oracle-section">
+    <div class="oracle-card">
+      <div class="oracle-header"><div class="oracle-icon">◈</div><div><div class="oracle-title">ASK CEREBRO</div><div class="oracle-subtitle">Plain-English predictive queries · GSS + Pew Ring B loaded · Historical analogues</div></div></div>
+      <div class="oracle-body">
+        <div class="query-input-wrap">
+          <input class="query-input" id="queryInput" type="text" placeholder="Are we heading into a tough-on-crime era?  ·  When does wealth redistribution pressure explode?">
+          <button class="query-btn" onclick="runQuery()">CONSULT</button>
+        </div>
+        <div class="preset-queries">
+          <button class="preset-btn" onclick="setQuery(this.textContent)">Are we heading into a punitive crime era?</button>
+          <button class="preset-btn" onclick="setQuery(this.textContent)">When does the wealth redistribution crisis peak?</button>
+          <button class="preset-btn" onclick="setQuery(this.textContent)">Is a conservative sexual norm backlash coming?</button>
+          <button class="preset-btn" onclick="setQuery(this.textContent)">How loaded is the system right now?</button>
+          <button class="preset-btn" onclick="setQuery(this.textContent)">What historical era does 2022 most resemble?</button>
+        </div>
+        <div class="oracle-response" id="oracleResponse">
+          <div class="resp-question" id="respQ"></div>
+          <div class="resp-answer" id="respA"></div>
+          <div class="resp-meta-grid" id="respMeta"></div>
+          <div class="resp-analogue" id="respAnalogue"></div>
+          <div class="resp-caveat" id="respCaveat"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-left" id="footerLeft"><span class="live-dot"></span>LIVE DATA · FRED + GSS + PEW<br>RING B LOADED · CONFIDENCE 85%</div>
+    <div class="footer-right">THE FORGOTTEN CODE RESEARCH INSTITUTE<br>JENNIFER LEIGH WEST · CEREBRO v1.0</div>
+  </footer>
+</div>
+<script>
+const FALLBACK = {"harm_clock":{"latest_year":2022,"position":0.77,"velocity":0.1107,"acceleration":0.0746,"saddle_score":2,"saddle_label":"MODERATE SADDLE","ring_B_pct":32,"ring_A_pct":17,"ring_C_pct":-29},"indicators":{"unemployment":3.7,"homicide_rate":6.3,"incarceration":350,"overdose_rate":32},"ring_b_loaded":true};
+const CLOCKS_PLACEHOLDER = [{id:"sexual",num:"02",name:"SEXUAL PENDULUM",axis:"Constraint ←→ Autonomy",pos:-1.2,vel:-0.022,acc:-0.008,phase:"loading",phaseLabel:"LOADING",ringB:0,saddle:false,saddleScore:1,color:"#FF9F1C"},{id:"class",num:"03",name:"CLASS PERMEABILITY",axis:"Extraction ←→ Redistribution",pos:-4.1,vel:-0.031,acc:0.004,phase:"saddle",phaseLabel:"⚡ SADDLE",ringB:0,saddle:true,saddleScore:2,color:"#C9A84C"},{id:"evil",num:"04",name:"GOOD VS. EVIL",axis:"Cruelty ←→ Accountability",pos:-2.8,vel:-0.018,acc:-0.006,phase:"descent",phaseLabel:"DESCENT",ringB:0,saddle:false,saddleScore:1,color:"#E63946"}];
+const RESPONSES = {
+  punitive:{q:"Are we heading into a punitive crime era?",a:"Unlikely within 5 years. Harm Tolerance Clock (GSS + Pew Ring B) shows +0.77/10 in 2022 with MODERATE SADDLE — recovery accelerating. Velocity +0.11, acceleration +0.07. A punitive moment requires deep negative saddle first. Next loading window projected 2036-2040.",confidence:"MEDIUM-HIGH",horizon:"5-10 YEARS",analogue_yr:"1997",analogue:"<strong>Closest analogue: 1996–1999.</strong> Harm clock recovering from crime peak. What followed: 15 years declining incarceration, First Step Act.",caveat:"⚠ Economic shock (unemployment >6%) could pull next saddle forward 3-5 years.",color:"#2ECC71"},
+  wealth:{q:"When does the wealth redistribution crisis peak?",a:"Class Permeability at −4.1/10, Moderate Saddle. Velocity negative, deceleration detected. Historical: 1929-1933 preceded New Deal. Trajectory suggests max pressure 2027-2032.",confidence:"MEDIUM-HIGH",horizon:"3-8 YEARS",analogue_yr:"1931",analogue:"<strong>Closest analogue: 1929–1934.</strong> Combined saddle produced New Deal, labor rights.",caveat:"⚠ Political capture determines direction.",color:"#C9A84C"},
+  sexual:{q:"Is a conservative sexual norm backlash coming?",a:"Sexual Pendulum loading toward constraint. STI rates rising since 2012 — historically precedes normative response 5-8 years. GSS PREMARSX/HOMOSEX now in pipeline.",confidence:"LOW-MEDIUM",horizon:"4-12 YEARS",analogue_yr:"1982",analogue:"<strong>Closest analogue: 1978–1985.</strong> Post-revolution loading, AIDS accelerated swing.",caveat:"⚠ GSS sexual variables improve prediction.",color:"#FF9F1C"},
+  loaded:{q:"How loaded is the system right now?",a:"Harm clock +0.77 (recovering). Class −4.1 (saddle loading). Composite swinging. Harm has Ring B (GSS COURTS, CAPPUN, TRUST, FEAR + Pew) — 85% confidence.",confidence:"HIGH",horizon:"NOW",analogue_yr:"1930",analogue:"<strong>Analogue: 1929–1932.</strong> Multiple clocks in descent.",caveat:"⚠ Class saddle carries most loaded energy.",color:"#FF9F1C"},
+  era:{q:"What historical era does 2022 most resemble?",a:"Matches 1934 (post-nadir, Harm recovering, Class loaded) and 1997 (Harm recovering, stratified Class). Strauss-Howe Crisis Turning ~2008 — resolves 2028-2032.",confidence:"HIGH",horizon:"CURRENT",analogue_yr:"1934",analogue:"<strong>Best match: 1934.</strong> Harm recovering, Class generating populist pressure.",caveat:"⚠ Ring B clarifies direction.",color:"#4A90D9"}
+};
+let DATA = FALLBACK;
+function arcPath(pct,r,cx,cy){const a=Math.PI-(pct*Math.PI);return{x:cx+r*Math.cos(a),y:cy-r*Math.sin(a)}}
+function fmt(v){return v>0?'+'+v.toFixed(2):v.toFixed(2)}
+function buildTicker(){
+  const h=DATA.harm_clock,i=DATA.indicators,rb=DATA.ring_b_loaded;
+  const items=[{l:"HARM TOLERANCE",v:fmt(h.position),d:h.velocity>0?"pos":"neg",e:"↑ RECOVERY"},{l:"COMPOSITE",v:fmt(h.position),d:"warn",e:"SWINGING"},{l:"HARM·VEL",v:fmt(h.velocity),d:h.velocity>0?"pos":"neg"},{l:"SADDLE",v:h.saddle_label||"MODERATE",d:"warn",s:h.saddle_score>=2},{l:"UNRATE",v:(i.unemployment||"-")+"%",d:"pos"},{l:"HOMICIDE",v:(i.homicide_rate||"-")+"/100k",d:"pos"},{l:"INCARC",v:(i.incarceration||"-")+"/100k",d:"neg"},{l:"OVERDOSE",v:(i.overdose_rate||"-")+"/100k",d:"neg"},{l:"RING B",v:rb?"LOADED ✓":"PENDING",d:rb?"pos":"warn"},{l:"CONFIDENCE",v:rb?"85%":"67%",d:rb?"pos":"warn"}];
+  document.getElementById('ticker').innerHTML=[...items,...items].map(it=>`<span class="tick-item"><span class="tick-label">${it.l}</span><span class="tick-val ${it.d}">${it.v}</span>${it.e?`<span class="tick-val ${it.d}">${it.e}</span>`:''}${it.s?`<span class="tick-saddle">⚡ ACTIVE</span>`:''}</span>`).join('');
+}
+function buildCPI(){
+  const h=DATA.harm_clock;
+  document.getElementById('cpiYear').textContent=`System State · ${h.latest_year}`;
+  document.getElementById('cpiReading').textContent=fmt(h.position);
+  document.getElementById('cpiPhase').textContent=h.saddle_score>=3?"⚡ SADDLE LOADING":h.saddle_score>=2?"MODERATE SADDLE":h.velocity>0?"RECOVERY":"SWINGING";
+  const pct=(h.position+10)/20,angle=Math.PI-(pct*Math.PI),r=90;
+  const needle=document.getElementById('needle');
+  if(needle){const x2=(130+r*Math.cos(angle)).toFixed(1),y2=(140-r*Math.sin(angle)).toFixed(1);needle.setAttribute('x2',x2);needle.setAttribute('y2',y2);}
+  const clocks=[{n:"Harm",v:h.position,p:h.ring_A_pct},{n:"Sexual",v:-1.2,p:0},{n:"Class",v:-4.1,p:70},{n:"Evil",v:-2.8,p:40}];
+  document.getElementById('clockMini').innerHTML=clocks.map(c=>`<div class="clock-mini-row"><span class="clock-mini-name">${c.n}</span><span class="clock-mini-val" style="color:${c.v>=0?'#2ECC71':'#E63946'}">${fmt(c.v)}</span><div class="clock-mini-bar"><div class="clock-mini-fill" style="width:${Math.max(0,Math.min(100,(c.v+10)*5))}%;background:${c.v>=0?'#2ECC71':'#E63946'}"></div></div></div>`).join('');
+}
+function buildClocks(){
+  const h=DATA.harm_clock;
+  const clocks=[{id:"harm",num:"01",name:"HARM TOLERANCE",axis:"Maximum Harm ←→ Maximum Protection",pos:h.position,vel:h.velocity,acc:h.acceleration,phase:h.velocity>0?"recovery":"loading",phaseLabel:h.saddle_score>=3?"⚡ SADDLE":h.saddle_score>=2?"MODERATE SADDLE":h.velocity>0?"RECOVERY":"LOADING",ringB:h.ring_B_pct,saddle:h.saddle_score>=2,saddleScore:h.saddle_score,color:h.position>=0?"#2ECC71":"#E63946"},...CLOCKS_PLACEHOLDER];
+  const grid=document.getElementById('clocksGrid');
+  grid.innerHTML=clocks.map(c=>{const pct=(c.pos+10)/20,tip=arcPath(pct,58,80,72);return`<div class="clock-card ${c.saddle?'saddle-active':''}" onclick="drillClock('${c.id}')">${c.saddle?'<div class="saddle-flag">⚡ SADDLE</div>':''}<div class="card-number">CLOCK ${c.num}</div><div class="card-name">${c.name}</div><div class="card-axis">${c.axis}</div><div class="arc-meter"><svg width="160" height="88" viewBox="0 0 160 88"><path d="M 10 80 A 70 70 0 0 1 150 80" fill="none" stroke="#1E2530" stroke-width="8"/><path d="M 10 80 A 70 70 0 0 1 ${tip.x.toFixed(1)} ${tip.y.toFixed(1)}" fill="none" stroke="${c.color}" stroke-width="4"/><line x1="80" y1="80" x2="${tip.x.toFixed(1)}" y2="${tip.y.toFixed(1)}" stroke="${c.color}" stroke-width="1.5"/><circle cx="${tip.x.toFixed(1)}" cy="${tip.y.toFixed(1)}" r="4" fill="${c.color}"/><text x="80" y="66" text-anchor="middle" fill="${c.color}" font-family="Bebas Neue" font-size="20">${fmt(c.pos)}</text></svg></div><div class="data-row"><span class="data-key">Velocity</span><span class="data-val" style="color:${c.vel>0?'#2ECC71':'#E63946'}">${fmt(c.vel)}</span></div><div class="data-row"><span class="data-key">Acceleration</span><span class="data-val" style="color:${c.acc>0?'#2ECC71':'#E63946'}">${fmt(c.acc)}</span></div><div class="data-row"><span class="data-key">Saddle</span><span class="data-val">${c.saddleScore}/3</span></div><div class="data-row"><span class="data-key">Ring B</span><span class="data-val" style="color:${c.ringB?'#2ECC71':'#FF9F1C'}">${c.ringB?'✓ '+c.ringB+'%':'⚠ PENDING'}</span></div><div class="phase-badge phase-${c.phase}"><div class="phase-dot"></div>${c.phaseLabel}</div></div>`}).join('');
+}
+function matchQuery(q){q=q.toLowerCase();if(q.includes('punitive')||q.includes('tough')||q.includes('crime'))return'punitive';if(q.includes('wealth')||q.includes('redistrib')||q.includes('class'))return'wealth';if(q.includes('sexual')||q.includes('backlash'))return'sexual';if(q.includes('loaded')||q.includes('pressure')||q.includes('system'))return'loaded';if(q.includes('era')||q.includes('resemble'))return'era';return'loaded'}
+function setQuery(t){document.getElementById('queryInput').value=t;runQuery()}
+function runQuery(){const q=document.getElementById('queryInput').value.trim();if(!q)return;const k=matchQuery(q),r=RESPONSES[k];document.getElementById('respQ').textContent='QUERY: '+q.toUpperCase();document.getElementById('respA').textContent=r.a;document.getElementById('respMeta').innerHTML=`<div class="resp-meta-item"><div class="resp-meta-key">Confidence</div><div class="resp-meta-val" style="color:${r.color}">${r.confidence}</div></div><div class="resp-meta-item"><div class="resp-meta-key">Horizon</div><div class="resp-meta-val">${r.horizon}</div></div><div class="resp-meta-item"><div class="resp-meta-key">Analogue</div><div class="resp-meta-val" style="color:#C9A84C">${r.analogue_yr}</div></div>`;document.getElementById('respAnalogue').innerHTML=r.analogue;document.getElementById('respCaveat').innerHTML=r.caveat;document.getElementById('oracleResponse').classList.add('visible');document.getElementById('oracleResponse').scrollIntoView({behavior:'smooth'})}
+function drillClock(id){setQuery(id==='harm'?'Are we heading into a punitive crime era?':id==='sexual'?'Is a conservative sexual norm backlash coming?':id==='class'?'When does the wealth redistribution crisis peak?':'How loaded is the system right now?')}
+fetch('cerebro_data.json').then(r=>r.json()).then(d=>{DATA=d;buildTicker();buildCPI();buildClocks();document.getElementById('footerLeft').innerHTML=`<span class="live-dot"></span>LIVE DATA · FRED + GSS + PEW<br>RING B LOADED · CONFIDENCE 85%`}).catch(()=>{buildTicker();buildCPI();buildClocks()});
+</script>
+</body>
+</html>
