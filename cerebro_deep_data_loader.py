@@ -154,13 +154,27 @@ def load_nasa_socio():
     """Load NASA socioeconomic if available (SEDAC, INFORM, LGII Gini)."""
     paths = (list(OUTPUT_DIR.glob("NASA*.csv")) + list(OUTPUT_DIR.glob("INFORM*.csv"))
              + list(OUTPUT_DIR.glob("SEDAC*.csv")) + list(OUTPUT_DIR.glob("*LGII*.csv"))
-             + list(OUTPUT_DIR.glob("*social*vulnerability*.csv")))
+             + list(OUTPUT_DIR.glob("*social*vulnerability*.csv"))
+             + list(OUTPUT_DIR.glob("*vulnerability*.csv")))
+    # Also check CIESIN SEDAC folder (common Downloads path)
+    if not paths:
+        for parent in [Path.home() / "Downloads", SCRIPT_DIR.parent]:
+            for d in parent.glob("CIESIN_SEDAC*"):
+                paths = list(d.rglob("*.csv"))
+                if paths:
+                    break
+            if paths:
+                break
     if not paths:
         return None, "Download from https://www.earthdata.nasa.gov/topics/human-dimensions/socioeconomics/data-access-tools"
     try:
         import pandas as pd
-        df = pd.read_csv(paths[0], nrows=100)
-        return {"rows": len(df), "file": paths[0].name}, None
+        p = paths[0]
+        if p.suffix.lower() == ".csv":
+            df = pd.read_csv(p, nrows=100)
+        else:
+            df = pd.read_excel(p, nrows=100)
+        return {"rows": len(df), "file": p.name}, None
     except Exception as e:
         return None, str(e)
 
@@ -213,13 +227,15 @@ def load_ucdp_ged():
 
 def load_acled():
     """Load ACLED if available."""
-    paths = list(OUTPUT_DIR.glob("ACLED*.csv")) + list(OUTPUT_DIR.glob("acled*.csv")) + list(OUTPUT_DIR.glob("*acled*.csv"))
+    paths = (list(OUTPUT_DIR.glob("ACLED*.csv")) + list(OUTPUT_DIR.glob("acled*.csv"))
+             + list(OUTPUT_DIR.glob("*acled*.csv")) + list(OUTPUT_DIR.glob("ACLED*.xlsx")))
     if not paths:
         return None, "Export from acleddata.com/data-export-tool, save to cerebro_data/"
     try:
         import pandas as pd
-        df = pd.read_csv(paths[0], nrows=1000)
-        return {"rows": len(df), "file": paths[0].name}, None
+        p = paths[0]
+        df = pd.read_excel(p, nrows=1000) if p.suffix.lower() in (".xlsx", ".xls") else pd.read_csv(p, nrows=1000)
+        return {"rows": len(df), "file": p.name}, None
     except Exception as e:
         return None, str(e)
 
@@ -229,15 +245,18 @@ def load_acled():
 # ─────────────────────────────────────────
 
 def load_freedom_house():
-    """Load Freedom House disaggregated if available."""
+    """Load Freedom House disaggregated if available (CSV or Excel)."""
     paths = (list(OUTPUT_DIR.glob("Freedom*.csv")) + list(OUTPUT_DIR.glob("freedom*.csv"))
-             + list(OUTPUT_DIR.glob("FH*.csv")) + list(OUTPUT_DIR.glob("*freedom*house*.csv")))
+             + list(OUTPUT_DIR.glob("FH*.csv")) + list(OUTPUT_DIR.glob("*freedom*house*.csv"))
+             + list(OUTPUT_DIR.glob("Freedom*.xlsx")) + list(OUTPUT_DIR.glob("FH*.xlsx"))
+             + list(OUTPUT_DIR.glob("FITW*.xlsx")) + list(OUTPUT_DIR.glob("*freedom*house*.xlsx")))
     if not paths:
         return None, "Download from freedomhouse.org/report/freedom-world"
     try:
         import pandas as pd
-        df = pd.read_csv(paths[0], nrows=100)
-        return {"file": paths[0].name, "rows": len(df)}, None
+        p = paths[0]
+        df = pd.read_excel(p, nrows=100) if p.suffix.lower() in (".xlsx", ".xls") else pd.read_csv(p, nrows=100)
+        return {"file": p.name, "rows": len(df)}, None
     except Exception as e:
         return None, str(e)
 
@@ -248,13 +267,15 @@ def load_freedom_house():
 
 def load_unhcr():
     """Load UNHCR microdata if available (e.g. SENS Nepal)."""
-    paths = list(OUTPUT_DIR.glob("UNHCR*.csv")) + list(OUTPUT_DIR.glob("unhcr*.csv")) + list(OUTPUT_DIR.glob("*SENS*.csv"))
+    paths = (list(OUTPUT_DIR.glob("UNHCR*.csv")) + list(OUTPUT_DIR.glob("unhcr*.csv"))
+             + list(OUTPUT_DIR.glob("*SENS*.csv")) + list(OUTPUT_DIR.glob("UNHCR*.xlsx")))
     if not paths:
         return None, "Download from microdata.unhcr.org"
     try:
         import pandas as pd
-        df = pd.read_csv(paths[0], nrows=100)
-        return {"file": paths[0].name, "rows": len(df)}, None
+        p = paths[0]
+        df = pd.read_excel(p, nrows=100) if p.suffix.lower() in (".xlsx", ".xls") else pd.read_csv(p, nrows=100)
+        return {"file": p.name, "rows": len(df)}, None
     except Exception as e:
         return None, str(e)
 

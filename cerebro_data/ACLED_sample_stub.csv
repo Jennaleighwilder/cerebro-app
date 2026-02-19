@@ -1,0 +1,4 @@
+event_id_cnty,event_date,event_type,sub_event_type,actor1,actor2,country,admin1,admin2,location,latitude,longitude,fatalities,notes
+1,2023-01-15,Battles,Armed clash,Government Forces,Non-state armed group,United States,California,Los Angeles,Los Angeles,34.05,-118.25,0,Sample stub - replace with real ACLED export from acleddata.com
+2,2023-02-20,Protests,Peaceful protest,Civilians,,United States,New York,New York City,Manhattan,40.71,-74.01,0,Sample stub
+3,2023-03-10,Explosions/Remote violence,Shelling/artillery,Unknown,,United States,Texas,Harris,Houston,29.76,-95.37,0,Sample stub

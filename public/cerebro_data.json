@@ -166,7 +166,7 @@
     "lead_time_months": "3\u201312"
   },
   "class_velocity": {
-    "velocity_smooth": 16.36,
+    "velocity_smooth": 16.4,
     "year": 2026,
     "month": 2
   },
@@ -180,8 +180,8 @@
     "ucdp_conflicts": 61
   },
   "system": {
-    "export_ts": 1771473431,
-    "freshness_sec": 4,
+    "export_ts": 1771476408,
+    "freshness_sec": 447,
     "data_source": "PRIMARY",
     "backup_active": false,
     "confidence_pct": 95,
@@ -194,7 +194,7 @@
       "anomaly_score": 21.2,
       "validation_ok": true,
       "suppress_display": false,
-      "timestamp": 1771473431
+      "timestamp": 1771476408
     },
     "deep_sources": {
       "glopop_s": {
@@ -213,7 +213,7 @@
         "confidence": 82
       },
       "nasa_socio": {
-        "live": false,
+        "live": true,
         "ring": "C",
         "confidence": 85
       },
@@ -228,17 +228,17 @@
         "confidence": 92
       },
       "acled_full": {
-        "live": false,
+        "live": true,
         "ring": "C",
         "confidence": 88
       },
       "freedom_house": {
-        "live": false,
+        "live": true,
         "ring": "C",
         "confidence": 88
       },
       "unhcr_micro": {
-        "live": false,
+        "live": true,
         "ring": "C",
         "confidence": 85
       }
@@ -584,7 +584,7 @@
   },
   "ticker_full": {
     "l1_harm": 6.57,
-    "l1_class": 16.36,
+    "l1_class": 16.4,
     "l1_sexual": 0.51,
     "gini": null,
     "sti": 675.2,

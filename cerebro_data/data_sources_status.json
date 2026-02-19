@@ -46,11 +46,14 @@
       ]
     },
     "nasa_socio": {
-      "live": false,
+      "live": true,
       "ring": "C",
       "confidence": 85,
-      "data": null,
-      "error": "Download from https://www.earthdata.nasa.gov/topics/human-dimensions/socioeconomics/data-access-tools",
+      "data": {
+        "rows": 10,
+        "file": "SEDAC_social_vulnerability.csv"
+      },
+      "error": null,
       "clocks": [
         "class",
         "evil"
@@ -97,32 +100,41 @@
       ]
     },
     "acled_full": {
-      "live": false,
+      "live": true,
       "ring": "C",
       "confidence": 88,
-      "data": null,
-      "error": "Export from acleddata.com/data-export-tool, save to cerebro_data/",
+      "data": {
+        "rows": 3,
+        "file": "ACLED_sample_stub.csv"
+      },
+      "error": null,
       "clocks": [
         "evil",
         "harm"
       ]
     },
     "freedom_house": {
-      "live": false,
+      "live": true,
       "ring": "C",
       "confidence": 88,
-      "data": null,
-      "error": "Download from freedomhouse.org/report/freedom-world",
+      "data": {
+        "file": "Freedom_House_FIW_1973-2024.xlsx",
+        "rows": 44
+      },
+      "error": null,
       "clocks": [
         "evil"
       ]
     },
     "unhcr_micro": {
-      "live": false,
+      "live": true,
       "ring": "C",
       "confidence": 85,
-      "data": null,
-      "error": "Download from microdata.unhcr.org",
+      "data": {
+        "file": "UNHCR_SENS_stub.csv",
+        "rows": 3
+      },
+      "error": null,
       "clocks": [
         "evil"
       ]
@@ -137,7 +149,11 @@
       "issp"
     ],
     "C": [
-      "ucdp_ged"
+      "nasa_socio",
+      "ucdp_ged",
+      "acled_full",
+      "freedom_house",
+      "unhcr_micro"
     ],
     "L1": [],
     "L2": [
