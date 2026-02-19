@@ -9,6 +9,9 @@ echo ""
 echo ">>> Running GSS loader (if .dta/.sav/.sas7bdat present)..."
 python3 cerebro_gss_loader.py || true
 echo ""
+echo ">>> Running deep data loader (GLOPOP-S, ISSP, GBCD, WDI, etc.)..."
+python3 cerebro_deep_data_loader.py || true
+echo ""
 echo ">>> Running Phase 2 pipeline (PRIMARY→BACKUP chain)..."
 python3 cerebro_pipeline.py || python3 cerebro_trends_loader.py || true
 echo ""

@@ -177,6 +177,17 @@ def main():
     except Exception:
         pass
 
+    # Deep data sources (GLOPOP-S, ISSP, GBCD, WDI, etc.)
+    deep_sources = {}
+    try:
+        ds_path = SCRIPT_DIR / "cerebro_data" / "data_sources_status.json"
+        if ds_path.exists():
+            with open(ds_path) as f:
+                ds = json.load(f)
+            deep_sources = ds.get("deep_sources", {})
+    except Exception:
+        pass
+
     data = {
         "harm_clock": {
             "latest_year": int(df.index[-1]),
@@ -205,6 +216,12 @@ def main():
             "overdose_rate": round(float(df["overdose_death_rate_cdc"].iloc[-1]), 1) if "overdose_death_rate_cdc" in df.columns else None,
         },
         "ring_b_loaded": bool(df["ring_B_score"].notna().any() and df["ring_B_score"].notna().sum() > 10),
+        "apogees": {
+            "harm": {"year": 1968, "position": 8.2, "label": "HARM TOLERANCE AT MAXIMUM SAFETY"},
+            "class": {"year": 1973, "position": 9.1, "label": "CLASS PERMEABILITY AT MAXIMUM MOBILITY"},
+            "sexual": {"year": 2016, "position": 9.4, "label": "SEXUAL PENDULUM AT MAXIMUM AUTONOMY"},
+            "evil": {"year": 2003, "position": 7.8, "label": "GOOD VS. EVIL AT MAXIMUM ACCOUNTABILITY"},
+        },
         "cultural_velocity": cv,
         "class_velocity": cvC,
         "sexual_velocity": cvS,
@@ -226,6 +243,7 @@ def main():
                 "suppress_display": bool(suppress_display),
                 "timestamp": int(EXPORT_TS),
             },
+            "deep_sources": {k: {"live": v.get("live"), "ring": v.get("ring"), "confidence": v.get("confidence")} for k, v in deep_sources.items()},
         },
         "ticker_full": {},
     }
@@ -273,6 +291,7 @@ def main():
         df_full = df_full[df_full["clock_position_10pt"].notna()]
         offline = {
             "harm_clock": data["harm_clock"],
+            "apogees": data["apogees"],
             "raw_series": {str(k): v for k, v in df_full[["clock_position_10pt", "velocity", "acceleration", "saddle_score"]].round(4).to_dict(orient="index").items()},
             "indicators": data["indicators"],
             "ring_b_loaded": data["ring_b_loaded"],

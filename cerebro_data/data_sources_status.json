@@ -1,0 +1,118 @@
+{
+  "deep_sources": {
+    "glopop_s": {
+      "live": false,
+      "ring": "A",
+      "confidence": 92,
+      "data": null,
+      "error": "No GLOPOP-S file. Download from https://link.springer.com/article/10.1038/s41597-024-03864-2",
+      "clocks": [
+        "class",
+        "harm",
+        "sexual",
+        "evil"
+      ]
+    },
+    "issp": {
+      "live": false,
+      "ring": "B",
+      "confidence": 88,
+      "data": null,
+      "error": "No ISSP file. Register at GESIS, download from https://www.gesis.org/en/issp/data-and-documentation/data-cumulations",
+      "clocks": [
+        "class",
+        "sexual",
+        "harm",
+        "evil"
+      ]
+    },
+    "gbcd": {
+      "live": false,
+      "ring": "L2",
+      "confidence": 82,
+      "data": null,
+      "error": "Clone: git clone https://github.com/Computational-social-science/GBCD.git",
+      "clocks": [
+        "class",
+        "evil"
+      ]
+    },
+    "nasa_socio": {
+      "live": false,
+      "ring": "C",
+      "confidence": 85,
+      "data": null,
+      "error": "Download from https://www.earthdata.nasa.gov/topics/human-dimensions/socioeconomics/data-access-tools",
+      "clocks": [
+        "class",
+        "evil"
+      ]
+    },
+    "wdi": {
+      "live": false,
+      "ring": "A",
+      "confidence": 90,
+      "data": null,
+      "error": "Download from Kaggle: umitka/world-development-indicators, save to cerebro_data/",
+      "clocks": [
+        "class",
+        "evil",
+        "harm"
+      ]
+    },
+    "ucdp_ged": {
+      "live": true,
+      "ring": "C",
+      "confidence": 92,
+      "data": {
+        "source": "UCDP_ACD_annual",
+        "years": 79,
+        "expand": "GED at ucdp.uu.se/downloads"
+      },
+      "error": null,
+      "clocks": [
+        "evil"
+      ]
+    },
+    "acled_full": {
+      "live": false,
+      "ring": "C",
+      "confidence": 88,
+      "data": null,
+      "error": "Export from acleddata.com/data-export-tool, save to cerebro_data/",
+      "clocks": [
+        "evil",
+        "harm"
+      ]
+    },
+    "freedom_house": {
+      "live": false,
+      "ring": "C",
+      "confidence": 88,
+      "data": null,
+      "error": "Download from freedomhouse.org/report/freedom-world",
+      "clocks": [
+        "evil"
+      ]
+    },
+    "unhcr_micro": {
+      "live": false,
+      "ring": "C",
+      "confidence": 85,
+      "data": null,
+      "error": "Download from microdata.unhcr.org",
+      "clocks": [
+        "evil"
+      ]
+    }
+  },
+  "rings_loaded": {
+    "A": [],
+    "B": [],
+    "C": [
+      "ucdp_ged"
+    ],
+    "L1": [],
+    "L2": []
+  }
+}

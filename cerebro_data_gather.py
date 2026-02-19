@@ -34,6 +34,10 @@ YEARS_END = 2025
 # Direct download URLs (no auth)
 UCDP_ACD_URL = "https://ucdp.uu.se/downloads/replication_data/2025_ucdp-prio-acd-251.xlsx"
 UCDP_BRD_URL = "https://ucdp.uu.se/downloads/replication_data/2025_ucdp-brd-dyadic-251.xlsx"
+# UCDP GED (georeferenced): https://ucdp.uu.se/downloads/index.html#ged_global — manual download
+# ACLED: acleddata.com/data-export-tool — requires registration
+# Freedom House: freedomhouse.org/report/freedom-world — CSV tables
+# UNHCR Microdata: microdata.unhcr.org — per-dataset
 
 print("=" * 70)
 print("CEREBRO DATA GATHER — AGGRESSIVE FETCH")
@@ -395,9 +399,12 @@ def main():
     print("=" * 70)
     print("\nMANUAL SOURCES (register & download):")
     print("  • GSS: gssdataexplorer.norc.org — batch extract for Ring B")
-    print("  • Gallup crime: news.gallup.com/poll/1603/crime.aspx")
-    print("  • Pew trust: pewresearch.org/politics/2023/09/19/public-trust-in-government")
-    print("  • ACLED: acleddata.com — USA conflict/protest events")
+    print("  • ISSP: gesis.org/issp — global attitudes (Ring B)")
+    print("  • ACLED: acleddata.com/data-export-tool — USA 1997–present")
+    print("  • UCDP GED: ucdp.uu.se/downloads — georeferenced 1946–present")
+    print("  • Freedom House: freedomhouse.org/report/freedom-world")
+    print("  • UNHCR: microdata.unhcr.org")
+    print("  • GLOPOP-S, WDI, GBCD: see DATA_SOURCES_REGISTRY.md")
     return 0
 
 

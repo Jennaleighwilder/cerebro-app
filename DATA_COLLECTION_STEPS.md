@@ -2,6 +2,8 @@
 
 Run `./run_all.sh` or `python cerebro_data_gather.py` then `python cerebro_phase1_ingest.py` after each step.
 
+**See [DATA_SOURCES_REGISTRY.md](DATA_SOURCES_REGISTRY.md)** for the full deep data catalog (GLOPOP-S, ISSP, GBCD, NASA, WDI, etc.) with Ring assignments and confidence scoring.
+
 ---
 
 ## ✅ COMPLETED (automated)
@@ -41,6 +43,22 @@ Run `./run_all.sh` or `python cerebro_data_gather.py` then `python cerebro_phase
 | 7 | Gallup crime | 5 min | Copy table from news.gallup.com/poll/1603/crime.aspx → cerebro_data/GALLUP_crime.csv |
 | 8 | CDC WONDER overdose 2023 | 15 min | wonder.cdc.gov → drug poisoning → export → cerebro_data/CDC_overdose_2023.csv |
 | 9 | ACLED USA | 15 min | Register at acleddata.com → export USA 2000–present → cerebro_data/ACLED_usa.csv |
+
+---
+
+## 🔲 DEEP DATA (priority order — see DATA_SOURCES_REGISTRY.md)
+
+| Priority | Dataset | Ring | Action |
+|----------|---------|------|--------|
+| 1 | GLOPOP-S (7.3B individuals) | A | Download from Springer, place in cerebro_data/ |
+| 2 | ISSP Cumulations | B | Register at GESIS, download modules → cerebro_data/ |
+| 3 | GBCD Corpus (2.9B tokens) | L2 | `git clone` from GitHub |
+| 4 | NASA Socioeconomic | C | Download from Earthdata |
+| 5 | World Development Indicators | A | Kaggle: umitka/world-development-indicators |
+| 6 | UCDP GED | C | ucdp.uu.se/downloads — georeferenced |
+| 7 | ACLED Full | C | acleddata.com/data-export-tool |
+| 8 | Freedom House | C | freedomhouse.org/report/freedom-world |
+| 9 | UNHCR Microdata | C | microdata.unhcr.org |
 
 ---
 

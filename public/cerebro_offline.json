@@ -35,6 +35,28 @@
     ],
     "delta_year_pct": 45.1
   },
+  "apogees": {
+    "harm": {
+      "year": 1968,
+      "position": 8.2,
+      "label": "HARM TOLERANCE AT MAXIMUM SAFETY"
+    },
+    "class": {
+      "year": 1973,
+      "position": 9.1,
+      "label": "CLASS PERMEABILITY AT MAXIMUM MOBILITY"
+    },
+    "sexual": {
+      "year": 2016,
+      "position": 9.4,
+      "label": "SEXUAL PENDULUM AT MAXIMUM AUTONOMY"
+    },
+    "evil": {
+      "year": 2003,
+      "position": 7.8,
+      "label": "GOOD VS. EVIL AT MAXIMUM ACCOUNTABILITY"
+    }
+  },
   "raw_series": {
     "1968": {
       "clock_position_10pt": 5.2027,
@@ -358,8 +380,8 @@
     "ucdp_conflicts": 61
   },
   "system": {
-    "export_ts": 1771468646,
-    "freshness_sec": 5,
+    "export_ts": 1771469374,
+    "freshness_sec": 733,
     "data_source": "PRIMARY",
     "backup_active": false,
     "confidence_pct": 95,
@@ -372,7 +394,54 @@
       "anomaly_score": 22.5,
       "validation_ok": true,
       "suppress_display": false,
-      "timestamp": 1771468646
+      "timestamp": 1771469374
+    },
+    "deep_sources": {
+      "glopop_s": {
+        "live": false,
+        "ring": "A",
+        "confidence": 92
+      },
+      "issp": {
+        "live": false,
+        "ring": "B",
+        "confidence": 88
+      },
+      "gbcd": {
+        "live": false,
+        "ring": "L2",
+        "confidence": 82
+      },
+      "nasa_socio": {
+        "live": false,
+        "ring": "C",
+        "confidence": 85
+      },
+      "wdi": {
+        "live": false,
+        "ring": "A",
+        "confidence": 90
+      },
+      "ucdp_ged": {
+        "live": true,
+        "ring": "C",
+        "confidence": 92
+      },
+      "acled_full": {
+        "live": false,
+        "ring": "C",
+        "confidence": 88
+      },
+      "freedom_house": {
+        "live": false,
+        "ring": "C",
+        "confidence": 88
+      },
+      "unhcr_micro": {
+        "live": false,
+        "ring": "C",
+        "confidence": 85
+      }
     }
   },
   "ticker_full": {
@@ -394,5 +463,5 @@
     "next_update_min": 4
   },
   "offline": true,
-  "export_ts": 1771468646
+  "export_ts": 1771469374
 }
