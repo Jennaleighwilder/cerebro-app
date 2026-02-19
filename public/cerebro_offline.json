@@ -416,39 +416,39 @@
   "raw_series": {
     "1968": {
       "clock_position_10pt": 7.5406,
-      "velocity": NaN,
-      "acceleration": NaN,
-      "saddle_score": NaN
+      "velocity": null,
+      "acceleration": null,
+      "saddle_score": null
     },
     "1970": {
       "clock_position_10pt": 6.3549,
-      "velocity": NaN,
-      "acceleration": NaN,
-      "saddle_score": NaN
+      "velocity": null,
+      "acceleration": null,
+      "saddle_score": null
     },
     "1972": {
       "clock_position_10pt": 5.6806,
-      "velocity": NaN,
-      "acceleration": NaN,
-      "saddle_score": NaN
+      "velocity": null,
+      "acceleration": null,
+      "saddle_score": null
     },
     "1974": {
       "clock_position_10pt": 3.8949,
       "velocity": -0.1215,
-      "acceleration": NaN,
-      "saddle_score": NaN
+      "acceleration": null,
+      "saddle_score": null
     },
     "1976": {
       "clock_position_10pt": 4.2562,
       "velocity": -0.07,
-      "acceleration": NaN,
-      "saddle_score": NaN
+      "acceleration": null,
+      "saddle_score": null
     },
     "1978": {
       "clock_position_10pt": 3.21,
       "velocity": -0.0824,
-      "acceleration": NaN,
-      "saddle_score": NaN
+      "acceleration": null,
+      "saddle_score": null
     },
     "1979": {
       "clock_position_10pt": 2.8302,
@@ -704,7 +704,7 @@
     }
   },
   "indicators": {
-    "unemployment": NaN,
+    "unemployment": null,
     "homicide_rate": 6.3,
     "incarceration": 350,
     "overdose_rate": 32.0
@@ -734,8 +734,8 @@
     "ucdp_conflicts": 61
   },
   "system": {
-    "export_ts": 1771477046,
-    "freshness_sec": 4,
+    "export_ts": 1771477189,
+    "freshness_sec": 147,
     "data_source": "PRIMARY",
     "backup_active": false,
     "confidence_pct": 95,
@@ -748,7 +748,7 @@
       "anomaly_score": 21.2,
       "validation_ok": true,
       "suppress_display": false,
-      "timestamp": 1771477046
+      "timestamp": 1771477189
     },
     "deep_sources": {
       "glopop_s": {
@@ -807,7 +807,7 @@
     "conflicts": 61,
     "gdelt_tone": -2.3,
     "metaculus": 72,
-    "fred_unrate": NaN,
+    "fred_unrate": null,
     "cdc_update": "12h ago",
     "ucdp_active": 61,
     "acled_events": 143,
@@ -817,5 +817,5 @@
     "next_update_min": 4
   },
   "offline": true,
-  "export_ts": 1771477046
+  "export_ts": 1771477189
 }

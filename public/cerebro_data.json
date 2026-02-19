@@ -128,7 +128,7 @@
     }
   },
   "indicators": {
-    "unemployment": NaN,
+    "unemployment": null,
     "homicide_rate": 6.3,
     "incarceration": 350,
     "overdose_rate": 32.0
@@ -180,8 +180,8 @@
     "ucdp_conflicts": 61
   },
   "system": {
-    "export_ts": 1771477046,
-    "freshness_sec": 4,
+    "export_ts": 1771477189,
+    "freshness_sec": 147,
     "data_source": "PRIMARY",
     "backup_active": false,
     "confidence_pct": 95,
@@ -194,7 +194,7 @@
       "anomaly_score": 21.2,
       "validation_ok": true,
       "suppress_display": false,
-      "timestamp": 1771477046
+      "timestamp": 1771477189
     },
     "deep_sources": {
       "glopop_s": {
@@ -609,7 +609,7 @@
     "conflicts": 61,
     "gdelt_tone": -2.3,
     "metaculus": 72,
-    "fred_unrate": NaN,
+    "fred_unrate": null,
     "cdc_update": "12h ago",
     "ucdp_active": 61,
     "acled_events": 143,

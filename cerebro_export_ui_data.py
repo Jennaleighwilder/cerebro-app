@@ -282,15 +282,28 @@ def main():
         "cohort_size": -8,
         "next_update_min": 4,
     }
-    # Convert to JSON-serializable types
+    # Convert to JSON-serializable types (NaN breaks JSON.parse in browser)
     def to_json_val(x):
         if pd.isna(x): return None
         if isinstance(x, (bool, type(None))): return x
         if isinstance(x, (int, float)): return round(float(x), 4) if isinstance(x, float) else int(x)
         return str(x)
 
+    def sanitize(obj):
+        """Recursively replace NaN/Inf with None so JSON is valid."""
+        if isinstance(obj, dict):
+            return {k: sanitize(v) for k, v in obj.items()}
+        if isinstance(obj, list):
+            return [sanitize(v) for v in obj]
+        if isinstance(obj, float) and (pd.isna(obj) or obj != obj):
+            return None
+        if isinstance(obj, (int, float)) and abs(obj) == float('inf'):
+            return None
+        return obj
+
     data["raw_series"] = {str(k): {kk: to_json_val(vv) for kk, vv in v.items()}
                           for k, v in data["raw_series"].items()}
+    data = sanitize(data)
 
     with open(OUT_JSON, "w") as f:
         json.dump(data, f, indent=2)
@@ -300,11 +313,13 @@ def main():
     try:
         df_full = pd.read_csv(CSV_PATH, index_col=0)
         df_full = df_full[df_full["clock_position_10pt"].notna()]
-        offline = {
+        raw_off = df_full[["clock_position_10pt", "velocity", "acceleration", "saddle_score"]].round(4).to_dict(orient="index")
+        raw_off = {str(k): {kk: to_json_val(vv) for kk, vv in v.items()} for k, v in raw_off.items()}
+        offline = sanitize({
             "harm_clock": data["harm_clock"],
             "apogees": data["apogees"],
             "country_risk": data.get("country_risk", {}),
-            "raw_series": {str(k): v for k, v in df_full[["clock_position_10pt", "velocity", "acceleration", "saddle_score"]].round(4).to_dict(orient="index").items()},
+            "raw_series": raw_off,
             "indicators": data["indicators"],
             "ring_b_loaded": data["ring_b_loaded"],
             "cultural_velocity": cv,
@@ -315,7 +330,7 @@ def main():
             "ticker_full": data["ticker_full"],
             "offline": True,
             "export_ts": EXPORT_TS,
-        }
+        })
         with open(OFFLINE_JSON, "w") as f:
             json.dump(offline, f, indent=2)
         print(f"Offline bundle: {OFFLINE_JSON}")
