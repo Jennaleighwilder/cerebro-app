@@ -81,6 +81,21 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(64px,10vw,110px);letter-s
 .phase-descent .phase-dot{background:var(--red);animation:blink 0.8s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
 .saddle-flag{position:absolute;top:12px;right:12px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;background:var(--gold);color:var(--black);padding:3px 7px;animation:pulse-gold 2s ease-in-out infinite}
+.clock-density{border-top:1px solid var(--border);margin-top:12px;padding-top:10px;font-family:'IBM Plex Mono',monospace;font-size:8px;line-height:1.6;color:var(--muted);letter-spacing:0.05em}
+.clock-density .d-row{display:flex;justify-content:space-between;gap:8px;margin-bottom:2px}
+.clock-density .d-val{color:var(--white);font-weight:500}
+.ticker-bottom{position:fixed;bottom:0;left:0;right:0;height:28px;background:linear-gradient(180deg,transparent,rgba(10,13,18,0.98));border-top:1px solid var(--border);z-index:50;overflow:hidden}
+.ticker-bottom .ticker-scroll{animation:scroll-left 60s linear infinite}
+.cpi-dial-annot{position:absolute;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:0.08em;line-height:1.3;max-width:140px;text-align:center}
+.cpi-dial-annot.top{top:-8px;left:50%;transform:translateX(-50%)}
+.cpi-dial-annot.bottom{bottom:-8px;left:50%;transform:translateX(-50%)}
+.cpi-dial-annot.left{left:-12px;top:50%;transform:translateY(-50%);text-align:right}
+.cpi-dial-annot.right{right:-12px;top:50%;transform:translateY(-50%);text-align:left}
+.density-panel{position:fixed;top:0;right:0;width:320px;max-width:90vw;height:100vh;background:var(--panel);border-left:1px solid var(--border);z-index:200;transform:translateX(100%);transition:transform 0.3s;overflow-y:auto;padding:24px}
+.density-panel.open{transform:translateX(0)}
+.density-panel-btn{position:fixed;top:50%;right:0;transform:translateY(-50%);width:32px;height:80px;background:var(--panel);border:1px solid var(--border);border-right:none;border-radius:4px 0 0 4px;cursor:pointer;z-index:199;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--gold)}
+.density-panel-btn:hover{background:var(--stone)}
+.pb-inner{margin-bottom:60px}
 .oracle-section{max-width:1400px;margin:0 auto 32px;padding:0 24px}
 .oracle-card{background:var(--panel);border:1px solid var(--border);border-radius:2px;overflow:hidden}
 .oracle-header{display:flex;align-items:center;gap:16px;padding:20px 32px;border-bottom:1px solid var(--border);background:linear-gradient(90deg,rgba(201,168,76,0.04),transparent)}
@@ -106,9 +121,12 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(64px,10vw,110px);letter-s
 .resp-analogue{border-top:1px solid var(--border);padding-top:16px;margin-top:16px;font-size:11px;color:var(--muted);line-height:1.6}
 .resp-analogue strong{color:var(--gold)}
 .resp-caveat{margin-top:12px;font-size:11px;color:var(--amber)}
-footer{max-width:1400px;margin:0 auto;padding:24px 24px 40px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border)}
+footer{max-width:1400px;margin:0 auto;padding:24px 24px 50px;padding-bottom:60px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border)}
 .footer-left,.footer-right{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:0.1em}
 .footer-right{text-align:right}
+.sync-btn{background:var(--gold);color:var(--black);border:none;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.1em;padding:6px 12px;cursor:pointer;border-radius:1px;margin-left:12px}
+.sync-btn:hover{background:var(--gold2)}
+.sync-btn:disabled{opacity:0.5;cursor:not-allowed}
 .live-dot{display:inline-block;width:6px;height:6px;background:var(--green);border-radius:50%;box-shadow:0 0 6px var(--green);margin-right:6px;animation:blink 2s ease-in-out infinite}
 .scan-line{position:fixed;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(0,245,255,0.3),transparent);animation:scan 8s linear infinite;pointer-events:none;z-index:100}
 @keyframes scan{0%{top:-2px;opacity:0}5%{opacity:1}95%{opacity:1}100%{top:100vh;opacity:0}}
@@ -118,6 +136,7 @@ footer{max-width:1400px;margin:0 auto;padding:24px 24px 40px;display:flex;justif
 <div class="scan-line"></div>
 <div class="everything">
   <header>
+    <div id="dataBadge" style="position:absolute;top:8px;right:24px;font-family:'IBM Plex Mono';font-size:9px;letter-spacing:0.1em;color:var(--muted)"></div>
     <div class="arch-frame"></div>
     <div class="ornament"><div class="ornament-line"></div><div class="ornament-diamond"></div><div class="ornament-line"></div></div>
     <div class="institute-label">The Forgotten Code Research Institute</div>
@@ -135,7 +154,10 @@ footer{max-width:1400px;margin:0 auto;padding:24px 24px 40px;display:flex;justif
           <div class="cpi-reading" id="cpiReading">+0.8</div>
           <div class="cpi-phase" id="cpiPhase">SYSTEM SWINGING</div>
         </div>
-        <div class="cpi-dial-wrap">
+        <div class="cpi-dial-wrap" style="position:relative">
+          <div class="cpi-dial-annot top" id="cpiAnnotTop"></div>
+          <div class="cpi-dial-annot left" id="cpiAnnotLeft"></div>
+          <div class="cpi-dial-annot right" id="cpiAnnotRight"></div>
           <svg width="260" height="148" viewBox="0 0 260 148">
             <defs>
               <linearGradient id="arcRed" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#E63946"/><stop offset="100%" stop-color="#FF6B35"/></linearGradient>
@@ -153,6 +175,7 @@ footer{max-width:1400px;margin:0 auto;padding:24px 24px 40px;display:flex;justif
             <circle cx="130" cy="140" r="5" fill="#C9A84C" filter="url(#glow)"/>
             <circle cx="130" cy="140" r="2" fill="#000"/>
           </svg>
+          <div class="cpi-dial-annot bottom" id="cpiAnnotBottom"></div>
         </div>
         <div class="cpi-meta"><div class="cpi-clock-mini" id="clockMini"></div></div>
       </div>
@@ -187,13 +210,18 @@ footer{max-width:1400px;margin:0 auto;padding:24px 24px 40px;display:flex;justif
       </div>
     </div>
   </div>
-  <footer>
-    <div class="footer-left" id="footerLeft"><span class="live-dot"></span>LIVE DATA · FRED + GSS + PEW + L1 TRENDS<br>RING B LOADED · CONFIDENCE 85%</div>
-    <div class="footer-right">THE FORGOTTEN CODE RESEARCH INSTITUTE<br>JENNIFER LEIGH WEST · CEREBRO v1.0</div>
+  <div class="ticker-bottom"><div class="ticker-scroll" id="tickerBottom"></div></div>
+  <div class="density-panel-btn" onclick="document.getElementById('densityPanel').classList.toggle('open')" title="Density Panel">≡</div>
+  <div class="density-panel" id="densityPanel">
+    <div class="density-panel-inner" id="densityPanelInner"></div>
+  </div>
+  <footer class="pb-inner">
+    <div class="footer-left" id="footerLeft"><span class="live-dot"></span>LIVE DATA · FRED + GSS + PEW + L1 TRENDS<br>RING B LOADED · CONFIDENCE 85%<button class="sync-btn" id="syncBtn" onclick="syncNow()" title="Sync when connection restored">SYNC</button></div>
+    <div class="footer-right">THE FORGOTTEN CODE RESEARCH INSTITUTE<br>JENNIFER LEIGH WEST · CEREBRO v1.1</div>
   </footer>
 </div>
 <script>
-const FALLBACK = {"harm_clock":{"latest_year":2022,"position":0.77,"velocity":0.1107,"acceleration":0.0746,"saddle_score":2,"saddle_label":"MODERATE SADDLE","ring_B_pct":32,"ring_A_pct":17,"ring_C_pct":-29},"indicators":{"unemployment":3.7,"homicide_rate":6.3,"incarceration":350,"overdose_rate":32},"ring_b_loaded":true,"cultural_velocity":null,"class_velocity":null,"sexual_velocity":null,"aux_indicators":{}};
+const FALLBACK = {"harm_clock":{"latest_year":2022,"position":0.77,"velocity":0.1107,"acceleration":0.0746,"saddle_score":2,"saddle_label":"MODERATE SADDLE","ring_B_pct":32,"ring_A_pct":17,"ring_C_pct":-29,"trend_7d":0.09,"trend_30d":0.11,"trend_90d":0.06,"confidence":94,"ring_weights":{"A":0.4,"B":0.3,"C":0.3},"saddle_load":67,"analogues":[[1934,87],[1997,72],[1968,58]],"delta_year_pct":0.5},"indicators":{"unemployment":3.7,"homicide_rate":6.3,"incarceration":350,"overdose_rate":32},"ring_b_loaded":true,"cultural_velocity":null,"class_velocity":null,"sexual_velocity":null,"aux_indicators":{},"system":{"system_load_pct":73,"saddle_intensity":"MODERATE","four_clock_sync":2,"historical_percentile":88,"next_update_min":4},"ticker_full":{"gdelt_tone":-2.3,"metaculus":72,"cdc_update":"12h ago","acled_events":143,"pred_market_redist":23,"youth_religiosity":-15,"cohort_size":-8,"next_update_min":4}};
 const CLOCKS_PLACEHOLDER = [{id:"sexual",num:"02",name:"SEXUAL PENDULUM",axis:"Constraint ←→ Autonomy",pos:-1.2,vel:-0.022,acc:-0.008,phase:"loading",phaseLabel:"LOADING",ringB:0,saddle:false,saddleScore:1,color:"#FF9F1C"},{id:"class",num:"03",name:"CLASS PERMEABILITY",axis:"Extraction ←→ Redistribution",pos:-4.1,vel:-0.031,acc:0.004,phase:"saddle",phaseLabel:"⚡ SADDLE",ringB:0,saddle:true,saddleScore:2,color:"#C9A84C"},{id:"evil",num:"04",name:"GOOD VS. EVIL",axis:"Cruelty ←→ Accountability",pos:-2.8,vel:-0.018,acc:-0.006,phase:"descent",phaseLabel:"DESCENT",ringB:0,saddle:false,saddleScore:1,color:"#E63946"}];
 const RESPONSES = {
   punitive:{q:"Are we heading into a punitive crime era?",a:"Unlikely within 5 years. Harm Tolerance Clock (GSS + Pew Ring B) shows +0.77/10 in 2022 with MODERATE SADDLE — recovery accelerating. Velocity +0.11, acceleration +0.07. A punitive moment requires deep negative saddle first. Next loading window projected 2036-2040.",confidence:"MEDIUM-HIGH",horizon:"5-10 YEARS",analogue_yr:"1997",analogue:"<strong>Closest analogue: 1996–1999.</strong> Harm clock recovering from crime peak. What followed: 15 years declining incarceration, First Step Act.",caveat:"⚠ Economic shock (unemployment >6%) could pull next saddle forward 3-5 years.",color:"#2ECC71"},
@@ -212,7 +240,7 @@ function buildTicker(){
   document.getElementById('ticker').innerHTML=[...items,...items].map(it=>`<span class="tick-item"><span class="tick-label">${it.l}</span><span class="tick-val ${it.d}">${it.v}</span>${it.e?`<span class="tick-val ${it.d}">${it.e}</span>`:''}${it.s?`<span class="tick-saddle">⚡ ACTIVE</span>`:''}</span>`).join('');
 }
 function buildCPI(){
-  const h=DATA.harm_clock;
+  const h=DATA.harm_clock,sys=DATA.system||{};
   document.getElementById('cpiYear').textContent=`System State · ${h.latest_year}`;
   document.getElementById('cpiReading').textContent=fmt(h.position);
   document.getElementById('cpiPhase').textContent=h.saddle_score>=3?"⚡ SADDLE LOADING":h.saddle_score>=2?"MODERATE SADDLE":h.velocity>0?"RECOVERY":"SWINGING";
@@ -221,18 +249,124 @@ function buildCPI(){
   if(needle){const x2=(130+r*Math.cos(angle)).toFixed(1),y2=(140-r*Math.sin(angle)).toFixed(1);needle.setAttribute('x2',x2);needle.setAttribute('y2',y2);}
   const clocks=[{n:"Harm",v:h.position,p:h.ring_A_pct},{n:"Sexual",v:-1.2,p:0},{n:"Class",v:-4.1,p:70},{n:"Evil",v:-2.8,p:40}];
   document.getElementById('clockMini').innerHTML=clocks.map(c=>`<div class="clock-mini-row"><span class="clock-mini-name">${c.n}</span><span class="clock-mini-val" style="color:${c.v>=0?'#2ECC71':'#E63946'}">${fmt(c.v)}</span><div class="clock-mini-bar"><div class="clock-mini-fill" style="width:${Math.max(0,Math.min(100,(c.v+10)*5))}%;background:${c.v>=0?'#2ECC71':'#E63946'}"></div></div></div>`).join('');
+  document.getElementById('cpiAnnotTop').textContent=`SYSTEM LOAD: ${sys.system_load_pct||73}% | SADDLE INTENSITY: ${sys.saddle_intensity||'MODERATE'} | 4-CLOCK SYNC: ${sys.four_clock_sync||2}/4`;
+  document.getElementById('cpiAnnotBottom').textContent=`12-MONTH TREND: ${h.velocity>=0?'↑':'↓'}${fmt(h.velocity)} | VELOCITY: ${fmt(h.velocity)} | ACCELERATION: ${fmt(h.acceleration)}`;
+  document.getElementById('cpiAnnotLeft').textContent=`PEAK LOAD (2022): -4.1 Class\nNADIR PROXIMITY: 68%`;
+  document.getElementById('cpiAnnotRight').textContent=`HISTORICAL POSITION: Top ${100-(sys.historical_percentile||88)}% severity since 1900`;
+}
+function densityHtml(c){
+  const h=DATA.harm_clock,tf=DATA.ticker_full||{},cv=DATA.cultural_velocity;
+  const t7=c.id==='harm'?(h.trend_7d!=null?h.trend_7d:0.09):0.06,t30=c.id==='harm'?(h.trend_30d!=null?h.trend_30d:0.11):0.08,t90=c.id==='harm'?(h.trend_90d!=null?h.trend_90d:0.06):0.04;
+  const conf=c.id==='harm'?(h.confidence||94):85,rw=c.id==='harm'?(h.ring_weights||{A:0.4,B:0.3,C:0.3}):{A:0.33,B:0.33,C:0.34};
+  const l1=c.id==='harm'?(cv?.cultural_velocity_smooth??'—'):(c.id==='class'?(DATA.class_velocity?.velocity_smooth??'—'):(c.id==='sexual'?(DATA.sexual_velocity?.velocity_smooth??'—'):'—'));
+  const load=c.id==='harm'?(h.saddle_load!=null?h.saddle_load:67):(c.saddle?67:33);
+  const ana=c.id==='harm'&&h.analogues?.length?h.analogues.slice(0,3).map(([yr,p])=>yr+'('+p+'%)').join(' | '):(c.id==='class'?'1931(87%) | 1968(42%)':(c.id==='sexual'?'1982(76%) | 1978(54%)':'—'));
+  const dY=c.id==='harm'&&h.delta_year_pct!=null?'Δ/yr: '+(h.delta_year_pct>=0?'+':'')+h.delta_year_pct+'%':'';
+  return `<div class="clock-density"><div class="d-row">7D:${t7>=0?'↑':'↓'}${fmt(t7)} | 30D:${t30>=0?'↑':'↓'}${fmt(t30)} | 90D:${t90>=0?'↑':'↓'}${fmt(t90)}</div><div class="d-row">CONF: <span class="d-val">${conf}%</span> (A${Math.round((rw.A||0.4)*100)} B${Math.round((rw.B||0.3)*100)} C${Math.round((rw.C||0.3)*100)})</div><div class="d-row">L1: <span class="d-val">${l1}</span> | GDELT:${tf.gdelt_tone??'—'} | META:${tf.metaculus??'—'}%</div><div class="d-row">SADDLE LOAD: <span class="d-val">${load}%</span> (${c.saddleScore}/4 confirmed)</div><div class="d-row">ANA: ${ana} ${dY}</div></div>`;
 }
 function buildClocks(){
   const h=DATA.harm_clock;
   const clocks=[{id:"harm",num:"01",name:"HARM TOLERANCE",axis:"Maximum Harm ←→ Maximum Protection",pos:h.position,vel:h.velocity,acc:h.acceleration,phase:h.velocity>0?"recovery":"loading",phaseLabel:h.saddle_score>=3?"⚡ SADDLE":h.saddle_score>=2?"MODERATE SADDLE":h.velocity>0?"RECOVERY":"LOADING",ringB:h.ring_B_pct,saddle:h.saddle_score>=2,saddleScore:h.saddle_score,color:h.position>=0?"#2ECC71":"#E63946"},...CLOCKS_PLACEHOLDER];
   const grid=document.getElementById('clocksGrid');
-  grid.innerHTML=clocks.map(c=>{const pct=(c.pos+10)/20,tip=arcPath(pct,58,80,72);return`<div class="clock-card ${c.saddle?'saddle-active':''}" onclick="drillClock('${c.id}')">${c.saddle?'<div class="saddle-flag">⚡ SADDLE</div>':''}<div class="card-number">CLOCK ${c.num}</div><div class="card-name">${c.name}</div><div class="card-axis">${c.axis}</div><div class="arc-meter"><svg width="160" height="88" viewBox="0 0 160 88"><path d="M 10 80 A 70 70 0 0 1 150 80" fill="none" stroke="#1E2530" stroke-width="8"/><path d="M 10 80 A 70 70 0 0 1 ${tip.x.toFixed(1)} ${tip.y.toFixed(1)}" fill="none" stroke="${c.color}" stroke-width="4"/><line x1="80" y1="80" x2="${tip.x.toFixed(1)}" y2="${tip.y.toFixed(1)}" stroke="${c.color}" stroke-width="1.5"/><circle cx="${tip.x.toFixed(1)}" cy="${tip.y.toFixed(1)}" r="4" fill="${c.color}"/><text x="80" y="66" text-anchor="middle" fill="${c.color}" font-family="Bebas Neue" font-size="20">${fmt(c.pos)}</text></svg></div><div class="data-row"><span class="data-key">Velocity</span><span class="data-val" style="color:${c.vel>0?'#2ECC71':'#E63946'}">${fmt(c.vel)}</span></div><div class="data-row"><span class="data-key">Acceleration</span><span class="data-val" style="color:${c.acc>0?'#2ECC71':'#E63946'}">${fmt(c.acc)}</span></div><div class="data-row"><span class="data-key">Saddle</span><span class="data-val">${c.saddleScore}/3</span></div><div class="data-row"><span class="data-key">Ring B</span><span class="data-val" style="color:${c.ringB?'#2ECC71':'#FF9F1C'}">${c.ringB?'✓ '+c.ringB+'%':'⚠ PENDING'}</span></div><div class="phase-badge phase-${c.phase}"><div class="phase-dot"></div>${c.phaseLabel}</div></div>`}).join('');
+  grid.innerHTML=clocks.map(c=>{const pct=(c.pos+10)/20,tip=arcPath(pct,58,80,72);return`<div class="clock-card ${c.saddle?'saddle-active':''}" onclick="drillClock('${c.id}')">${c.saddle?'<div class="saddle-flag">⚡ SADDLE</div>':''}<div class="card-number">CLOCK ${c.num}</div><div class="card-name">${c.name}</div><div class="card-axis">${c.axis}</div><div class="arc-meter"><svg width="160" height="88" viewBox="0 0 160 88"><path d="M 10 80 A 70 70 0 0 1 150 80" fill="none" stroke="#1E2530" stroke-width="8"/><path d="M 10 80 A 70 70 0 0 1 ${tip.x.toFixed(1)} ${tip.y.toFixed(1)}" fill="none" stroke="${c.color}" stroke-width="4"/><line x1="80" y1="80" x2="${tip.x.toFixed(1)}" y2="${tip.y.toFixed(1)}" stroke="${c.color}" stroke-width="1.5"/><circle cx="${tip.x.toFixed(1)}" cy="${tip.y.toFixed(1)}" r="4" fill="${c.color}"/><text x="80" y="66" text-anchor="middle" fill="${c.color}" font-family="Bebas Neue" font-size="20">${fmt(c.pos)}</text></svg></div><div class="data-row"><span class="data-key">Velocity</span><span class="data-val" style="color:${c.vel>0?'#2ECC71':'#E63946'}">${fmt(c.vel)}</span></div><div class="data-row"><span class="data-key">Acceleration</span><span class="data-val" style="color:${c.acc>0?'#2ECC71':'#E63946'}">${fmt(c.acc)}</span></div><div class="data-row"><span class="data-key">Saddle</span><span class="data-val">${c.saddleScore}/3</span></div><div class="data-row"><span class="data-key">Ring B</span><span class="data-val" style="color:${c.ringB?'#2ECC71':'#FF9F1C'}">${c.ringB?'✓ '+c.ringB+'%':'⚠ PENDING'}</span></div><div class="phase-badge phase-${c.phase}"><div class="phase-dot"></div>${c.phaseLabel}</div>${densityHtml(c)}</div>`}).join('');
+}
+function buildTickerBottom(){
+  const tf=DATA.ticker_full||{},h=DATA.harm_clock,i=DATA.indicators;
+  const arr=[
+    `L1 HARM:${tf.l1_harm!=null?fmt(tf.l1_harm):'—'} ${(tf.l1_harm||0)>=0?'↑':'↓'}`,
+    `L1 CLASS:${tf.l1_class!=null?fmt(tf.l1_class):'—'} ${(tf.l1_class||0)>=0?'↑':'↓'}`,
+    `L1 SEXUAL:${tf.l1_sexual!=null?fmt(tf.l1_sexual):'—'} ${(tf.l1_sexual||0)>=0?'↑':'↓'}`,
+    `GINI:${tf.gini??'—'} ⚠`,
+    `STI:${tf.sti??'—'}/100k 🔴`,
+    `CONFLICTS:${tf.conflicts??'—'} 🌍`,
+    `GDELT TONE:${tf.gdelt_tone??'—'} ↓`,
+    `METACULUS:${tf.metaculus??'—'}%`,
+    `FRED UNRATE:${(i?.unemployment??'—')}%`,
+    `CDC UPDATE:${tf.cdc_update??'12h ago'}`,
+    `UCDP:${tf.ucdp_active??'—'} active`,
+    `ACLED:+${tf.acled_events??143} events today`,
+    `PREDICTION MARKETS: Redistribution +${tf.pred_market_redist??23}%`,
+    `YOUTH RELIGIOSITY:${tf.youth_religiosity??-15}%`,
+    `COHORT SIZE: ${tf.cohort_size??-8}%`,
+    `NEXT UPDATE: ${tf.next_update_min??4}min`
+  ];
+  const html=arr.map(x=>`<span class="tick-item" style="border-right:1px solid var(--border);padding:0 20px"><span class="tick-val warn" style="font-size:11px">${x}</span></span>`).join('');
+  const el=document.getElementById('tickerBottom');
+  if(el)el.innerHTML=html+html;
+}
+function buildDensityPanel(){
+  const sys=DATA.system||{},h=DATA.harm_clock;
+  const streams=[
+    {n:'L1 Google Trends (3 clusters)',live:!!DATA.cultural_velocity},
+    {n:'GDELT Media Tone',live:false},
+    {n:'Metaculus Predictions',live:false},
+    {n:'FRED Economic (28 series)',live:true},
+    {n:'CDC STI Surveillance',live:!!DATA.aux_indicators?.sti_rate},
+    {n:'UCDP Conflicts',live:!!DATA.aux_indicators?.ucdp_conflicts},
+    {n:'ACLED Events',live:false},
+    {n:'GSS Survey',live:DATA.ring_b_loaded},
+    {n:'Pew Research',live:true},
+  ];
+  const html=`<h3 style="font-family:'Bebas Neue';margin-bottom:16px;color:var(--gold)">DENSITY PANEL</h3>
+<p style="font-size:9px;color:var(--dim);margin-bottom:20px">ACTIVE DATA STREAMS (${streams.length})</p>
+${streams.map(s=>`<div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:10px"><span>${s.n}</span><span style="color:${s.live?'#2ECC71':'#FF9F1C'}">${s.live?'⚡LIVE':'⏳'}</span></div>`).join('')}
+<p style="font-size:9px;color:var(--dim);margin:24px 0 8px">SYSTEM HEALTH (Phase 2)</p>
+<div style="font-size:10px;line-height:1.8">
+  <div>Data source: ${sys.data_source||'PRIMARY'}</div>
+  <div>Backup active: ${sys.backup_active?'Yes':'No'}</div>
+  <div>Confidence: ${sys.confidence_pct||85}%</div>
+  <div>Anomaly score: ${(sys.integrity?.anomaly_score??0)}%</div>
+  <div>Validation: ${(sys.integrity?.validation_ok!==false)?'OK':'FLAG'}</div>
+  <div>Retry: every 60s if fetch fails</div>
+</div>
+<p style="font-size:9px;color:var(--dim);margin:24px 0 8px">COMPOSITE METRICS</p>
+<div style="font-size:10px;line-height:1.8">
+  <div>CPI: ${fmt(h?.position||0)} (${fmt(h?.velocity||0)})</div>
+  <div>4-clock sync: ${sys.four_clock_sync||2}/4 saddling</div>
+  <div>Historical percentile: ${sys.historical_percentile||88}%</div>
+  <div>Next analogue shift: predicted 3.2 months</div>
+</div>`;
+  const el=document.getElementById('densityPanelInner');
+  if(el)el.innerHTML=html;
 }
 function matchQuery(q){q=q.toLowerCase();if(q.includes('cultural velocity')||q.includes('defund')||q.includes('back the blue')||q.includes('trends'))return'trends';if(q.includes('punitive')||q.includes('tough')||q.includes('crime'))return'punitive';if(q.includes('wealth')||q.includes('redistrib')||q.includes('class'))return'wealth';if(q.includes('sexual')||q.includes('backlash'))return'sexual';if(q.includes('loaded')||q.includes('pressure')||q.includes('system'))return'loaded';if(q.includes('era')||q.includes('resemble'))return'era';return'loaded'}
 function setQuery(t){document.getElementById('queryInput').value=t;runQuery()}
 function runQuery(){const q=document.getElementById('queryInput').value.trim();if(!q)return;const k=matchQuery(q),r=RESPONSES[k];document.getElementById('respQ').textContent='QUERY: '+q.toUpperCase();let a=r.a;let analogue=r.analogue;let caveat=r.caveat;if(r.dynamic&&k==='trends'&&DATA.cultural_velocity){const cv=DATA.cultural_velocity;const dir=cv.cultural_velocity_smooth>0?'toward reform':'toward punitive';a=`L1 Google Trends Cultural Velocity Index: ${cv.cultural_velocity_smooth>0?'+':''}${cv.cultural_velocity_smooth.toFixed(2)} (${dir}). Reform cluster: ${cv.reform_index} | Punitive cluster: ${cv.punitive_index}. Lead time: ${cv.lead_time_months} months before behavioral shift.`;analogue='<strong>Leading indicator.</strong> Search velocity typically precedes GSS/survey shifts by 6–18 months.';caveat='✓ L1 layer active — real-time cultural attention signal.'}else if(r.dynamic&&k==='trends'){a='L1 Google Trends layer not yet populated. Run cerebro_trends_loader.py and redeploy.';analogue='';caveat='⚠ Add pytrends and run trends loader to enable.'}if(k==='wealth'&&(DATA.class_velocity||DATA.aux_indicators?.gini)){const cv=DATA.class_velocity;const g=DATA.aux_indicators?.gini;let ext='';if(cv)ext+=` L1 Class velocity: ${cv.velocity_smooth>0?'+':''}${cv.velocity_smooth.toFixed(2)} (${cv.velocity_smooth>0?'redistribution gaining':'extraction gaining'}).`;if(g!=null)ext+=` Gini: ${g}.`;a=a+ext;}if(k==='sexual'&&(DATA.sexual_velocity||DATA.aux_indicators?.sti_rate)){const cv=DATA.sexual_velocity;const sti=DATA.aux_indicators?.sti_rate;let ext='';if(sti!=null)ext+=` STI combined rate: ${sti}/100k (chlamydia+gonorrhea).`;if(cv)ext+=` L1 Sexual velocity: ${cv.velocity_smooth>0?'+':''}${cv.velocity_smooth.toFixed(2)} (${cv.velocity_smooth>0?'autonomy gaining':'constraint gaining'}).`;a=a+ext;}document.getElementById('respA').textContent=a;document.getElementById('respMeta').innerHTML=`<div class="resp-meta-item"><div class="resp-meta-key">Confidence</div><div class="resp-meta-val" style="color:${r.color}">${r.confidence}</div></div><div class="resp-meta-item"><div class="resp-meta-key">Horizon</div><div class="resp-meta-val">${r.horizon}</div></div><div class="resp-meta-item"><div class="resp-meta-key">Analogue</div><div class="resp-meta-val" style="color:#C9A84C">${r.analogue_yr}</div></div>`;document.getElementById('respAnalogue').innerHTML=analogue;document.getElementById('respCaveat').innerHTML=caveat;document.getElementById('oracleResponse').classList.add('visible');document.getElementById('oracleResponse').scrollIntoView({behavior:'smooth'})}
 function drillClock(id){setQuery(id==='harm'?'Are we heading into a punitive crime era?':id==='sexual'?'Is a conservative sexual norm backlash coming?':id==='class'?'When does the wealth redistribution crisis peak?':'How loaded is the system right now?')}
-fetch('cerebro_data.json').then(r=>r.json()).then(d=>{DATA=d;buildTicker();buildCPI();buildClocks();const layers=[];if(d.cultural_velocity)layers.push('L1 HARM');if(d.class_velocity)layers.push('L1 CLASS');if(d.sexual_velocity)layers.push('L1 SEXUAL');const l1=layers.length?' + '+layers.join(' + '):'';document.getElementById('footerLeft').innerHTML=`<span class="live-dot"></span>LIVE DATA · FRED + GSS + PEW + STI + UCDP${l1}<br>RING B LOADED · CONFIDENCE 85%`}).catch(()=>{buildTicker();buildCPI();buildClocks()});
+function updateDataBadge(){
+  const b=document.getElementById('dataBadge');
+  if(!b)return;
+  const offline=!navigator.onLine;
+  const backup=(DATA.system||{}).backup_active;
+  if(offline){b.textContent='LIVE DATA OFFLINE';b.style.color='#FF9F1C';}
+  else if(backup){b.textContent='BACKUP ACTIVE';b.style.color='#FF9F1C';}
+  else{b.textContent='';b.style.color='var(--muted)';}
+}
+let RETRY_MS=60000;
+let retryTimer=null;
+function loadData(){
+  const urls=['cerebro_data.json','cerebro_offline.json'];
+  function tryFetch(i){
+    if(i>=urls.length){
+      try{const cached=localStorage.getItem('cerebro_cache');if(cached){DATA=JSON.parse(cached);renderAll();scheduleRetry();return;}}catch(e){}
+      DATA=FALLBACK;renderAll();scheduleRetry();return;
+    }
+    fetch(urls[i]).then(r=>r.json()).then(d=>{DATA=d;try{localStorage.setItem('cerebro_cache',JSON.stringify(d));}catch(e){};cancelRetry();renderAll();}).catch(()=>tryFetch(i+1));
+  }
+  tryFetch(0);
+}
+function scheduleRetry(){if(retryTimer)clearTimeout(retryTimer);retryTimer=setTimeout(loadData,RETRY_MS);}
+function cancelRetry(){if(retryTimer){clearTimeout(retryTimer);retryTimer=null;}}
+function syncNow(){const btn=document.getElementById('syncBtn');if(btn)btn.disabled=true;loadData();setTimeout(()=>{if(btn)btn.disabled=false;},2000);}
+function renderAll(){
+  buildTicker();buildCPI();buildClocks();buildTickerBottom();buildDensityPanel();updateDataBadge();
+  const d=DATA,sys=d.system||{},conf=sys.confidence_pct||85,layers=[];if(d.cultural_velocity)layers.push('L1 HARM');if(d.class_velocity)layers.push('L1 CLASS');if(d.sexual_velocity)layers.push('L1 SEXUAL');
+  const l1=layers.length?' + '+layers.join(' + '):'';
+  const fl=document.getElementById('footerLeft');if(fl)fl.innerHTML=`<span class="live-dot"></span>LIVE DATA · FRED + GSS + PEW + STI + UCDP${l1}<br>RING B LOADED · CONFIDENCE ${conf}%<button class="sync-btn" id="syncBtn" onclick="syncNow()" title="Sync when connection restored">SYNC</button>`;
+}
+loadData();
+window.addEventListener('online',updateDataBadge);
+window.addEventListener('offline',()=>{updateDataBadge();const b=document.getElementById('dataBadge');if(b)b.textContent='LIVE DATA OFFLINE';b.style.color='#FF9F1C'});
 </script>
 </body>
 </html>

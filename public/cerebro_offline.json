@@ -1,0 +1,398 @@
+{
+  "harm_clock": {
+    "latest_year": 2022,
+    "position": 0.77,
+    "velocity": 0.1107,
+    "acceleration": 0.0746,
+    "saddle_score": 2,
+    "saddle_label": "MODERATE SADDLE",
+    "ring_B_pct": 32.0,
+    "ring_A_pct": 17.0,
+    "ring_C_pct": -29.0,
+    "trend_7d": 0.0,
+    "trend_30d": 0.01,
+    "trend_90d": 0.03,
+    "confidence": 94,
+    "ring_weights": {
+      "A": 0.4,
+      "B": 0.3,
+      "C": 0.3
+    },
+    "saddle_load": 67.0,
+    "analogues": [
+      [
+        2016,
+        99.0
+      ],
+      [
+        2008,
+        99.0
+      ],
+      [
+        2014,
+        97.0
+      ]
+    ],
+    "delta_year_pct": 45.1
+  },
+  "raw_series": {
+    "1968": {
+      "clock_position_10pt": 5.2027,
+      "velocity": NaN,
+      "acceleration": NaN,
+      "saddle_score": NaN
+    },
+    "1970": {
+      "clock_position_10pt": 3.6676,
+      "velocity": NaN,
+      "acceleration": NaN,
+      "saddle_score": NaN
+    },
+    "1972": {
+      "clock_position_10pt": 2.9381,
+      "velocity": NaN,
+      "acceleration": NaN,
+      "saddle_score": NaN
+    },
+    "1974": {
+      "clock_position_10pt": 1.1528,
+      "velocity": -0.135,
+      "acceleration": NaN,
+      "saddle_score": NaN
+    },
+    "1976": {
+      "clock_position_10pt": 0.7149,
+      "velocity": -0.0984,
+      "acceleration": NaN,
+      "saddle_score": NaN
+    },
+    "1978": {
+      "clock_position_10pt": 0.7778,
+      "velocity": -0.072,
+      "acceleration": NaN,
+      "saddle_score": NaN
+    },
+    "1979": {
+      "clock_position_10pt": 0.8569,
+      "velocity": -0.0099,
+      "acceleration": 0.0417,
+      "saddle_score": 2.0
+    },
+    "1980": {
+      "clock_position_10pt": 1.0491,
+      "velocity": 0.0111,
+      "acceleration": 0.0365,
+      "saddle_score": 1.0
+    },
+    "1982": {
+      "clock_position_10pt": -0.587,
+      "velocity": -0.0455,
+      "acceleration": 0.0088,
+      "saddle_score": 2.0
+    },
+    "1984": {
+      "clock_position_10pt": 1.8141,
+      "velocity": 0.0319,
+      "acceleration": 0.0139,
+      "saddle_score": 1.0
+    },
+    "1985": {
+      "clock_position_10pt": 1.647,
+      "velocity": 0.0199,
+      "acceleration": 0.0029,
+      "saddle_score": 1.0
+    },
+    "1986": {
+      "clock_position_10pt": 1.6754,
+      "velocity": 0.0754,
+      "acceleration": 0.0403,
+      "saddle_score": 1.0
+    },
+    "1987": {
+      "clock_position_10pt": 2.0246,
+      "velocity": 0.007,
+      "acceleration": -0.0083,
+      "saddle_score": 0.0
+    },
+    "1988": {
+      "clock_position_10pt": 1.409,
+      "velocity": -0.0079,
+      "acceleration": -0.0093,
+      "saddle_score": 1.0
+    },
+    "1989": {
+      "clock_position_10pt": 1.2937,
+      "velocity": -0.0127,
+      "acceleration": -0.0294,
+      "saddle_score": 1.0
+    },
+    "1990": {
+      "clock_position_10pt": 0.5413,
+      "velocity": -0.0494,
+      "acceleration": -0.0188,
+      "saddle_score": 1.0
+    },
+    "1991": {
+      "clock_position_10pt": 0.0958,
+      "velocity": -0.0438,
+      "acceleration": -0.0119,
+      "saddle_score": 1.0
+    },
+    "1992": {
+      "clock_position_10pt": -1.6562,
+      "velocity": -0.0983,
+      "acceleration": -0.0285,
+      "saddle_score": 1.0
+    },
+    "1993": {
+      "clock_position_10pt": -1.1775,
+      "velocity": -0.0573,
+      "acceleration": -0.0026,
+      "saddle_score": 1.0
+    },
+    "1994": {
+      "clock_position_10pt": -1.2538,
+      "velocity": -0.045,
+      "acceleration": -0.0004,
+      "saddle_score": 1.0
+    },
+    "1995": {
+      "clock_position_10pt": -1.7214,
+      "velocity": -0.0022,
+      "acceleration": 0.0321,
+      "saddle_score": 3.0
+    },
+    "1996": {
+      "clock_position_10pt": 0.1216,
+      "velocity": 0.0433,
+      "acceleration": 0.0335,
+      "saddle_score": 2.0
+    },
+    "1997": {
+      "clock_position_10pt": -0.5906,
+      "velocity": 0.0221,
+      "acceleration": 0.0224,
+      "saddle_score": 2.0
+    },
+    "1998": {
+      "clock_position_10pt": 1.2787,
+      "velocity": 0.1,
+      "acceleration": 0.0341,
+      "saddle_score": 1.0
+    },
+    "1999": {
+      "clock_position_10pt": 0.4282,
+      "velocity": 0.0102,
+      "acceleration": -0.011,
+      "saddle_score": 0.0
+    },
+    "2000": {
+      "clock_position_10pt": 2.1465,
+      "velocity": 0.0912,
+      "acceleration": 0.023,
+      "saddle_score": 2.0
+    },
+    "2001": {
+      "clock_position_10pt": 1.6617,
+      "velocity": 0.0128,
+      "acceleration": -0.0291,
+      "saddle_score": 0.0
+    },
+    "2002": {
+      "clock_position_10pt": 1.3316,
+      "velocity": 0.0301,
+      "acceleration": 0.0066,
+      "saddle_score": 2.0
+    },
+    "2003": {
+      "clock_position_10pt": -0.6879,
+      "velocity": -0.0945,
+      "acceleration": -0.0619,
+      "saddle_score": 1.0
+    },
+    "2004": {
+      "clock_position_10pt": 1.387,
+      "velocity": -0.0092,
+      "acceleration": -0.0073,
+      "saddle_score": 1.0
+    },
+    "2005": {
+      "clock_position_10pt": -1.0159,
+      "velocity": -0.0782,
+      "acceleration": -0.0361,
+      "saddle_score": 1.0
+    },
+    "2006": {
+      "clock_position_10pt": 1.3778,
+      "velocity": 0.0689,
+      "acceleration": 0.0544,
+      "saddle_score": 2.0
+    },
+    "2007": {
+      "clock_position_10pt": -1.4087,
+      "velocity": -0.0932,
+      "acceleration": -0.028,
+      "saddle_score": 1.0
+    },
+    "2008": {
+      "clock_position_10pt": 0.8511,
+      "velocity": 0.0622,
+      "acceleration": 0.0468,
+      "saddle_score": 2.0
+    },
+    "2009": {
+      "clock_position_10pt": -4.112,
+      "velocity": -0.183,
+      "acceleration": -0.0839,
+      "saddle_score": 1.0
+    },
+    "2010": {
+      "clock_position_10pt": -0.904,
+      "velocity": 0.0168,
+      "acceleration": 0.0367,
+      "saddle_score": 2.0
+    },
+    "2011": {
+      "clock_position_10pt": -4.5271,
+      "velocity": -0.1793,
+      "acceleration": -0.0805,
+      "saddle_score": 1.0
+    },
+    "2012": {
+      "clock_position_10pt": -0.3099,
+      "velocity": 0.1267,
+      "acceleration": 0.1032,
+      "saddle_score": 2.0
+    },
+    "2013": {
+      "clock_position_10pt": -3.5607,
+      "velocity": -0.0886,
+      "acceleration": -0.0351,
+      "saddle_score": 1.0
+    },
+    "2014": {
+      "clock_position_10pt": 0.6019,
+      "velocity": 0.171,
+      "acceleration": 0.1167,
+      "saddle_score": 2.0
+    },
+    "2015": {
+      "clock_position_10pt": -3.3336,
+      "velocity": -0.1008,
+      "acceleration": -0.0758,
+      "saddle_score": 1.0
+    },
+    "2016": {
+      "clock_position_10pt": 0.8482,
+      "velocity": 0.147,
+      "acceleration": 0.0785,
+      "saddle_score": 2.0
+    },
+    "2017": {
+      "clock_position_10pt": -3.0569,
+      "velocity": -0.122,
+      "acceleration": -0.0976,
+      "saddle_score": 1.0
+    },
+    "2018": {
+      "clock_position_10pt": 1.7968,
+      "velocity": 0.171,
+      "acceleration": 0.0906,
+      "saddle_score": 2.0
+    },
+    "2019": {
+      "clock_position_10pt": -2.5451,
+      "velocity": -0.1131,
+      "acceleration": -0.0867,
+      "saddle_score": 1.0
+    },
+    "2020": {
+      "clock_position_10pt": -4.3671,
+      "velocity": -0.0437,
+      "acceleration": 0.0261,
+      "saddle_score": 3.0
+    },
+    "2021": {
+      "clock_position_10pt": -3.7393,
+      "velocity": -0.1845,
+      "acceleration": -0.1185,
+      "saddle_score": 1.0
+    },
+    "2022": {
+      "clock_position_10pt": 0.7747,
+      "velocity": 0.1107,
+      "acceleration": 0.0746,
+      "saddle_score": 2.0
+    }
+  },
+  "indicators": {
+    "unemployment": 3.7,
+    "homicide_rate": 6.3,
+    "incarceration": 350,
+    "overdose_rate": 32.0
+  },
+  "ring_b_loaded": true,
+  "cultural_velocity": {
+    "cultural_velocity": 24.23,
+    "cultural_velocity_smooth": 9.27,
+    "reform_index": 10.3,
+    "punitive_index": 12.7,
+    "year": 2026,
+    "month": 2,
+    "lead_time_months": "3\u201312"
+  },
+  "class_velocity": {
+    "velocity_smooth": 15.89,
+    "year": 2026,
+    "month": 2
+  },
+  "sexual_velocity": {
+    "velocity_smooth": -0.11,
+    "year": 2026,
+    "month": 2
+  },
+  "aux_indicators": {
+    "gini": 0.456,
+    "consumer_sentiment": 57.6,
+    "sti_rate": 675.2,
+    "ucdp_conflicts": 61
+  },
+  "system": {
+    "export_ts": 1771468646,
+    "freshness_sec": 5,
+    "data_source": "PRIMARY",
+    "backup_active": false,
+    "confidence_pct": 95,
+    "four_clock_sync": 2,
+    "system_load_pct": 73,
+    "saddle_intensity": "MODERATE",
+    "historical_percentile": 88,
+    "next_update_min": 4,
+    "integrity": {
+      "anomaly_score": 22.5,
+      "validation_ok": true,
+      "suppress_display": false,
+      "timestamp": 1771468646
+    }
+  },
+  "ticker_full": {
+    "l1_harm": 9.27,
+    "l1_class": 15.89,
+    "l1_sexual": -0.11,
+    "gini": 0.456,
+    "sti": 675.2,
+    "conflicts": 61,
+    "gdelt_tone": -2.3,
+    "metaculus": 72,
+    "fred_unrate": 3.7,
+    "cdc_update": "12h ago",
+    "ucdp_active": 61,
+    "acled_events": 143,
+    "pred_market_redist": 23,
+    "youth_religiosity": -15,
+    "cohort_size": -8,
+    "next_update_min": 4
+  },
+  "offline": true,
+  "export_ts": 1771468646
+}

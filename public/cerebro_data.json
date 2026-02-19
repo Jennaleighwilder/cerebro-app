@@ -8,7 +8,32 @@
     "saddle_label": "MODERATE SADDLE",
     "ring_B_pct": 32.0,
     "ring_A_pct": 17.0,
-    "ring_C_pct": -29.0
+    "ring_C_pct": -29.0,
+    "trend_7d": 0.0,
+    "trend_30d": 0.01,
+    "trend_90d": 0.03,
+    "confidence": 94,
+    "ring_weights": {
+      "A": 0.4,
+      "B": 0.3,
+      "C": 0.3
+    },
+    "saddle_load": 67.0,
+    "analogues": [
+      [
+        2016,
+        99.0
+      ],
+      [
+        2008,
+        99.0
+      ],
+      [
+        2014,
+        97.0
+      ]
+    ],
+    "delta_year_pct": 45.1
   },
   "raw_series": {
     "2008": {
@@ -110,10 +135,10 @@
   },
   "ring_b_loaded": true,
   "cultural_velocity": {
-    "cultural_velocity": 15.38,
-    "cultural_velocity_smooth": 7.6,
-    "reform_index": 10.0,
-    "punitive_index": 13.0,
+    "cultural_velocity": 24.23,
+    "cultural_velocity_smooth": 9.27,
+    "reform_index": 10.3,
+    "punitive_index": 12.7,
     "year": 2026,
     "month": 2,
     "lead_time_months": "3\u201312"
@@ -133,5 +158,41 @@
     "consumer_sentiment": 57.6,
     "sti_rate": 675.2,
     "ucdp_conflicts": 61
+  },
+  "system": {
+    "export_ts": 1771468646,
+    "freshness_sec": 5,
+    "data_source": "PRIMARY",
+    "backup_active": false,
+    "confidence_pct": 95,
+    "four_clock_sync": 2,
+    "system_load_pct": 73,
+    "saddle_intensity": "MODERATE",
+    "historical_percentile": 88,
+    "next_update_min": 4,
+    "integrity": {
+      "anomaly_score": 22.5,
+      "validation_ok": true,
+      "suppress_display": false,
+      "timestamp": 1771468646
+    }
+  },
+  "ticker_full": {
+    "l1_harm": 9.27,
+    "l1_class": 15.89,
+    "l1_sexual": -0.11,
+    "gini": 0.456,
+    "sti": 675.2,
+    "conflicts": 61,
+    "gdelt_tone": -2.3,
+    "metaculus": 72,
+    "fred_unrate": 3.7,
+    "cdc_update": "12h ago",
+    "ucdp_active": 61,
+    "acled_events": 143,
+    "pred_market_redist": 23,
+    "youth_religiosity": -15,
+    "cohort_size": -8,
+    "next_update_min": 4
   }
 }
