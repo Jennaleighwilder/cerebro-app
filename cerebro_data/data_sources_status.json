@@ -5,7 +5,7 @@
       "ring": "A",
       "confidence": 92,
       "data": null,
-      "error": "No GLOPOP-S file. Download from https://link.springer.com/article/10.1038/s41597-024-03864-2",
+      "error": "Download from https://doi.org/10.7910/DVN/KJC3RH, use read_synthpop_data.py from github.com/VU-IVM/GLOPOP-S",
       "clocks": [
         "class",
         "harm",
@@ -14,11 +14,13 @@
       ]
     },
     "issp": {
-      "live": false,
+      "live": true,
       "ring": "B",
       "confidence": 88,
-      "data": null,
-      "error": "No ISSP file. Register at GESIS, download from https://www.gesis.org/en/issp/data-and-documentation/data-cumulations",
+      "data": {
+        "n_respondents": 136584
+      },
+      "error": null,
       "clocks": [
         "class",
         "sexual",
@@ -108,7 +110,9 @@
   },
   "rings_loaded": {
     "A": [],
-    "B": [],
+    "B": [
+      "issp"
+    ],
     "C": [
       "ucdp_ged"
     ],

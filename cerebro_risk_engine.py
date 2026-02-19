@@ -99,31 +99,55 @@ def _load_glopop_by_country():
 
 def _load_issp_redistribution():
     """Load ISSP Role of Government module: 'Should government reduce income differences?'"""
-    paths = list(OUTPUT_DIR.glob("ISSP*Role*.csv")) + list(OUTPUT_DIR.glob("ISSP*.csv")) + list(OUTPUT_DIR.glob("issp*.csv"))
+    paths = (
+        list(OUTPUT_DIR.glob("ISSP*Role*.csv")) + list(OUTPUT_DIR.glob("ISSP*.csv")) + list(OUTPUT_DIR.glob("issp*.csv"))
+        + list(OUTPUT_DIR.glob("ZA4747*.dta")) + list(OUTPUT_DIR.glob("ZA4747*.sav"))
+    )
     if not paths:
         return {}
     try:
         import pandas as pd
-        df = pd.read_csv(paths[0], nrows=5000)
-        # EQWLTH, GINCOME, or similar — "agree gov should reduce"
-        red_col = next((c for c in df.columns if "eqwlth" in c.lower() or "reduce" in c.lower() or "inequal" in c.lower()), None)
-        country_col = next((c for c in df.columns if "country" in c.lower() or "iso" in c.lower() or c in ("V2", "COUNTRY")), None)
+        p = paths[0]
+        if p.suffix.lower() == ".dta":
+            df = pd.read_stata(p)
+        elif p.suffix.lower() == ".sav":
+            try:
+                df, _ = __import__("pyreadstat").read_sav(p)
+            except Exception:
+                df = pd.read_spss(p) if hasattr(pd, "read_spss") else pd.DataFrame()
+        else:
+            df = pd.read_csv(p, nrows=5000)
+        # EQWLTH, GINCOME, or ZA4747 v54 ("gov reduce income differences")
+        red_col = next((c for c in df.columns if "eqwlth" in str(c).lower() or "reduce" in str(c).lower() or "inequal" in str(c).lower()), None)
+        if not red_col and "v54" in df.columns:
+            red_col = "v54"  # ISSP Role of Gov
+        country_col = next((c for c in df.columns if "country" in str(c).lower() or "iso" in str(c).lower() or c in ("V2", "COUNTRY")), None)
         if not red_col or df.empty:
             return {}
-        # Score: higher = more redistribution demand (1-5 scale, 5=strongly agree)
+        # Score: v54 categorical 1=Definitely should, 2=Probably should, 3=Probably not, 4=Definitely not
         def score_redist(s):
             if pd.isna(s): return 50
             try:
-                v = float(s)
-                return min(100, max(0, (v / 5) * 100))
+                v = int(float(s)) if isinstance(s, (int, float)) or hasattr(s, "item") else 3
+                return {1: 90, 2: 70, 3: 50, 4: 25, 5: 50}.get(v, 50)
             except: return 50
+        if red_col in df.columns and str(df[red_col].dtype) == "category":
+            codes = df[red_col].astype("category").cat.codes
+            df["_red"] = codes.map(lambda x: {0: 90, 1: 70, 2: 50, 3: 25, 4: 50, 5: 50}.get(int(x), 50))
+        else:
+            df["_red"] = df[red_col].apply(score_redist)
+        def to_iso(c):
+            s = str(c)
+            if "-" in s: return s.split("-")[1][:2].upper()
+            if "." in s: return s.split(".")[1].strip()[:2].upper()
+            return str(c)[:3].upper()
         if country_col:
             out = {}
-            for iso, grp in df.groupby(country_col):
-                vals = grp[red_col].apply(score_redist)
-                out[str(iso)[:3].upper()] = {"redistribution_demand": vals.mean()}
+            for cval, grp in df.groupby(country_col):
+                iso = to_iso(cval)
+                out[iso] = {"redistribution_demand": float(grp["_red"].mean())}
             return out
-        return {"_global": {"redistribution_demand": df[red_col].apply(score_redist).mean()}}
+        return {"_global": {"redistribution_demand": float(df["_red"].mean())}}
     except Exception as e:
         print(f"  ✗ ISSP: {e}")
         return {}

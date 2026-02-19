@@ -50,7 +50,7 @@ Run `./run_all.sh` or `python cerebro_data_gather.py` then `python cerebro_phase
 
 | Priority | Dataset | Ring | Action |
 |----------|---------|------|--------|
-| 1 | GLOPOP-S (7.3B individuals) | A | Download from Springer, place in cerebro_data/ |
+| 1 | GLOPOP-S (7.3B individuals) | A | Harvard Dataverse https://doi.org/10.7910/DVN/KJC3RH → cerebro_data/GLOPOP-S/ (see docs/GLOPOP-S_README.md) |
 | 2 | ISSP Cumulations | B | Register at GESIS, download modules → cerebro_data/ |
 | 3 | GBCD Corpus (2.9B tokens) | L2 | `git clone` from GitHub |
 | 4 | NASA Socioeconomic | C | Download from Earthdata |

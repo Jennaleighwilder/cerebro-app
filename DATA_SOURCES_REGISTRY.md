@@ -24,11 +24,14 @@ Master list of all datasets with Ring assignments, confidence scoring, and inges
 | **Ring** | Ring A (Class micro-validation) |
 | **Confidence** | 92% (academic-grade, LIS+DHS origin) |
 | **Coverage** | 78 countries (81.4% global pop) + 99 synthetic |
-| **Source** | Springer Nature / Scientific Data |
-| **URL** | https://link.springer.com/article/10.1038/s41597-024-03864-2 |
-| **Format** | Per region/country, open source |
+| **Source** | Scientific Data (2024) 11:1096 |
+| **Paper** | `docs/GLOPOP-S_s41597-024-03864-2.pdf` |
+| **Data** | Harvard Dataverse: https://doi.org/10.7910/DVN/KJC3RH |
+| **Code** | GitHub: https://github.com/VU-IVM/GLOPOP-S/ (read_synthpop_data.py) |
+| **Format** | Binary per country/region (ISO folders); use read_synthpop_data.py |
+| **Attributes** | Income (1–5 quintile), Wealth, Settlement, Age, Gender, Education, Household type/size |
 | **Clocks** | Class (income/wealth), Harm (household risk), Sexual (household type), Evil (vulnerability) |
-| **Status** | 🔲 Pending — requires download + aggregation |
+| **Status** | 🔲 Pending — download from Dataverse, extract to cerebro_data/GLOPOP-S/ |
 
 ### World Development Indicators — 265 Countries, 1960–2024
 | Field | Value |

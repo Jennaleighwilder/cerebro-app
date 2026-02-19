@@ -54,11 +54,15 @@ def _write_status(sources_status):
 # ─────────────────────────────────────────
 
 def load_glopop_s():
-    """Load GLOPOP-S if available. Expects cerebro_data/GLOPOP-S_* or download instructions."""
-    # GLOPOP-S is per-region; we'd need user to place files
+    """Load GLOPOP-S if available. Expects cerebro_data/GLOPOP-S/ or GLOPOP-S*.csv.
+    Data: Harvard Dataverse https://doi.org/10.7910/DVN/KJC3RH
+    Code: https://github.com/VU-IVM/GLOPOP-S/ (read_synthpop_data.py)"""
+    glopop_dir = OUTPUT_DIR / "GLOPOP-S"
     paths = list(OUTPUT_DIR.glob("GLOPOP-S*.csv")) + list(OUTPUT_DIR.glob("glopop*.csv"))
+    if glopop_dir.exists():
+        paths = list(glopop_dir.rglob("*.csv")) + list(glopop_dir.rglob("*.bin"))  # binary format
     if not paths:
-        return None, "No GLOPOP-S file. Download from https://link.springer.com/article/10.1038/s41597-024-03864-2"
+        return None, "Download from https://doi.org/10.7910/DVN/KJC3RH, use read_synthpop_data.py from github.com/VU-IVM/GLOPOP-S"
     try:
         import pandas as pd
         df = pd.read_csv(paths[0])
@@ -79,8 +83,11 @@ def load_glopop_s():
 # ─────────────────────────────────────────
 
 def load_issp():
-    """Load ISSP if available. Expects cerebro_data/ISSP_*.csv or .dta."""
-    paths = list(OUTPUT_DIR.glob("ISSP*.csv")) + list(OUTPUT_DIR.glob("ISSP*.dta")) + list(OUTPUT_DIR.glob("issp*.csv"))
+    """Load ISSP if available. Expects cerebro_data/ISSP_*.csv, ZA4747*.dta, ZA4747*.sav, or .dta."""
+    paths = (
+        list(OUTPUT_DIR.glob("ISSP*.csv")) + list(OUTPUT_DIR.glob("ISSP*.dta")) + list(OUTPUT_DIR.glob("issp*.csv"))
+        + list(OUTPUT_DIR.glob("ZA4747*.dta")) + list(OUTPUT_DIR.glob("ZA4747*.sav"))
+    )
     if not paths:
         return None, "No ISSP file. Register at GESIS, download from https://www.gesis.org/en/issp/data-and-documentation/data-cumulations"
     try:

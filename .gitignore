@@ -5,3 +5,5 @@ __pycache__/
 *.dta
 *.sav
 *.sas7bdat
+!cerebro_data/*.dta
+!cerebro_data/*.sav
