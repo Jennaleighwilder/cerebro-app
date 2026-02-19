@@ -9,6 +9,9 @@ echo ""
 echo ">>> Running GSS loader (if .dta/.sav/.sas7bdat present)..."
 python3 cerebro_gss_loader.py || true
 echo ""
+echo ">>> Running GLOPOP-S aggregator (extract zip, aggregate .dat.gz by country)..."
+python3 cerebro_glopop_aggregator.py || true
+echo ""
 echo ">>> Running deep data loader (GLOPOP-S, ISSP, GBCD, WDI, etc.)..."
 python3 cerebro_deep_data_loader.py || true
 echo ""
@@ -21,8 +24,12 @@ echo ""
 echo ">>> Running phase1 harm clock ingest..."
 python3 cerebro_phase1_ingest.py
 echo ""
+echo ">>> Running backtest..."
+python3 cerebro_backtest.py || true
+echo ""
 echo ">>> Running tests..."
 python3 test_data_gather.py
+python3 tests/test_oracle.py || true
 echo ""
 echo ">>> Exporting UI data..."
 python3 cerebro_export_ui_data.py

@@ -1,0 +1,14 @@
+{
+  "n_saddles_tested": 20,
+  "mae_years": 1.45,
+  "median_absolute_error_years": 1.0,
+  "worst_case_error_years": 4,
+  "interval_coverage_pct": 45.0,
+  "event_categories": [
+    "redistribution",
+    "policy_shift"
+  ],
+  "event_library": "US 1900\u2013present (New Deal, Great Society, Reagan, Crime Bill, 2008, 2020)",
+  "stored_in": "cerebro_data/backtest_metrics.json",
+  "version": 1
+}
