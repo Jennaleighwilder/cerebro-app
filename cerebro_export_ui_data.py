@@ -128,6 +128,61 @@ def _compute_analogues(df, pos_col="clock_position_10pt", top_n=3):
     return [(yr, round(100 - 100 * d / total_range, 0)) for yr, d in diffs[:top_n]]
 
 
+def _load_method_data(df):
+    """Load method transparency data (equations, thresholds, limitations)."""
+    try:
+        from cerebro_peak_window import get_method_equations, compute_peak_window
+        eq = get_method_equations()
+        row = df.iloc[-1]
+        now_year = int(df.index[-1])
+        pos = float(row["clock_position_10pt"])
+        vel = float(row["velocity"])
+        acc = float(row["acceleration"])
+        rb = float(row["ring_B_score"]) if pd.notna(row.get("ring_B_score")) else None
+        pw = compute_peak_window(now_year, pos, vel, acc, rb)
+        return {
+            "saddle_rule": eq["saddle_rule"],
+            "peak_window_rule": eq["peak_window_rule"],
+            "thresholds": eq["thresholds"],
+            "peak_window": pw,
+            "limitations": [
+                "Does NOT predict direction (reform vs punitive) — political capture determines that.",
+                "Does NOT predict magnitude of policy response.",
+                "Analogue library is US-centric; other countries need local event labels.",
+                "Ring B (GSS/Pew) improves confidence when loaded; without it, horizon widens.",
+            ],
+        }
+    except Exception as e:
+        return {"error": str(e), "saddle_rule": "", "peak_window_rule": "", "thresholds": {}, "limitations": []}
+
+
+def _load_backtest_metrics():
+    """Load backtest results from cerebro_backtest.py output."""
+    bt_path = SCRIPT_DIR / "cerebro_data" / "backtest_metrics.json"
+    if not bt_path.exists():
+        return {"n_saddles_tested": 0, "mae_years": None, "median_absolute_error_years": None,
+                "interval_coverage_pct": None, "event_library": "", "stored_in": str(bt_path)}
+    try:
+        with open(bt_path) as f:
+            return json.load(f)
+    except Exception:
+        return {"n_saddles_tested": 0, "mae_years": None, "interval_coverage_pct": None}
+
+
+def _build_math_state(df):
+    """Build state vector + thresholds for Show math toggle."""
+    row = df.iloc[-1]
+    return {
+        "position": round(float(row["clock_position_10pt"]), 4),
+        "velocity": round(float(row["velocity"]), 4),
+        "acceleration": round(float(row["acceleration"]), 4),
+        "saddle_score": int(row["saddle_score"]) if pd.notna(row["saddle_score"]) else 0,
+        "thresholds": {"v_thresh": 0.15, "saddle_sign_oppose": True},
+        "analogue_count": len(_compute_analogues(df)),
+        "latest_year": int(df.index[-1]),
+    }
+
+
 def _load_gathered_indicators():
     """Load latest Class/Sexual/Conflict indicators from cerebro_gathered_raw."""
     p = SCRIPT_DIR / "cerebro_data" / "cerebro_gathered_raw.csv"
@@ -256,6 +311,9 @@ def main():
             "deep_sources": {k: {"live": v.get("live"), "ring": v.get("ring"), "confidence": v.get("confidence")} for k, v in deep_sources.items()},
         },
         "country_risk": country_risk,
+        "method_data": _load_method_data(df),
+        "backtest_metrics": _load_backtest_metrics(),
+        "math_state": _build_math_state(df),
         "ticker_full": {},
     }
     aux = data["aux_indicators"]
@@ -319,6 +377,9 @@ def main():
             "harm_clock": data["harm_clock"],
             "apogees": data["apogees"],
             "country_risk": data.get("country_risk", {}),
+            "method_data": data.get("method_data", {}),
+            "backtest_metrics": data.get("backtest_metrics", {}),
+            "math_state": data.get("math_state", {}),
             "raw_series": raw_off,
             "indicators": data["indicators"],
             "ring_b_loaded": data["ring_b_loaded"],
