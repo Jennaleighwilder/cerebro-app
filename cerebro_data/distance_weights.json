@@ -1,0 +1,27 @@
+{
+  "vel_weight": 10,
+  "acc_weight": 2500,
+  "n_episodes": 20,
+  "train_size": 14,
+  "test_size": 6,
+  "random_seed": 42,
+  "provenance": {
+    "method": "grid_search",
+    "objective": "pinball_q10_q90 + 0.5*MAE",
+    "vel_grid": [
+      10,
+      50,
+      100,
+      200,
+      500
+    ],
+    "acc_grid": [
+      500,
+      1000,
+      2500,
+      5000,
+      10000
+    ]
+  },
+  "version": 1
+}

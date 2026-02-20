@@ -132,6 +132,7 @@ def _load_method_data(df):
     """Load method transparency data (equations, thresholds, limitations)."""
     try:
         from cerebro_peak_window import get_method_equations, compute_peak_window
+        from cerebro_conformal import load_calibration
         eq = get_method_equations()
         row = df.iloc[-1]
         now_year = int(df.index[-1])
@@ -140,11 +141,24 @@ def _load_method_data(df):
         acc = float(row["acceleration"])
         rb = float(row["ring_B_score"]) if pd.notna(row.get("ring_B_score")) else None
         pw = compute_peak_window(now_year, pos, vel, acc, rb)
+        prov = eq.get("provenance", {})
+        conformal = load_calibration()
+        dist_weights = {}
+        dw_path = SCRIPT_DIR / "cerebro_data" / "distance_weights.json"
+        if dw_path.exists():
+            try:
+                with open(dw_path) as f:
+                    dist_weights = json.load(f)
+            except Exception:
+                pass
         return {
             "saddle_rule": eq["saddle_rule"],
             "peak_window_rule": eq["peak_window_rule"],
             "thresholds": eq["thresholds"],
+            "provenance": prov,
             "peak_window": pw,
+            "conformal_calibration": conformal,
+            "distance_weights": dist_weights,
             "limitations": [
                 "Does NOT predict direction (reform vs punitive) — political capture determines that.",
                 "Does NOT predict magnitude of policy response.",
@@ -161,7 +175,7 @@ def _load_backtest_metrics():
     bt_path = SCRIPT_DIR / "cerebro_data" / "backtest_metrics.json"
     if not bt_path.exists():
         return {"n_saddles_tested": 0, "mae_years": None, "median_absolute_error_years": None,
-                "interval_coverage_pct": None, "event_library": "", "stored_in": str(bt_path)}
+                "coverage_50": None, "coverage_80": None, "event_library": "", "stored_in": str(bt_path)}
     try:
         with open(bt_path) as f:
             return json.load(f)
@@ -171,13 +185,24 @@ def _load_backtest_metrics():
 
 def _build_math_state(df):
     """Build state vector + thresholds for Show math toggle."""
+    from cerebro_peak_window import V_THRESH, DIST_VEL_WEIGHT, DIST_ACC_WEIGHT, INTERVAL_ALPHA, get_method_equations
     row = df.iloc[-1]
+    prov = get_method_equations().get("provenance", {})
     return {
         "position": round(float(row["clock_position_10pt"]), 4),
         "velocity": round(float(row["velocity"]), 4),
         "acceleration": round(float(row["acceleration"]), 4),
         "saddle_score": int(row["saddle_score"]) if pd.notna(row["saddle_score"]) else 0,
-        "thresholds": {"v_thresh": 0.15, "saddle_sign_oppose": True},
+        "thresholds": {"v_thresh": V_THRESH, "saddle_sign_oppose": True},
+        "provenance": {
+            "v_thresh": V_THRESH,
+            "distance_vel_weight": DIST_VEL_WEIGHT,
+            "distance_acc_weight": DIST_ACC_WEIGHT,
+            "interval_alpha": INTERVAL_ALPHA,
+            "quantile_lo": prov.get("quantile_lo"),
+            "quantile_hi": prov.get("quantile_hi"),
+            "window_label": prov.get("window_label"),
+        },
         "analogue_count": len(_compute_analogues(df)),
         "latest_year": int(df.index[-1]),
     }

@@ -37,7 +37,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:0.08em;colo
   <div class="method-section">
     <h2>What a saddle means mathematically</h2>
     <p id="saddleRule">Loading...</p>
-    <p><strong>Thresholds:</strong> <code>v_thresh = 0.15</code>, <code>sign(a) opposes sign(v)</code> required. Saddle intensity combines velocity factor, acceleration magnitude, and Ring B (GSS/Pew attitudes).</p>
+    <p id="provenance">Loading...</p>
   </div>
 
   <div class="method-section">
@@ -54,6 +54,10 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:0.08em;colo
     <h2>Backtest results</h2>
     <p id="backtestResults">Loading...</p>
   </div>
+  <div class="method-section">
+    <h2>Code provenance</h2>
+    <p id="codeProvenance">Loading...</p>
+  </div>
 
   <div class="method-section">
     <h2>Limitations — what it does NOT predict</h2>
@@ -62,22 +66,33 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:0.08em;colo
 </div>
 <script>
 fetch('cerebro_data.json').then(r=>r.json()).then(d=>{
-  const md=d.method_data||{}, bt=d.backtest_metrics||{};
-  document.getElementById('peakRule').textContent=md.peak_window_rule||'Peak year = now_year + weighted_median(Δt_i). Window = [now_year + weighted_p25, now_year + weighted_p75].';
+  const md=d.method_data||{}, bt=d.backtest_metrics||{}, p=md.provenance||{};
+  document.getElementById('peakRule').textContent=md.peak_window_rule||'Peak year = now_year + weighted_median(Δt_i). Window = [now_year + weighted_p10, now_year + weighted_p90] (80% window).';
   document.getElementById('saddleRule').textContent=md.saddle_rule||'Saddle when |v| < v_thresh AND sign(a) opposes sign(v).';
+  document.getElementById('provenance').innerHTML=`<strong>Thresholds:</strong> <code>v_thresh = ${p.v_thresh??0.15}</code>, <code>sign(a) opposes sign(v)</code> required. Saddle intensity combines velocity factor, acceleration magnitude, and Ring B (GSS/Pew attitudes).`;
+  const dw=md.distance_weights||{},cal=md.conformal_calibration||{};
   document.getElementById('backtestResults').innerHTML=
     `<strong>N saddles tested:</strong> ${bt.n_saddles_tested??0}<br>
      <strong>MAE (years):</strong> ${bt.mae_years??'—'}<br>
      <strong>Median absolute error:</strong> ${bt.median_absolute_error_years??'—'} years<br>
      <strong>Worst-case error:</strong> ${bt.worst_case_error_years??'—'} years<br>
-     <strong>80% interval coverage:</strong> ${bt.interval_coverage_pct??'—'}%<br>
+     <strong>Pinball q10/q90:</strong> ${bt.pinball_loss_q10??'—'} / ${bt.pinball_loss_q90??'—'}<br>
+     <strong>Sharpness (80%):</strong> ${bt.sharpness_80_years??'—'} years<br>
+     <strong>50% coverage (raw/calibrated):</strong> ${bt.coverage_50??'—'}% / ${bt.coverage_50_calibrated??'—'}%<br>
+     <strong>80% coverage (raw/calibrated):</strong> ${bt.coverage_80??'—'}% / ${bt.coverage_80_calibrated??'—'}%<br>
      <strong>Event library:</strong> ${bt.event_library||'—'}`;
+  document.getElementById('codeProvenance').innerHTML=
+    `<strong>V_THRESH:</strong> ${p.v_thresh??0.15}<br>
+     <strong>Distance weights (learned):</strong> vel=${dw.vel_weight??p.distance_vel_weight??100}, acc=${dw.acc_weight??p.distance_acc_weight??2500}<br>
+     <strong>Interval quantiles:</strong> p${((p.quantile_lo??0.1)*100).toFixed(0)}–p${((p.quantile_hi??0.9)*100).toFixed(0)} (${p.window_label??'80% window'})<br>
+     <strong>Conformal:</strong> ${cal?.s_hat!=null?'s_hat='+cal.s_hat+', alpha='+cal.alpha:'not applied'}`;
   const lim=md.limitations||[];
   document.getElementById('limitations').innerHTML=lim.map(l=>`<li>${l}</li>`).join('');
 }).catch(()=>{
-  document.getElementById('peakRule').textContent='Peak year = now_year + weighted_median(Δt_i). Window = [now_year + weighted_p25, now_year + weighted_p75]. Δt_i = event_year_i − saddle_year_i. Weight w_i = 1/(1 + distance).';
+  document.getElementById('peakRule').textContent='Peak year = now_year + weighted_median(Δt_i). Window = [now_year + weighted_p10, now_year + weighted_p90] (80% window). Δt_i = event_year_i − saddle_year_i. Weight w_i = 1/(1 + distance).';
   document.getElementById('saddleRule').textContent='Saddle when |v| < 0.15 AND sign(a) opposes sign(v).';
   document.getElementById('backtestResults').textContent='Run cerebro_backtest.py and redeploy to load backtest metrics.';
+  document.getElementById('codeProvenance').textContent='V_THRESH=0.15, distance_vel_weight=100, distance_acc_weight=2500, quantiles p10–p90 (80% window).';
 });
 </script>
 </body>
