@@ -436,6 +436,30 @@ def _load_chimera_master():
         return {}
 
 
+def _load_chimera_export():
+    """Load CHIMERA sister engine export (figure-8, honeycomb, log tail)."""
+    p = SCRIPT_DIR / "cerebro_data" / "chimera_export.json"
+    if not p.exists():
+        return {}
+    try:
+        with open(p) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def _load_infinity_score():
+    """Load Infinity Score (composite metric)."""
+    p = SCRIPT_DIR / "cerebro_data" / "infinity_score.json"
+    if not p.exists():
+        return {}
+    try:
+        with open(p) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
 def _load_systemic_instability(df):
     try:
         from cerebro_coupling import systemic_instability_index
@@ -640,6 +664,8 @@ def main():
             "historical_replay": _load_historical_replay(),
             "chimera": _load_chimera_master(),
         },
+        "chimera": _load_chimera_export(),
+        "infinity_score": _load_infinity_score(),
         "systemic_instability_index": _load_systemic_instability(df),
         "math_state": _build_math_state(df),
         "ticker_full": {},
@@ -713,6 +739,8 @@ def main():
             "backtest_metrics": data.get("backtest_metrics", {}),
             "ensemble": data.get("ensemble", {}),
             "figure8": data.get("figure8", {}),
+            "chimera": data.get("chimera", {}),
+            "infinity_score": data.get("infinity_score", {}),
             "hazard_curve": data.get("hazard_curve", {}),
             "math_state": data.get("math_state", {}),
             "raw_series": raw_off,

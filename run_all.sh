@@ -66,6 +66,9 @@ python3 tests/test_core_frozen.py -v || true
 python3 tests/test_dominance.py -v || true
 python3 -m pytest tests/ -q 2>/dev/null || true
 echo ""
+echo ">>> Running CHIMERA sister engine (figure-8)..."
+python3 cerebro_chimera_bridge.py || true
+echo ""
 echo ">>> Exporting UI data..."
 python3 cerebro_export_ui_data.py
 echo ""
