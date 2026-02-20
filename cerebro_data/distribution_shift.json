@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "mahalanobis_distance": 1.59,
+  "percentile": 0.4048,
+  "outside_historical_convex_hull": false,
+  "confidence_modifier": 1.0
+}

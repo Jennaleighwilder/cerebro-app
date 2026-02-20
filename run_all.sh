@@ -49,6 +49,12 @@ python3 cerebro_honeycomb.py || true
 python3 cerebro_historical_replay.py || true
 python3 cerebro_ensemble_backtest.py || true
 echo ""
+echo ">>> Figure-8 self-tune (distance weights, conformal, regime markov)..."
+python3 cerebro_fit_distance_weights.py || true
+python3 cerebro_honeycomb_conformal.py || true
+python3 cerebro_regime_markov.py || true
+python3 cerebro_honeycomb.py || true
+echo ""
 echo ">>> Running tests..."
 python3 test_data_gather.py || true
 python3 tests/test_core_frozen.py -v || true

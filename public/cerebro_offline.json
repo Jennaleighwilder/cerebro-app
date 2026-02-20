@@ -406,8 +406,8 @@
     },
     "provenance": {
       "v_thresh": 0.15,
-      "distance_vel_weight": 100,
-      "distance_acc_weight": 2500,
+      "distance_vel_weight": 10.0,
+      "distance_acc_weight": 500.0,
       "interval_alpha": 0.8,
       "quantile_lo": 0.1,
       "quantile_hi": 0.9,
@@ -435,7 +435,22 @@
       "release_risk": "LOW"
     },
     "conformal_calibration": null,
-    "distance_weights": {},
+    "distance_weights": {
+      "vel_weight": 10,
+      "acc_weight": 500,
+      "fit": {
+        "min_train": 5,
+        "n_used": 14,
+        "mae": 1.36,
+        "coverage_80": 0.93,
+        "interval_width_mean": 3.43
+      },
+      "grid_searched": {
+        "vel": 9,
+        "acc": 7
+      },
+      "version": 1
+    },
     "limitations": [
       "Does NOT predict direction (reform vs punitive) \u2014 political capture determines that.",
       "Does NOT predict magnitude of policy response.",
@@ -516,18 +531,18 @@
         "interval_width_mean": 3.57
       },
       "sister": {
-        "mae": 2.14,
-        "coverage_80": 0.8571,
-        "brier_5yr": 0.1129,
-        "interval_width_mean": 8.21
+        "mae": 2.29,
+        "coverage_80": 0.5714,
+        "brier_5yr": 0.2496,
+        "interval_width_mean": 1.5
       },
       "honeycomb": {
-        "mae": 1.36,
-        "coverage_80": 0.9286,
-        "brier_5yr": 0.0877,
-        "interval_width_mean": 5.43
+        "mae": 1.64,
+        "coverage_80": 0.8571,
+        "brier_5yr": 0.1337,
+        "interval_width_mean": 3.5
       },
-      "winner": "honeycomb"
+      "winner": "core"
     },
     "honeycomb_weights": {
       "cells": {
@@ -568,6 +583,348 @@
         }
       },
       "tau": 1.0
+    }
+  },
+  "figure8": {
+    "distance_weights": {
+      "vel_weight": 10,
+      "acc_weight": 500,
+      "fit": {
+        "min_train": 5,
+        "n_used": 14,
+        "mae": 1.36,
+        "coverage_80": 0.93,
+        "interval_width_mean": 3.43
+      },
+      "grid_searched": {
+        "vel": 9,
+        "acc": 7
+      },
+      "version": 1
+    },
+    "honeycomb_conformal": {
+      "target_coverage": 0.8,
+      "min_train": 5,
+      "n_used": 14,
+      "s_hat": 0.0,
+      "empirical_coverage": 0.86,
+      "method": "walkforward_conformal_interval",
+      "version": 1
+    },
+    "regime_markov": {
+      "version": 1,
+      "p_1yr": {
+        "Stable": 0.0909,
+        "Redistribution": 0.3799,
+        "Crackdown": 0.0909,
+        "Reform": 0.0909,
+        "Polarization": 0.3475
+      },
+      "p_3yr": {
+        "Stable": 0.0793,
+        "Redistribution": 0.403,
+        "Crackdown": 0.0793,
+        "Reform": 0.0793,
+        "Polarization": 0.3591
+      },
+      "p_5yr": {
+        "Stable": 0.0766,
+        "Redistribution": 0.4077,
+        "Crackdown": 0.0766,
+        "Reform": 0.0766,
+        "Polarization": 0.3626
+      },
+      "p_10yr": {
+        "Stable": 0.0758,
+        "Redistribution": 0.4091,
+        "Crackdown": 0.0758,
+        "Reform": 0.0758,
+        "Polarization": 0.3636
+      },
+      "dominant_path_10yr": [
+        "Polarization",
+        "Redistribution",
+        "Redistribution",
+        "Redistribution",
+        "Redistribution",
+        "Redistribution",
+        "Redistribution",
+        "Redistribution",
+        "Redistribution",
+        "Redistribution"
+      ],
+      "n_years_used": 42
+    },
+    "honeycomb": {
+      "peak_year": 2021,
+      "window_start": 2019,
+      "window_end": 2022,
+      "confidence_pct": 71,
+      "method": "honeycomb_ensemble",
+      "components": {
+        "core": {
+          "peak_year": 2020,
+          "window_start": 2019,
+          "window_end": 2023,
+          "confidence_pct": 88
+        },
+        "sister": {
+          "peak_year": 2022,
+          "window_start": 2021,
+          "window_end": 2022,
+          "confidence_pct": 65
+        },
+        "simulation": {
+          "peak_year": 2020,
+          "window_start": 2019,
+          "window_end": 2021
+        },
+        "shift": {
+          "percentile": 0.4048,
+          "confidence_modifier": 1.0
+        }
+      },
+      "disagreement_std_years": 0.94
+    },
+    "forward_simulation": {
+      "version": 1,
+      "sim_runs": 5000,
+      "event_probability_5yr": 0.91,
+      "event_probability_10yr": 0.99,
+      "mean_time_to_event": 2.6,
+      "median_time_to_event": 2,
+      "no_event_within_15yr": 0.0,
+      "distribution": {
+        "1": 0.3824,
+        "2": 0.2444,
+        "3": 0.1366,
+        "4": 0.0902,
+        "5": 0.0538,
+        "6": 0.0372,
+        "7": 0.0202,
+        "8": 0.0136,
+        "9": 0.008,
+        "10": 0.0048,
+        "11": 0.004,
+        "12": 0.002,
+        "13": 0.0012,
+        "14": 0.0006,
+        "15": 0.0004
+      }
+    },
+    "distribution_shift": {
+      "version": 1,
+      "mahalanobis_distance": 1.59,
+      "percentile": 0.4048,
+      "outside_historical_convex_hull": false,
+      "confidence_modifier": 1.0
+    },
+    "historical_replay": {
+      "version": 1,
+      "n_years": 14,
+      "mean_errors": {
+        "core": 1.43,
+        "sister": 2.29,
+        "honeycomb": 1.64
+      },
+      "records": [
+        {
+          "year": 1993,
+          "core_peak_year": 1995,
+          "sister_peak_year": 2008,
+          "honeycomb_peak_year": 2001,
+          "honeycomb_window_start": 1999,
+          "honeycomb_window_end": 2004,
+          "actual_next_event_year": 1994,
+          "core_error": 1,
+          "sister_error": 14,
+          "honeycomb_error": 7,
+          "n_eff": 5,
+          "confidence": 0.91
+        },
+        {
+          "year": 1995,
+          "core_peak_year": 1996,
+          "sister_peak_year": 1997,
+          "honeycomb_peak_year": 1997,
+          "honeycomb_window_start": 1995,
+          "honeycomb_window_end": 1998,
+          "actual_next_event_year": 1996,
+          "core_error": 0,
+          "sister_error": 1,
+          "honeycomb_error": 1,
+          "n_eff": 6,
+          "confidence": 0.91
+        },
+        {
+          "year": 1996,
+          "core_peak_year": 1997,
+          "sister_peak_year": 2000,
+          "honeycomb_peak_year": 1998,
+          "honeycomb_window_start": 1997,
+          "honeycomb_window_end": 2000,
+          "actual_next_event_year": 2000,
+          "core_error": 3,
+          "sister_error": 0,
+          "honeycomb_error": 2,
+          "n_eff": 7,
+          "confidence": 0.91
+        },
+        {
+          "year": 1997,
+          "core_peak_year": 1998,
+          "sister_peak_year": 2001,
+          "honeycomb_peak_year": 1999,
+          "honeycomb_window_start": 1998,
+          "honeycomb_window_end": 2001,
+          "actual_next_event_year": 2000,
+          "core_error": 2,
+          "sister_error": 1,
+          "honeycomb_error": 1,
+          "n_eff": 8,
+          "confidence": 0.91
+        },
+        {
+          "year": 2000,
+          "core_peak_year": 2003,
+          "sister_peak_year": 2001,
+          "honeycomb_peak_year": 2002,
+          "honeycomb_window_start": 2000,
+          "honeycomb_window_end": 2003,
+          "actual_next_event_year": 2001,
+          "core_error": 2,
+          "sister_error": 0,
+          "honeycomb_error": 1,
+          "n_eff": 9,
+          "confidence": 0.86
+        },
+        {
+          "year": 2001,
+          "core_peak_year": 2002,
+          "sister_peak_year": 2002,
+          "honeycomb_peak_year": 2002,
+          "honeycomb_window_start": 2001,
+          "honeycomb_window_end": 2004,
+          "actual_next_event_year": 2003,
+          "core_error": 1,
+          "sister_error": 1,
+          "honeycomb_error": 1,
+          "n_eff": 10,
+          "confidence": 0.86
+        },
+        {
+          "year": 2002,
+          "core_peak_year": 2003,
+          "sister_peak_year": 2003,
+          "honeycomb_peak_year": 2003,
+          "honeycomb_window_start": 2002,
+          "honeycomb_window_end": 2005,
+          "actual_next_event_year": 2003,
+          "core_error": 0,
+          "sister_error": 0,
+          "honeycomb_error": 0,
+          "n_eff": 11,
+          "confidence": 0.86
+        },
+        {
+          "year": 2006,
+          "core_peak_year": 2007,
+          "sister_peak_year": 2007,
+          "honeycomb_peak_year": 2007,
+          "honeycomb_window_start": 2006,
+          "honeycomb_window_end": 2009,
+          "actual_next_event_year": 2008,
+          "core_error": 1,
+          "sister_error": 1,
+          "honeycomb_error": 1,
+          "n_eff": 12,
+          "confidence": 0.86
+        },
+        {
+          "year": 2008,
+          "core_peak_year": 2010,
+          "sister_peak_year": 2010,
+          "honeycomb_peak_year": 2010,
+          "honeycomb_window_start": 2008,
+          "honeycomb_window_end": 2011,
+          "actual_next_event_year": 2010,
+          "core_error": 0,
+          "sister_error": 0,
+          "honeycomb_error": 0,
+          "n_eff": 13,
+          "confidence": 0.86
+        },
+        {
+          "year": 2010,
+          "core_peak_year": 2012,
+          "sister_peak_year": 2012,
+          "honeycomb_peak_year": 2012,
+          "honeycomb_window_start": 2010,
+          "honeycomb_window_end": 2013,
+          "actual_next_event_year": 2017,
+          "core_error": 5,
+          "sister_error": 5,
+          "honeycomb_error": 5,
+          "n_eff": 14,
+          "confidence": 0.91
+        },
+        {
+          "year": 2012,
+          "core_peak_year": 2014,
+          "sister_peak_year": 2019,
+          "honeycomb_peak_year": 2016,
+          "honeycomb_window_start": 2015,
+          "honeycomb_window_end": 2021,
+          "actual_next_event_year": 2017,
+          "core_error": 3,
+          "sister_error": 2,
+          "honeycomb_error": 1,
+          "n_eff": 15,
+          "confidence": 0.82
+        },
+        {
+          "year": 2014,
+          "core_peak_year": 2016,
+          "sister_peak_year": 2020,
+          "honeycomb_peak_year": 2018,
+          "honeycomb_window_start": 2017,
+          "honeycomb_window_end": 2021,
+          "actual_next_event_year": 2017,
+          "core_error": 1,
+          "sister_error": 3,
+          "honeycomb_error": 1,
+          "n_eff": 16,
+          "confidence": 0.82
+        },
+        {
+          "year": 2016,
+          "core_peak_year": 2018,
+          "sister_peak_year": 2019,
+          "honeycomb_peak_year": 2018,
+          "honeycomb_window_start": 2017,
+          "honeycomb_window_end": 2021,
+          "actual_next_event_year": 2017,
+          "core_error": 1,
+          "sister_error": 2,
+          "honeycomb_error": 1,
+          "n_eff": 17,
+          "confidence": 0.88
+        },
+        {
+          "year": 2018,
+          "core_peak_year": 2020,
+          "sister_peak_year": 2022,
+          "honeycomb_peak_year": 2021,
+          "honeycomb_window_start": 2019,
+          "honeycomb_window_end": 2022,
+          "actual_next_event_year": 2020,
+          "core_error": 0,
+          "sister_error": 2,
+          "honeycomb_error": 1,
+          "n_eff": 18,
+          "confidence": 0.88
+        }
+      ]
     }
   },
   "hazard_curve": {
@@ -922,8 +1279,8 @@
     "ucdp_conflicts": 61
   },
   "system": {
-    "export_ts": 1771563898,
-    "freshness_sec": 87937,
+    "export_ts": 1771565358,
+    "freshness_sec": 89397,
     "data_source": "PRIMARY",
     "backup_active": false,
     "confidence_pct": 95,
@@ -936,7 +1293,7 @@
       "anomaly_score": 21.2,
       "validation_ok": true,
       "suppress_display": false,
-      "timestamp": 1771563898
+      "timestamp": 1771565358
     },
     "deep_sources": {
       "glopop_s": {
@@ -1005,5 +1362,5 @@
     "next_update_min": 4
   },
   "offline": true,
-  "export_ts": 1771563898
+  "export_ts": 1771565358
 }

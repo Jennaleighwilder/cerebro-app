@@ -1,0 +1,35 @@
+{
+  "peak_year": 2021,
+  "window_start": 2019,
+  "window_end": 2022,
+  "confidence_pct": 71,
+  "method": "honeycomb_ensemble",
+  "components": {
+    "core": {
+      "peak_year": 2020,
+      "window_start": 2019,
+      "window_end": 2023,
+      "confidence_pct": 88
+    },
+    "sister": {
+      "peak_year": 2022,
+      "window_start": 2021,
+      "window_end": 2022,
+      "confidence_pct": 65
+    },
+    "simulation": {
+      "peak_year": 2020,
+      "window_start": 2019,
+      "window_end": 2021
+    },
+    "shift": {
+      "percentile": 0.4048,
+      "confidence_modifier": 1.0
+    }
+  },
+  "disagreement_std_years": 0.94,
+  "window_label": "80% calibrated (honeycomb)",
+  "conformal_applied": true,
+  "conformal_s_hat": 0.0,
+  "target_coverage": 0.8
+}

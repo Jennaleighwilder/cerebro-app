@@ -11,6 +11,7 @@ __pycache__/
 cerebro_data/world_development_indicators.csv
 cerebro_data/GLOPOP-S/
 # GBCD: clone separately (git clone .../GBCD) or keep locally; data in cerebro_data.json
+GBCD/
 .vercel
 .env*.local
 .coverage

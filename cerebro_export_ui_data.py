@@ -391,6 +391,39 @@ def _load_honeycomb():
         return {}
 
 
+def _load_distance_weights():
+    p = SCRIPT_DIR / "cerebro_data" / "distance_weights.json"
+    if not p.exists():
+        return {}
+    try:
+        with open(p) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def _load_honeycomb_conformal():
+    p = SCRIPT_DIR / "cerebro_data" / "honeycomb_conformal.json"
+    if not p.exists():
+        return {}
+    try:
+        with open(p) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def _load_regime_markov():
+    p = SCRIPT_DIR / "cerebro_data" / "regime_markov.json"
+    if not p.exists():
+        return {}
+    try:
+        with open(p) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
 def _load_systemic_instability(df):
     try:
         from cerebro_coupling import systemic_instability_index
@@ -586,6 +619,9 @@ def main():
         "regime_probabilities": _load_regime_probabilities(),
         "spillover_metrics": _load_spillover_metrics(),
         "figure8": {
+            "distance_weights": _load_distance_weights(),
+            "honeycomb_conformal": _load_honeycomb_conformal(),
+            "regime_markov": _load_regime_markov(),
             "honeycomb": _load_honeycomb(),
             "forward_simulation": _load_forward_simulation(),
             "distribution_shift": _load_distribution_shift(),

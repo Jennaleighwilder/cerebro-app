@@ -1,0 +1,16 @@
+{
+  "vel_weight": 10,
+  "acc_weight": 500,
+  "fit": {
+    "min_train": 5,
+    "n_used": 14,
+    "mae": 1.36,
+    "coverage_80": 0.93,
+    "interval_width_mean": 3.43
+  },
+  "grid_searched": {
+    "vel": 9,
+    "acc": 7
+  },
+  "version": 1
+}

@@ -1,0 +1,165 @@
+{
+  "top_20": [
+    {
+      "vel_weight": 10,
+      "acc_weight": 500,
+      "mae": 1.3571,
+      "coverage_80": 0.9286,
+      "interval_width_mean": 3.43,
+      "n_used": 14
+    },
+    {
+      "vel_weight": 10,
+      "acc_weight": 1000,
+      "mae": 1.3571,
+      "coverage_80": 0.9286,
+      "interval_width_mean": 3.43,
+      "n_used": 14
+    },
+    {
+      "vel_weight": 75,
+      "acc_weight": 100,
+      "mae": 1.3571,
+      "coverage_80": 0.9286,
+      "interval_width_mean": 3.43,
+      "n_used": 14
+    },
+    {
+      "vel_weight": 75,
+      "acc_weight": 250,
+      "mae": 1.3571,
+      "coverage_80": 0.9286,
+      "interval_width_mean": 3.43,
+      "n_used": 14
+    },
+    {
+      "vel_weight": 10,
+      "acc_weight": 2500,
+      "mae": 1.3571,
+      "coverage_80": 0.9286,
+      "interval_width_mean": 3.57,
+      "n_used": 14
+    },
+    {
+      "vel_weight": 25,
+      "acc_weight": 1000,
+      "mae": 1.3571,
+      "coverage_80": 0.9286,
+      "interval_width_mean": 3.57,
+      "n_used": 14
+    },
+    {
+      "vel_weight": 25,
+      "acc_weight": 2500,
+      "mae": 1.3571,
+      "coverage_80": 0.9286,
+      "interval_width_mean": 3.57,
+      "n_used": 14
+    },
+    {
+      "vel_weight": 50,
+      "acc_weight": 1000,
+      "mae": 1.3571,
+      "coverage_80": 0.9286,
+      "interval_width_mean": 3.57,
+      "n_used": 14
+    },
+    {
+      "vel_weight": 50,
+      "acc_weight": 2500,
+      "mae": 1.3571,
+      "coverage_80": 0.9286,
+      "interval_width_mean": 3.57,
+      "n_used": 14
+    },
+    {
+      "vel_weight": 10,
+      "acc_weight": 10000,
+      "mae": 1.3571,
+      "coverage_80": 0.9286,
+      "interval_width_mean": 3.71,
+      "n_used": 14
+    },
+    {
+      "vel_weight": 200,
+      "acc_weight": 10000,
+      "mae": 1.3571,
+      "coverage_80": 0.9286,
+      "interval_width_mean": 3.71,
+      "n_used": 14
+    },
+    {
+      "vel_weight": 300,
+      "acc_weight": 10000,
+      "mae": 1.3571,
+      "coverage_80": 0.9286,
+      "interval_width_mean": 3.71,
+      "n_used": 14
+    },
+    {
+      "vel_weight": 10,
+      "acc_weight": 100,
+      "mae": 1.4286,
+      "coverage_80": 0.9286,
+      "interval_width_mean": 3.43,
+      "n_used": 14
+    },
+    {
+      "vel_weight": 10,
+      "acc_weight": 250,
+      "mae": 1.4286,
+      "coverage_80": 0.9286,
+      "interval_width_mean": 3.43,
+      "n_used": 14
+    },
+    {
+      "vel_weight": 25,
+      "acc_weight": 100,
+      "mae": 1.4286,
+      "coverage_80": 0.9286,
+      "interval_width_mean": 3.43,
+      "n_used": 14
+    },
+    {
+      "vel_weight": 25,
+      "acc_weight": 250,
+      "mae": 1.4286,
+      "coverage_80": 0.9286,
+      "interval_width_mean": 3.43,
+      "n_used": 14
+    },
+    {
+      "vel_weight": 25,
+      "acc_weight": 500,
+      "mae": 1.4286,
+      "coverage_80": 0.9286,
+      "interval_width_mean": 3.43,
+      "n_used": 14
+    },
+    {
+      "vel_weight": 50,
+      "acc_weight": 100,
+      "mae": 1.4286,
+      "coverage_80": 0.9286,
+      "interval_width_mean": 3.43,
+      "n_used": 14
+    },
+    {
+      "vel_weight": 50,
+      "acc_weight": 250,
+      "mae": 1.4286,
+      "coverage_80": 0.9286,
+      "interval_width_mean": 3.43,
+      "n_used": 14
+    },
+    {
+      "vel_weight": 50,
+      "acc_weight": 500,
+      "mae": 1.4286,
+      "coverage_80": 0.9286,
+      "interval_width_mean": 3.43,
+      "n_used": 14
+    }
+  ],
+  "version": 1
+}

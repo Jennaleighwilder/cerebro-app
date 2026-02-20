@@ -65,6 +65,31 @@ def _sim_q25_q75(sim: dict) -> tuple[float, float]:
     return float(q25_yr), float(q75_yr)
 
 
+def _load_learned_weights() -> tuple[float | None, float | None]:
+    """Return (vel_weight, acc_weight) from distance_weights.json or (None, None)."""
+    p = SCRIPT_DIR / "cerebro_data" / "distance_weights.json"
+    if not p.exists():
+        return None, None
+    try:
+        with open(p) as f:
+            d = json.load(f)
+        return float(d.get("vel_weight")), float(d.get("acc_weight"))
+    except Exception:
+        return None, None
+
+
+def _load_conformal() -> dict | None:
+    """Load honeycomb_conformal.json or None."""
+    p = SCRIPT_DIR / "cerebro_data" / "honeycomb_conformal.json"
+    if not p.exists():
+        return None
+    try:
+        with open(p) as f:
+            return json.load(f)
+    except Exception:
+        return None
+
+
 def compute_honeycomb_fusion(
     now_year: int,
     pos: float,
@@ -74,6 +99,8 @@ def compute_honeycomb_fusion(
     rb: float | None,
     sim_summary: dict | None = None,
     shift_dict: dict | None = None,
+    apply_learned_weights: bool = True,
+    apply_conformal: bool = True,
 ) -> dict:
     """Fuse core, sister, sim, shift. sim_summary and shift_dict override file loads."""
     from cerebro_peak_window import compute_peak_window
@@ -82,7 +109,10 @@ def compute_honeycomb_fusion(
     if len(pool) < MIN_TRAIN:
         return {"error": "Insufficient past", "peak_year": now_year + 5, "window_start": now_year + 3, "window_end": now_year + 10, "confidence_pct": 50}
 
-    core = compute_peak_window(now_year, pos, vel, acc, rb, pool, interval_alpha=0.8)
+    vw, aw = (None, None)
+    if apply_learned_weights:
+        vw, aw = _load_learned_weights()
+    core = compute_peak_window(now_year, pos, vel, acc, rb, pool, interval_alpha=0.8, vel_weight=vw, acc_weight=aw)
     sis = sister_predict(now_year, pos, vel, acc, pool)
 
     core_peak = core["peak_year"]
@@ -150,7 +180,7 @@ def compute_honeycomb_fusion(
     base_conf -= min(25, int(disp * 6))
     confidence_pct = int(_clamp(base_conf, 40, 95))
 
-    return {
+    out = {
         "peak_year": peak_year,
         "window_start": window_start,
         "window_end": window_end,
@@ -164,6 +194,27 @@ def compute_honeycomb_fusion(
         },
         "disagreement_std_years": round(disp, 2),
     }
+
+    if apply_conformal:
+        cal = _load_conformal()
+        if cal and cal.get("s_hat") is not None:
+            s_hat = float(cal["s_hat"])
+            out["window_start"] = int(window_start - s_hat)
+            out["window_end"] = int(window_end + s_hat)
+            out["window_label"] = "80% calibrated (honeycomb)"
+            out["conformal_applied"] = True
+            out["conformal_s_hat"] = round(s_hat, 4)
+            out["target_coverage"] = cal.get("target_coverage", 0.8)
+            if out["window_start"] > peak_year:
+                out["window_start"] = peak_year - 1
+            if out["window_end"] < peak_year:
+                out["window_end"] = peak_year + 1
+        else:
+            out.setdefault("conformal_applied", False)
+    else:
+        out.setdefault("conformal_applied", False)
+
+    return out
 
 
 def run_honeycomb() -> dict:
