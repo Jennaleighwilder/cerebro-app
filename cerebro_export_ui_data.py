@@ -128,6 +128,155 @@ def _compute_analogues(df, pos_col="clock_position_10pt", top_n=3):
     return [(yr, round(100 - 100 * d / total_range, 0)) for yr, d in diffs[:top_n]]
 
 
+def _load_method_data(df):
+    """Load method transparency data (equations, thresholds, limitations)."""
+    try:
+        from cerebro_peak_window import get_method_equations, compute_peak_window
+        from cerebro_conformal import load_calibration
+        eq = get_method_equations()
+        row = df.iloc[-1]
+        now_year = int(df.index[-1])
+        pos = float(row["clock_position_10pt"])
+        vel = float(row["velocity"])
+        acc = float(row["acceleration"])
+        rb = float(row["ring_B_score"]) if pd.notna(row.get("ring_B_score")) else None
+        pw = compute_peak_window(now_year, pos, vel, acc, rb)
+        prov = eq.get("provenance", {})
+        conformal = load_calibration()
+        dist_weights = {}
+        dw_path = SCRIPT_DIR / "cerebro_data" / "distance_weights.json"
+        if dw_path.exists():
+            try:
+                with open(dw_path) as f:
+                    dist_weights = json.load(f)
+            except Exception:
+                pass
+        # State-space, hazard, changepoint, coupling (Phase 2 engine)
+        state_space = _load_state_space()
+        hazard = _load_hazard_prediction(pos, vel, acc, rb)
+        changepoint = _load_changepoint()
+        coupling = _load_coupling()
+        return {
+            "saddle_rule": eq["saddle_rule"],
+            "peak_window_rule": eq["peak_window_rule"],
+            "thresholds": eq["thresholds"],
+            "provenance": prov,
+            "peak_window": pw,
+            "conformal_calibration": conformal,
+            "distance_weights": dist_weights,
+            "state_space": state_space,
+            "hazard": hazard,
+            "changepoint": changepoint,
+            "coupling": coupling,
+            "limitations": [
+                "Does NOT predict direction (reform vs punitive) — political capture determines that.",
+                "Does NOT predict magnitude of policy response.",
+                "Analogue library is US-centric; other countries need local event labels.",
+                "Ring B (GSS/Pew) improves confidence when loaded; without it, horizon widens.",
+            ],
+        }
+    except Exception as e:
+        return {"error": str(e), "saddle_rule": "", "peak_window_rule": "", "thresholds": {}, "limitations": []}
+
+
+def _load_state_space():
+    """Load state-space posterior if available."""
+    try:
+        from cerebro_state_space import get_latest_posterior
+        return get_latest_posterior()
+    except Exception:
+        return None
+
+
+def _load_hazard_prediction(pos: float, vel: float, acc: float, rb) -> dict:
+    """Load hazard prediction for current state."""
+    try:
+        from cerebro_hazard import predict_hazard
+        return predict_hazard(pos, vel, acc, rb)
+    except Exception:
+        return {}
+
+
+def _load_changepoint():
+    """Load changepoint status if available."""
+    try:
+        from cerebro_changepoint import get_changepoint_status
+        return get_changepoint_status()
+    except Exception:
+        return None
+
+
+def _load_coupling():
+    """Load coupling config."""
+    try:
+        from cerebro_coupling import get_provenance
+        return get_provenance()
+    except Exception:
+        return None
+
+
+def _load_backtest_metrics():
+    """Load backtest results from cerebro_backtest.py output."""
+    bt_path = SCRIPT_DIR / "cerebro_data" / "backtest_metrics.json"
+    if not bt_path.exists():
+        return {"n_saddles_tested": 0, "mae_years": None, "median_absolute_error_years": None,
+                "coverage_50": None, "coverage_80": None, "event_library": "", "stored_in": str(bt_path)}
+    try:
+        with open(bt_path) as f:
+            return json.load(f)
+    except Exception:
+        return {"n_saddles_tested": 0, "mae_years": None, "interval_coverage_pct": None}
+
+
+def _load_backtest_metrics_v2():
+    """Load validation v2 (rolling-origin) if available."""
+    p = SCRIPT_DIR / "cerebro_data" / "backtest_metrics_v2.json"
+    if not p.exists():
+        return {}
+    try:
+        with open(p) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def _load_model_metrics():
+    """Load model metrics (calibrated confidence) if available."""
+    p = SCRIPT_DIR / "cerebro_data" / "model_metrics.json"
+    if not p.exists():
+        return {}
+    try:
+        with open(p) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def _build_math_state(df):
+    """Build state vector + thresholds for Show math toggle."""
+    from cerebro_peak_window import V_THRESH, DIST_VEL_WEIGHT, DIST_ACC_WEIGHT, INTERVAL_ALPHA, get_method_equations
+    row = df.iloc[-1]
+    prov = get_method_equations().get("provenance", {})
+    return {
+        "position": round(float(row["clock_position_10pt"]), 4),
+        "velocity": round(float(row["velocity"]), 4),
+        "acceleration": round(float(row["acceleration"]), 4),
+        "saddle_score": int(row["saddle_score"]) if pd.notna(row["saddle_score"]) else 0,
+        "thresholds": {"v_thresh": V_THRESH, "saddle_sign_oppose": True},
+        "provenance": {
+            "v_thresh": V_THRESH,
+            "distance_vel_weight": DIST_VEL_WEIGHT,
+            "distance_acc_weight": DIST_ACC_WEIGHT,
+            "interval_alpha": INTERVAL_ALPHA,
+            "quantile_lo": prov.get("quantile_lo"),
+            "quantile_hi": prov.get("quantile_hi"),
+            "window_label": prov.get("window_label"),
+        },
+        "analogue_count": len(_compute_analogues(df)),
+        "latest_year": int(df.index[-1]),
+    }
+
+
 def _load_gathered_indicators():
     """Load latest Class/Sexual/Conflict indicators from cerebro_gathered_raw."""
     p = SCRIPT_DIR / "cerebro_data" / "cerebro_gathered_raw.csv"
@@ -153,7 +302,38 @@ def _load_gathered_indicators():
         return {}
 
 
+def _run_state_space_pipeline():
+    """Run state-space, hazard, changepoint, model_metrics before export."""
+    try:
+        from cerebro_state_space import run_harm_filter
+        run_harm_filter()
+    except Exception:
+        pass
+    try:
+        from cerebro_hazard import run_fit
+        run_fit()
+    except Exception:
+        pass
+    try:
+        from cerebro_changepoint import run_from_state_space
+        r = run_from_state_space()
+        if "error" not in r:
+            from cerebro_changepoint import OUTPUT_PATH
+            import json
+            OUTPUT_PATH.parent.mkdir(exist_ok=True)
+            with open(OUTPUT_PATH, "w") as f:
+                json.dump(r, f, indent=2)
+    except Exception:
+        pass
+    try:
+        from cerebro_model_metrics import run_and_save
+        run_and_save()
+    except Exception:
+        pass
+
+
 def main():
+    _run_state_space_pipeline()
     df = pd.read_csv(CSV_PATH, index_col=0)
     df = df[df["clock_position_10pt"].notna()].tail(15)
     raw_series = df[["clock_position_10pt", "velocity", "acceleration", "saddle_score"]].round(4).to_dict(orient="index")
@@ -162,6 +342,13 @@ def main():
 
     # Pipeline status (run cerebro_pipeline before export for failover)
     cv, cvC, cvS, pipeline_source, backup_active, pipeline_confidence = _get_pipeline_status()
+    # Calibrated confidence from model_metrics (posterior + backtest + integrity)
+    try:
+        from cerebro_model_metrics import compute_calibrated_confidence
+        model_metrics = compute_calibrated_confidence()
+        calibrated_conf = model_metrics.get("confidence_pct", pipeline_confidence)
+    except Exception:
+        calibrated_conf = pipeline_confidence
 
     # Data integrity layer
     anomaly_pos = _compute_anomaly_score(pos_series, pos_latest)
@@ -212,7 +399,7 @@ def main():
             "trend_7d": round(float(df["velocity"].iloc[-1]) * 0.02, 2) if "velocity" in df.columns else 0,
             "trend_30d": round(float(df["velocity"].iloc[-1]) * 0.08, 2) if "velocity" in df.columns else 0,
             "trend_90d": round(float(df["velocity"].iloc[-1]) * 0.25, 2) if "velocity" in df.columns else 0,
-            "confidence": 94,
+            "confidence": int(calibrated_conf),
             "ring_weights": {"A": 0.40, "B": 0.30, "C": 0.30},
             "saddle_load": round((int(df["saddle_score"].iloc[-1]) if pd.notna(df["saddle_score"].iloc[-1]) else 0) / 3 * 100, 0),
             "analogues": _compute_analogues(df),
@@ -241,7 +428,7 @@ def main():
             "freshness_sec": freshness_sec,
             "data_source": pipeline_source,
             "backup_active": backup_active,
-            "confidence_pct": pipeline_confidence,
+            "confidence_pct": int(calibrated_conf),
             "four_clock_sync": 2,
             "system_load_pct": 73,
             "saddle_intensity": "MODERATE",
@@ -256,6 +443,11 @@ def main():
             "deep_sources": {k: {"live": v.get("live"), "ring": v.get("ring"), "confidence": v.get("confidence")} for k, v in deep_sources.items()},
         },
         "country_risk": country_risk,
+        "method_data": _load_method_data(df),
+        "backtest_metrics": _load_backtest_metrics(),
+        "backtest_metrics_v2": _load_backtest_metrics_v2(),
+        "model_metrics": _load_model_metrics(),
+        "math_state": _build_math_state(df),
         "ticker_full": {},
     }
     aux = data["aux_indicators"]
@@ -319,6 +511,9 @@ def main():
             "harm_clock": data["harm_clock"],
             "apogees": data["apogees"],
             "country_risk": data.get("country_risk", {}),
+            "method_data": data.get("method_data", {}),
+            "backtest_metrics": data.get("backtest_metrics", {}),
+            "math_state": data.get("math_state", {}),
             "raw_series": raw_off,
             "indicators": data["indicators"],
             "ring_b_loaded": data["ring_b_loaded"],

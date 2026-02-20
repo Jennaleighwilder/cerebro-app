@@ -1,0 +1,13 @@
+{
+  "regime_shift_probability": NaN,
+  "last_change_estimate": 1968,
+  "last_change_index": 0,
+  "n_innovations": 47,
+  "provenance": {
+    "method": "cusum_residual",
+    "threshold": 2.0,
+    "random_seed": 42,
+    "timestamp": 1771548699,
+    "version": 1
+  }
+}
