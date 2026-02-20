@@ -5,6 +5,7 @@ CEREBRO BACKTEST — Validate peak window predictions
 Iterates known historical epochs (1900–present for US), detects saddles,
 predicts windows, compares to labeled redistribution/policy events.
 Output: backtest_metrics.json for UI and versioning.
+Includes: pinball loss, sharpness, coverage before/after conformal.
 """
 
 import json
@@ -13,6 +14,11 @@ from pathlib import Path
 SCRIPT_DIR = Path(__file__).resolve().parent
 OUTPUT_PATH = SCRIPT_DIR / "cerebro_data" / "backtest_metrics.json"
 CSV_PATH = SCRIPT_DIR / "cerebro_harm_clock_data.csv"
+
+
+def _pinball_loss(y_true: float, y_pred: float, q: float) -> float:
+    e = y_true - y_pred
+    return max(q * e, (q - 1) * e)
 
 
 # Labeled events (US): year of major redistribution/policy shift
@@ -75,41 +81,85 @@ def run_backtest() -> dict:
     if len(episodes) < 5:
         return _empty_metrics(f"Only {len(episodes)} saddle episodes")
 
-    # Backtest: for each saddle, predict window, check if event in window
-    errors = []
-    in_window = 0
-    for ep in episodes:
-        sy = ep["saddle_year"]
-        ey = ep["event_year"]
-        pred = compute_peak_window(
-            sy, ep["position"], ep["velocity"], ep["acceleration"],
-            ep.get("ring_B_score"),
-            [e for e in episodes if e["saddle_year"] != sy],
-        )
-        ws, we = pred["window_start"], pred["window_end"]
-        err = abs(ey - pred["peak_year"])
-        errors.append(err)
-        if ws <= ey <= we:
-            in_window += 1
+    from cerebro_conformal import run_calibration
+    OUTPUT_PATH.parent.mkdir(exist_ok=True)
+    cal = run_calibration(episodes, alpha=0.2, interval_alpha=0.8)
+    if "error" not in cal:
+        with open(SCRIPT_DIR / "cerebro_data" / "conformal_calibration.json", "w") as f:
+            json.dump(cal, f, indent=2)
 
-    # Metrics
+    errors = []
+    in_window_50 = 0
+    in_window_80 = 0
+    in_window_50_cal = 0
+    in_window_80_cal = 0
+    pl10_sum, pl90_sum, pl50_sum = 0.0, 0.0, 0.0
+    width_80_sum = 0.0
+
+    for ep in episodes:
+        others = [e for e in episodes if e["saddle_year"] != ep["saddle_year"]]
+        pred_50 = compute_peak_window(
+            ep["saddle_year"], ep["position"], ep["velocity"], ep["acceleration"],
+            ep.get("ring_B_score"), others, interval_alpha=0.5, apply_conformal=False,
+        )
+        pred_80 = compute_peak_window(
+            ep["saddle_year"], ep["position"], ep["velocity"], ep["acceleration"],
+            ep.get("ring_B_score"), others, interval_alpha=0.8, apply_conformal=False,
+        )
+        pred_80_cal = compute_peak_window(
+            ep["saddle_year"], ep["position"], ep["velocity"], ep["acceleration"],
+            ep.get("ring_B_score"), others, interval_alpha=0.8, apply_conformal=True,
+        )
+        pred_50_cal = compute_peak_window(
+            ep["saddle_year"], ep["position"], ep["velocity"], ep["acceleration"],
+            ep.get("ring_B_score"), others, interval_alpha=0.5, apply_conformal=True,
+        )
+        ey = ep["event_year"]
+        dt_true = ey - ep["saddle_year"]
+        err = abs(ey - pred_80["peak_year"])
+        errors.append(err)
+        if pred_50["window_start"] <= ey <= pred_50["window_end"]:
+            in_window_50 += 1
+        if pred_80["window_start"] <= ey <= pred_80["window_end"]:
+            in_window_80 += 1
+        if pred_50_cal["window_start"] <= ey <= pred_50_cal["window_end"]:
+            in_window_50_cal += 1
+        if pred_80_cal["window_start"] <= ey <= pred_80_cal["window_end"]:
+            in_window_80_cal += 1
+        pl10_sum += _pinball_loss(dt_true, pred_80.get("delta_p10", 0), 0.10)
+        pl90_sum += _pinball_loss(dt_true, pred_80.get("delta_p90", 0), 0.90)
+        pl50_sum += _pinball_loss(dt_true, pred_80.get("delta_median", 0), 0.50)
+        width_80_sum += pred_80_cal["window_end"] - pred_80_cal["window_start"]
+
     import numpy as np
+    n = len(episodes)
     errors_arr = np.array(errors)
     mae = float(np.mean(np.abs(errors_arr)))
     median_ae = float(np.median(np.abs(errors_arr)))
     worst = int(np.max(np.abs(errors_arr)))
-    coverage = in_window / len(episodes) * 100 if episodes else 0
+    coverage_50 = in_window_50 / n * 100 if n else 0
+    coverage_80 = in_window_80 / n * 100 if n else 0
+    coverage_50_cal = in_window_50_cal / n * 100 if n else 0
+    coverage_80_cal = in_window_80_cal / n * 100 if n else 0
+    sharpness_80 = width_80_sum / n if n else 0
 
     return {
-        "n_saddles_tested": len(episodes),
+        "n_saddles_tested": n,
         "mae_years": round(mae, 2),
         "median_absolute_error_years": round(median_ae, 2),
         "worst_case_error_years": worst,
-        "interval_coverage_pct": round(coverage, 1),
+        "pinball_loss_q10": round(pl10_sum / n, 4) if n else None,
+        "pinball_loss_q90": round(pl90_sum / n, 4) if n else None,
+        "pinball_loss_q50": round(pl50_sum / n, 4) if n else None,
+        "sharpness_80_years": round(sharpness_80, 2),
+        "coverage_50": round(coverage_50, 1),
+        "coverage_80": round(coverage_80, 1),
+        "coverage_50_calibrated": round(coverage_50_cal, 1),
+        "coverage_80_calibrated": round(coverage_80_cal, 1),
         "event_categories": ["redistribution", "policy_shift"],
         "event_library": "US 1900–present (New Deal, Great Society, Reagan, Crime Bill, 2008, 2020)",
         "stored_in": "cerebro_data/backtest_metrics.json",
-        "version": 1,
+        "version": 2,
     }
 
 
@@ -119,12 +169,15 @@ def _empty_metrics(reason: str) -> dict:
         "mae_years": None,
         "median_absolute_error_years": None,
         "worst_case_error_years": None,
-        "interval_coverage_pct": None,
+        "coverage_50": None,
+        "coverage_80": None,
+        "coverage_50_calibrated": None,
+        "coverage_80_calibrated": None,
         "event_categories": [],
         "event_library": "",
         "stored_in": str(OUTPUT_PATH),
         "error": reason,
-        "version": 1,
+        "version": 2,
     }
 
 
@@ -135,7 +188,7 @@ def main():
     with open(OUTPUT_PATH, "w") as f:
         json.dump(metrics, f, indent=2)
     print(f"Backtest: {metrics.get('n_saddles_tested', 0)} saddles, "
-          f"MAE={metrics.get('mae_years')} yr, coverage={metrics.get('interval_coverage_pct')}%")
+          f"MAE={metrics.get('mae_years')} yr, coverage_80_cal={metrics.get('coverage_80_calibrated')}%")
     print(f"  → {OUTPUT_PATH}")
     return 0
 

@@ -1,0 +1,9 @@
+{
+  "alpha": 0.2,
+  "s_hat": 1.0,
+  "n_samples": 20,
+  "timestamp": 1771548456,
+  "version": 1,
+  "interval_alpha": 0.8,
+  "coverage_target": 0.8
+}
