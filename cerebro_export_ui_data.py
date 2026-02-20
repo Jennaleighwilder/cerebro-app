@@ -346,6 +346,51 @@ def _load_honeycomb_weights():
         return {}
 
 
+def _load_historical_replay():
+    p = SCRIPT_DIR / "cerebro_data" / "historical_replay.json"
+    if not p.exists():
+        return {}
+    try:
+        with open(p) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def _load_forward_simulation():
+    p = SCRIPT_DIR / "cerebro_data" / "forward_simulation.json"
+    if not p.exists():
+        return {}
+    try:
+        with open(p) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def _load_distribution_shift():
+    p = SCRIPT_DIR / "cerebro_data" / "distribution_shift.json"
+    if not p.exists():
+        return {}
+    try:
+        with open(p) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def _load_honeycomb():
+    """Load honeycomb fusion verdict from cerebro_data/honeycomb_latest.json."""
+    p = SCRIPT_DIR / "cerebro_data" / "honeycomb_latest.json"
+    if not p.exists():
+        return {}
+    try:
+        with open(p) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
 def _load_systemic_instability(df):
     try:
         from cerebro_coupling import systemic_instability_index
@@ -540,6 +585,12 @@ def main():
         },
         "regime_probabilities": _load_regime_probabilities(),
         "spillover_metrics": _load_spillover_metrics(),
+        "figure8": {
+            "honeycomb": _load_honeycomb(),
+            "forward_simulation": _load_forward_simulation(),
+            "distribution_shift": _load_distribution_shift(),
+            "historical_replay": _load_historical_replay(),
+        },
         "systemic_instability_index": _load_systemic_instability(df),
         "math_state": _build_math_state(df),
         "ticker_full": {},
@@ -612,6 +663,7 @@ def main():
             "method_data": data.get("method_data", {}),
             "backtest_metrics": data.get("backtest_metrics", {}),
             "ensemble": data.get("ensemble", {}),
+            "figure8": data.get("figure8", {}),
             "hazard_curve": data.get("hazard_curve", {}),
             "math_state": data.get("math_state", {}),
             "raw_series": raw_off,

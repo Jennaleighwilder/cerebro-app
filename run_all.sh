@@ -41,9 +41,12 @@ python3 cerebro_regime.py || true
 python3 cerebro_spillover.py || true
 python3 cerebro_rolling_origin.py || true
 echo ""
-echo ">>> Sister engine + Honeycomb ensemble..."
+echo ">>> Figure-8 lab (sister, forward sim, distribution shift, honeycomb, historical replay)..."
 python3 cerebro_sister_engine.py || true
+python3 cerebro_forward_simulation.py || true
+python3 cerebro_distribution_shift.py || true
 python3 cerebro_honeycomb.py || true
+python3 cerebro_historical_replay.py || true
 python3 cerebro_ensemble_backtest.py || true
 echo ""
 echo ">>> Running tests..."

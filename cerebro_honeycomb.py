@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-CEREBRO HONEYCOMB — Local mixture-of-experts (Core + Sister)
-==========================================================
-Partition state-space into cells; learn blending weights per cell from walk-forward MAE.
+CEREBRO HONEYCOMB — Ensemble arbitration (Core + Sister + Sim + Shift)
+======================================================================
+Fuses core analogue peak, sister regression peak, forward simulation, and distribution shift.
 """
 
 import json
@@ -10,211 +10,184 @@ import numpy as np
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-OUTPUT_PATH = SCRIPT_DIR / "cerebro_data" / "hazard_curve_honeycomb.json"
-WEIGHTS_PATH = SCRIPT_DIR / "cerebro_data" / "honeycomb_weights.json"
-
-# Bin edges
-POS_BINS = [-10, -5, 0, 5, 10]
-VEL_BINS = [-float("inf"), -0.15, -0.05, 0.05, 0.15, float("inf")]
-ACC_BINS = [-float("inf"), -0.05, 0, 0.05, float("inf")]
-TAU = 1.0
+OUTPUT_PATH = SCRIPT_DIR / "cerebro_data" / "honeycomb_latest.json"
 MIN_TRAIN = 5
 
 
-def _get_cell(pos: float, vel: float, acc: float) -> tuple:
-    """Return (pbin, vbin, abin) indices."""
-    pbin = sum(1 for b in POS_BINS if pos >= b) - 1
-    pbin = max(0, min(len(POS_BINS) - 2, pbin))
-    vbin = sum(1 for b in VEL_BINS if vel >= b) - 1
-    vbin = max(0, min(len(VEL_BINS) - 2, vbin))
-    abin = sum(1 for b in ACC_BINS if acc >= b) - 1
-    abin = max(0, min(len(ACC_BINS) - 2, abin))
-    return (pbin, vbin, abin)
+def _clamp(x: float, lo: float, hi: float) -> float:
+    return max(lo, min(hi, x))
 
 
-def _softmax_weights(mae_core: float, mae_sister: float, tau: float = 1.0) -> tuple:
-    """w_core, w_sister from softmax(-mae/tau). Lower MAE = higher weight."""
-    s0 = np.exp(-mae_core / tau)
-    s1 = np.exp(-mae_sister / tau)
-    z = s0 + s1
-    if z < 1e-10:
-        return 0.5, 0.5
-    return s0 / z, s1 / z
+def _load_forward_sim() -> dict:
+    p = SCRIPT_DIR / "cerebro_data" / "forward_simulation.json"
+    if not p.exists():
+        return {}
+    try:
+        with open(p) as f:
+            return json.load(f)
+    except Exception:
+        return {}
 
 
-def _load_episodes():
-    from cerebro_calibration import _load_episodes as _cal_load
-    raw, _ = _cal_load(score_threshold=2.0)
-    return raw
+def _load_distribution_shift() -> dict:
+    p = SCRIPT_DIR / "cerebro_data" / "distribution_shift.json"
+    if not p.exists():
+        return {"percentile": 0.5, "confidence_modifier": 1.0}
+    try:
+        with open(p) as f:
+            return json.load(f)
+    except Exception:
+        return {"percentile": 0.5, "confidence_modifier": 1.0}
 
 
-def _core_prediction(ep: dict, pool: list) -> dict:
-    """Core (analogue) peak window for episode."""
-    from cerebro_core import compute_peak_window
-    pred = compute_peak_window(
-        ep["saddle_year"],
-        ep.get("position", 0),
-        ep.get("velocity", 0),
-        ep.get("acceleration", 0),
-        ep.get("ring_B_score"),
-        pool,
-        interval_alpha=0.8,
-    )
-    return {
-        "peak_year": pred["peak_year"],
-        "window_start": pred["window_start"],
-        "window_end": pred["window_end"],
-        "P_1yr": _core_p_by_horizon(ep["saddle_year"], pred, 1),
-        "P_3yr": _core_p_by_horizon(ep["saddle_year"], pred, 3),
-        "P_5yr": _core_p_by_horizon(ep["saddle_year"], pred, 5),
-        "P_10yr": _core_p_by_horizon(ep["saddle_year"], pred, 10),
-    }
+def _sim_q25_q75(sim: dict) -> tuple[float, float]:
+    """Compute q25, q75 from sim distribution (time-to-event years)."""
+    dist = sim.get("distribution", {})
+    if not dist:
+        med = sim.get("median_time_to_event", 5)
+        return max(1, med - 2), min(15, med + 2)
+    # dist is { "1": 0.04, "2": 0.08, ... } — fraction at each year
+    years = sorted([int(k) for k in dist.keys() if k.isdigit()])
+    if not years:
+        return 3.0, 8.0
+    probs = [float(dist.get(str(y), 0)) for y in years]
+    cum = np.cumsum(probs)
+    q25_yr = years[0]
+    q75_yr = years[-1]
+    for i, c in enumerate(cum):
+        if c >= 0.25:
+            q25_yr = years[i]
+            break
+    for i, c in enumerate(cum):
+        if c >= 0.75:
+            q75_yr = years[i]
+            break
+    return float(q25_yr), float(q75_yr)
 
 
-def _core_p_by_horizon(now_year: int, pred: dict, H: int) -> float:
-    """Approximate P(event within H yr) from core window (linear in window)."""
-    ws, we = pred["window_start"], pred["window_end"]
-    T = now_year + H
-    if T >= we:
-        return 1.0
-    if T <= ws:
-        return 0.0
-    span = max(1, we - ws)
-    return min(1.0, (T - ws) / span)
+def compute_honeycomb_fusion(
+    now_year: int,
+    pos: float,
+    vel: float,
+    acc: float,
+    pool: list,
+    rb: float | None,
+    sim_summary: dict | None = None,
+    shift_dict: dict | None = None,
+) -> dict:
+    """Fuse core, sister, sim, shift. sim_summary and shift_dict override file loads."""
+    from cerebro_peak_window import compute_peak_window
+    from cerebro_sister_engine import sister_predict
 
+    if len(pool) < MIN_TRAIN:
+        return {"error": "Insufficient past", "peak_year": now_year + 5, "window_start": now_year + 3, "window_end": now_year + 10, "confidence_pct": 50}
 
-def _sister_prediction(ep: dict, pool: list) -> dict:
-    """Sister hazard for episode (train on pool, predict for ep)."""
-    from cerebro_sister_engine import _feature_vec, _fit_logistic, _predict_proba, _sister_peak_window
-    HORIZONS = [1, 3, 5, 10]
-    models = {}
-    for H in HORIZONS:
-        X = np.array([_feature_vec(e) for e in pool])
-        y = np.array([1.0 if (e.get("event_year", 0) - e.get("saddle_year", 0)) <= H else 0.0 for e in pool])
-        if y.sum() < 2 or (1 - y).sum() < 2:
-            models[f"P_{H}yr"] = None
-            continue
-        coef, intercept = _fit_logistic(X, y)
-        models[f"P_{H}yr"] = (coef, intercept)
-    x = _feature_vec(ep).reshape(1, -1)
-    probs = {}
-    for h in HORIZONS:
-        key = f"P_{h}yr"
-        if models.get(key):
-            coef, intercept = models[key]
-            probs[key] = float(_predict_proba(x, coef, intercept)[0])
-        else:
-            probs[key] = 0.0
-    for i in range(1, len(HORIZONS)):
-        probs[f"P_{HORIZONS[i]}yr"] = max(probs.get(f"P_{HORIZONS[i]}yr", 0), probs.get(f"P_{HORIZONS[i-1]}yr", 0))
-    peak_year, ws, we = _sister_peak_window(ep["saddle_year"], probs)
+    core = compute_peak_window(now_year, pos, vel, acc, rb, pool, interval_alpha=0.8)
+    sis = sister_predict(now_year, pos, vel, acc, pool)
+
+    core_peak = core["peak_year"]
+    core_ws = core["window_start"]
+    core_we = core["window_end"]
+    core_conf = core.get("confidence_pct", 70)
+
+    sis_peak = sis["peak_year"]
+    sis_ws = sis["window_start"]
+    sis_we = sis["window_end"]
+    sis_conf = sis.get("confidence_pct", 70)
+
+    sim = sim_summary if sim_summary is not None else _load_forward_sim()
+    if sim.get("error"):
+        sim_peak = now_year + 5
+        sim_ws = now_year + 3
+        sim_we = now_year + 8
+        sim_conf = 50
+    else:
+        med = sim.get("median_time_to_event", 5)
+        q25, q75 = _sim_q25_q75(sim)
+        sim_peak = now_year + int(round(med))
+        sim_ws = now_year + int(round(q25))
+        sim_we = now_year + int(round(q75))
+        sim_conf = 70
+
+    shift = shift_dict if shift_dict is not None else _load_distribution_shift()
+    shift_mod = shift.get("confidence_modifier", 1.0)
+
+    w_core = _clamp(core_conf / 100.0, 0.4, 0.9)
+    w_sis = _clamp(sis_conf / 100.0, 0.2, 0.8)
+    w_sim = 0.3
+    total = w_core + w_sis + w_sim
+    w_core /= total
+    w_sis /= total
+    w_sim /= total
+
+    peak_float = w_core * core_peak + w_sis * sis_peak + w_sim * sim_peak
+    peak_year = int(round(peak_float))
+
+    ws_float = w_core * core_ws + w_sis * sis_ws + w_sim * sim_ws
+    we_float = w_core * core_we + w_sis * sis_we + w_sim * sim_we
+    window_start = int(round(ws_float))
+    window_end = int(round(we_float))
+
+    if window_start >= window_end:
+        window_start = peak_year - 2
+        window_end = peak_year + 2
+    if window_start > peak_year:
+        window_start = peak_year - 1
+    if window_end < peak_year:
+        window_end = peak_year + 1
+    width = window_end - window_start
+    if width < 3:
+        half = (3 - width) // 2
+        window_start = max(now_year, window_start - half - (3 - width - 2 * half))
+        window_end = window_start + 3
+    if width > 15:
+        window_start = peak_year - 7
+        window_end = peak_year + 8
+
+    base_conf = w_core * core_conf + w_sis * sis_conf + w_sim * sim_conf
+    base_conf *= shift_mod
+    disp = float(np.std([core_peak, sis_peak, sim_peak]))
+    base_conf -= min(25, int(disp * 6))
+    confidence_pct = int(_clamp(base_conf, 40, 95))
+
     return {
         "peak_year": peak_year,
-        "window_start": ws,
-        "window_end": we,
-        "P_1yr": probs.get("P_1yr", 0),
-        "P_3yr": probs.get("P_3yr", 0),
-        "P_5yr": probs.get("P_5yr", 0),
-        "P_10yr": probs.get("P_10yr", 0),
+        "window_start": window_start,
+        "window_end": window_end,
+        "confidence_pct": confidence_pct,
+        "method": "honeycomb_ensemble",
+        "components": {
+            "core": {"peak_year": core_peak, "window_start": core_ws, "window_end": core_we, "confidence_pct": core_conf},
+            "sister": {"peak_year": sis_peak, "window_start": sis_ws, "window_end": sis_we, "confidence_pct": sis_conf},
+            "simulation": {"peak_year": sim_peak, "window_start": sim_ws, "window_end": sim_we},
+            "shift": {"percentile": shift.get("percentile", 0.5), "confidence_modifier": shift_mod},
+        },
+        "disagreement_std_years": round(disp, 2),
     }
-
-
-def _compute_cell_weights(episodes: list) -> dict:
-    """Walk-forward: for each cell, compute MAE of core vs sister, derive weights."""
-    from cerebro_eval_utils import past_only_pool
-    sorted_ep = sorted(episodes, key=lambda e: e.get("saddle_year", 0))
-    cell_mae_core = {}
-    cell_mae_sister = {}
-    cell_n = {}
-
-    for ep in sorted_ep:
-        t = ep.get("saddle_year")
-        if t is None:
-            continue
-        pool = past_only_pool(episodes, t)
-        if len(pool) < MIN_TRAIN:
-            continue
-        cell = _get_cell(ep.get("position", 0), ep.get("velocity", 0), ep.get("acceleration", 0))
-        event_yr = ep.get("event_year", t + 5)
-
-        try:
-            core_pred = _core_prediction(ep, pool)
-            sister_pred = _sister_prediction(ep, pool)
-        except Exception:
-            continue
-
-        mae_core = abs(core_pred["peak_year"] - event_yr)
-        mae_sister = abs(sister_pred["peak_year"] - event_yr)
-
-        if cell not in cell_mae_core:
-            cell_mae_core[cell] = []
-            cell_mae_sister[cell] = []
-        cell_mae_core[cell].append(mae_core)
-        cell_mae_sister[cell].append(mae_sister)
-        cell_n[cell] = cell_n.get(cell, 0) + 1
-
-    weights = {}
-    for cell in set(cell_mae_core.keys()) | set(cell_mae_sister.keys()):
-        mae_c = np.mean(cell_mae_core.get(cell, [5.0]))
-        mae_s = np.mean(cell_mae_sister.get(cell, [5.0]))
-        w_c, w_s = _softmax_weights(mae_c, mae_s, TAU)
-        weights[str(cell)] = {
-            "w_core": round(w_c, 4),
-            "w_sister": round(w_s, 4),
-            "mae_core": round(mae_c, 2),
-            "mae_sister": round(mae_s, 2),
-            "n": cell_n.get(cell, 0),
-        }
-    return weights
 
 
 def run_honeycomb() -> dict:
-    """Compute honeycomb hazard for latest episode."""
-    episodes = _load_episodes()
-    if len(episodes) < MIN_TRAIN + 3:
-        return {"error": "Insufficient episodes", "P_5yr": 0}
+    """Fuse core, sister, sim, shift into honeycomb verdict."""
+    from cerebro_calibration import _load_episodes
+    from cerebro_eval_utils import past_only_pool
 
-    weights = _compute_cell_weights(episodes)
-    with open(WEIGHTS_PATH, "w") as f:
-        json.dump({"cells": weights, "tau": TAU}, f, indent=2)
+    episodes, _ = _load_episodes(score_threshold=2.0)
+    if len(episodes) < MIN_TRAIN + 2:
+        return {"error": "Insufficient episodes", "peak_year": 0, "window_start": 0, "window_end": 0, "confidence_pct": 50}
 
     latest = max(episodes, key=lambda e: e.get("saddle_year", 0))
-    pool = [e for e in episodes if e.get("saddle_year", 0) < latest.get("saddle_year", 0)]
+    pool = past_only_pool(episodes, latest["saddle_year"])
     if len(pool) < MIN_TRAIN:
-        return {"error": "Insufficient past", "P_5yr": 0}
+        return {"error": "Insufficient past", "peak_year": 0, "window_start": 0, "window_end": 0, "confidence_pct": 50}
 
-    cell = _get_cell(latest.get("position", 0), latest.get("velocity", 0), latest.get("acceleration", 0))
-    w_c = weights.get(str(cell), {}).get("w_core", 0.5)
-    w_s = weights.get(str(cell), {}).get("w_sister", 0.5)
-    if abs(w_c + w_s - 1.0) > 0.01:
-        w_c, w_s = 0.5, 0.5
-
-    core_pred = _core_prediction(latest, pool)
-    sister_pred = _sister_prediction(latest, pool)
-
-    P1 = w_c * core_pred["P_1yr"] + w_s * sister_pred["P_1yr"]
-    P3 = w_c * core_pred["P_3yr"] + w_s * sister_pred["P_3yr"]
-    P5 = w_c * core_pred["P_5yr"] + w_s * sister_pred["P_5yr"]
-    P10 = w_c * core_pred["P_10yr"] + w_s * sister_pred["P_10yr"]
-    peak_year = int(round(w_c * core_pred["peak_year"] + w_s * sister_pred["peak_year"]))
-    ws = int(round(w_c * core_pred["window_start"] + w_s * sister_pred["window_start"]))
-    we = int(round(w_c * core_pred["window_end"] + w_s * sister_pred["window_end"]))
-
-    out = {
-        "P_1yr": round(P1, 4),
-        "P_3yr": round(P3, 4),
-        "P_5yr": round(P5, 4),
-        "P_10yr": round(min(1.0, P10), 4),
-        "peak_year": peak_year,
-        "window_start": ws,
-        "window_end": we,
-        "now_year": latest["saddle_year"],
-        "method": "honeycomb",
-        "w_core": round(w_c, 4),
-        "w_sister": round(w_s, 4),
-        "cell": list(cell),
-    }
-    return out
+    return compute_honeycomb_fusion(
+        latest["saddle_year"],
+        latest.get("position", 0),
+        latest.get("velocity", 0),
+        latest.get("acceleration", 0),
+        pool,
+        latest.get("ring_B_score"),
+    )
 
 
 def main():
@@ -222,7 +195,7 @@ def main():
     r = run_honeycomb()
     with open(OUTPUT_PATH, "w") as f:
         json.dump(r, f, indent=2)
-    print(f"Honeycomb: P_5yr={r.get('P_5yr')}, w_core={r.get('w_core')} → {OUTPUT_PATH}")
+    print(f"Honeycomb: peak={r.get('peak_year')}, conf={r.get('confidence_pct')}% → {OUTPUT_PATH}")
     return 0
 
 

@@ -136,6 +136,19 @@ footer{max-width:1400px;margin:0 auto;padding:24px 24px 50px;padding-bottom:60px
 .live-dot{display:inline-block;width:6px;height:6px;background:var(--green);border-radius:50%;box-shadow:0 0 6px var(--green);margin-right:6px;animation:blink 2s ease-in-out infinite}
 .scan-line{position:fixed;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(0,245,255,0.3),transparent);animation:scan 8s linear infinite;pointer-events:none;z-index:100}
 @keyframes scan{0%{top:-2px;opacity:0}5%{opacity:1}95%{opacity:1}100%{top:100vh;opacity:0}}
+.figure8-section{max-width:1400px;margin:0 auto 32px;padding:0 24px}
+.figure8-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}
+@media(max-width:900px){.figure8-grid{grid-template-columns:1fr}}
+.figure8-card{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--gold);border-radius:2px;padding:20px 24px;overflow:hidden}
+.figure8-card-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:0.1em;color:var(--gold);margin-bottom:12px}
+.figure8-card-body{font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.6;color:var(--white)}
+.figure8-placeholder{color:var(--dim);font-style:italic}
+.figure8-download{text-align:center;margin-top:8px}
+.figure8-link{color:var(--gold);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;text-decoration:none}
+.figure8-link:hover{text-decoration:underline}
+.figure8-warn{color:var(--red);font-weight:600;margin-top:8px}
+.figure8-bar{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:10px}
+.figure8-bar-fill{height:8px;background:var(--gold);border-radius:1px;min-width:2px}
 </style>
 </head>
 <body>
@@ -228,6 +241,30 @@ footer{max-width:1400px;margin:0 auto;padding:24px 24px 50px;padding-bottom:60px
         </div>
       </div>
     </div>
+  </div>
+  <div class="arch-divider"><div class="arch-divider-line rev"></div><div class="arch-divider-glyph"></div><div class="arch-divider-label">FIGURE-8 LAB</div><div class="arch-divider-glyph"></div><div class="arch-divider-line"></div></div>
+  <div class="figure8-section" id="figure8Section">
+    <div class="figure8-grid">
+      <div class="figure8-card">
+        <div class="figure8-card-title">Honeycomb Verdict</div>
+        <div class="figure8-card-body" id="figure8Honeycomb">
+          <div class="figure8-placeholder">Run cerebro_honeycomb.py to load</div>
+        </div>
+      </div>
+      <div class="figure8-card">
+        <div class="figure8-card-title">Forward Simulation</div>
+        <div class="figure8-card-body" id="figure8Sim">
+          <div class="figure8-placeholder">Run cerebro_forward_simulation.py to load</div>
+        </div>
+      </div>
+      <div class="figure8-card">
+        <div class="figure8-card-title">Distribution Shift</div>
+        <div class="figure8-card-body" id="figure8Shift">
+          <div class="figure8-placeholder">Run cerebro_distribution_shift.py to load</div>
+        </div>
+      </div>
+    </div>
+    <div class="figure8-download"><a href="cerebro_offline.json" download class="figure8-link">Download Figure-8 artifacts</a></div>
   </div>
   <div class="ticker-bottom"><div class="ticker-scroll" id="tickerBottom"></div></div>
   <div class="density-panel-btn" onclick="document.getElementById('densityPanel').classList.toggle('open')" title="Density Panel">≡</div>
@@ -392,8 +429,36 @@ function loadData(){
 function scheduleRetry(){if(retryTimer)clearTimeout(retryTimer);retryTimer=setTimeout(loadData,RETRY_MS);}
 function cancelRetry(){if(retryTimer){clearTimeout(retryTimer);retryTimer=null;}}
 function syncNow(){const btn=document.getElementById('syncBtn');if(btn)btn.disabled=true;loadData();setTimeout(()=>{if(btn)btn.disabled=false;},2000);}
+function buildFigure8(){
+  const f8=DATA.figure8||{};const hon=f8.honeycomb||{};const sim=f8.forward_simulation||{};const shift=f8.distribution_shift||{};
+  const honEl=document.getElementById('figure8Honeycomb');if(!honEl)return;
+  if(hon.error||!hon.peak_year){honEl.innerHTML=hon.error||'<div class="figure8-placeholder">Run cerebro_honeycomb.py to load</div>';}else{
+    const c=hon.components||{};const core=c.core||{};const sis=c.sister||{};const simc=c.simulation||{};
+    honEl.innerHTML=`<div class="data-row"><span class="data-key">Peak year</span><span class="data-val" style="color:var(--gold)">${hon.peak_year}</span></div>`
+      +`<div class="data-row"><span class="data-key">Window</span><span class="data-val">${hon.window_start}–${hon.window_end}</span></div>`
+      +`<div class="data-row"><span class="data-key">Confidence</span><span class="data-val">${hon.confidence_pct}%</span></div>`
+      +`<div class="data-row"><span class="data-key">Disagreement (σ)</span><span class="data-val">${hon.disagreement_std_years??'—'} yr</span></div>`
+      +`<div style="margin-top:12px;font-size:9px;color:var(--dim)">Components: Core ${core.peak_year??'—'} | Sister ${sis.peak_year??'—'} | Sim ${simc.peak_year??'—'}</div>`;
+  }
+  const simEl=document.getElementById('figure8Sim');if(!simEl)return;
+  if(sim.error||(!sim.event_probability_5yr&&!sim.median_time_to_event)){simEl.innerHTML=sim.error||'<div class="figure8-placeholder">Run cerebro_forward_simulation.py to load</div>';}else{
+    const p5=(sim.event_probability_5yr??0)*100;const p10=(sim.event_probability_10yr??0)*100;const med=sim.median_time_to_event??'—';
+    let hist='';const dist=sim.distribution||{};const yrs=Object.keys(dist).filter(k=>/^\d+$/.test(k)).map(Number).sort((a,b)=>a-b);
+    if(yrs.length){const max=Math.max(...yrs.map(y=>dist[String(y)]||0));yrs.slice(0,15).forEach(y=>{const v=dist[String(y)]||0;const pct=max>0?(v/max)*100:0;hist+=`<div class="figure8-bar"><span style="min-width:24px">${y}yr</span><div class="figure8-bar-fill" style="width:${Math.max(2,pct)}%"></div><span style="color:var(--muted)">${(v*100).toFixed(1)}%</span></div>`;});}
+    simEl.innerHTML=`<div class="data-row"><span class="data-key">P(5yr)</span><span class="data-val">${p5.toFixed(0)}%</span></div>`
+      +`<div class="data-row"><span class="data-key">P(10yr)</span><span class="data-val">${p10.toFixed(0)}%</span></div>`
+      +`<div class="data-row"><span class="data-key">Median time-to-event</span><span class="data-val">${med} yr</span></div>`
+      +`<div style="margin-top:12px;font-size:9px;color:var(--dim)">Distribution</div>${hist||'<div class="figure8-placeholder">—</div>'}`;
+  }
+  const shiftEl=document.getElementById('figure8Shift');if(!shiftEl)return;
+  if(shift.error||(shift.percentile==null&&!shift.confidence_modifier)){shiftEl.innerHTML=shift.error||'<div class="figure8-placeholder">Run cerebro_distribution_shift.py to load</div>';}else{
+    const pct=shift.percentile??0;const mod=shift.confidence_modifier??1;const warn=pct>0.95?'<div class="figure8-warn">Out-of-distribution risk: extrapolating</div>':'';
+    shiftEl.innerHTML=`<div class="data-row"><span class="data-key">Percentile</span><span class="data-val">${(pct*100).toFixed(1)}%</span></div>`
+      +`<div class="data-row"><span class="data-key">Confidence modifier</span><span class="data-val">${mod}</span></div>${warn}`;
+  }
+}
 function renderAll(){
-  buildTicker();buildCPI();buildClocks();buildTickerBottom();buildDensityPanel();updateDataBadge();
+  buildTicker();buildCPI();buildClocks();buildTickerBottom();buildDensityPanel();buildFigure8();updateDataBadge();
   const d=DATA,sys=d.system||{},conf=sys.confidence_pct||85,layers=[];if(d.cultural_velocity)layers.push('L1 HARM');if(d.class_velocity)layers.push('L1 CLASS');if(d.sexual_velocity)layers.push('L1 SEXUAL');
   const l1=layers.length?' + '+layers.join(' + '):'';
   const cal=DATA.calibration_curve;const calNote=cal&&cal.bins?.length?' · Confidence calibrated against historical reliability':'';
