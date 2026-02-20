@@ -1,0 +1,9 @@
+{
+  "coverage_target": 0.8,
+  "s_hat": 0.0,
+  "window_widen_factor": 1.0,
+  "contract_status": "PASS",
+  "empirical_coverage": 0.9286,
+  "n_used": 14,
+  "residuals_quantile_level": 0.2143
+}

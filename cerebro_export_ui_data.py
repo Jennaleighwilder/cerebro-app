@@ -140,12 +140,18 @@ def _load_method_data(df):
         acc = float(row["acceleration"])
         rb = float(row["ring_B_score"]) if pd.notna(row.get("ring_B_score")) else None
         ss = int(row["saddle_score"]) if pd.notna(row.get("saddle_score")) else 0
-        pw = compute_peak_window(now_year, pos, vel, acc, rb, apply_conformal=False)
+        pos_ser = df["clock_position_10pt"].tolist() if "clock_position_10pt" in df.columns else None
+        vel_ser = df["velocity"].tolist() if "velocity" in df.columns else None
+        acc_ser = df["acceleration"].tolist() if "acceleration" in df.columns else None
+        pw = compute_peak_window(
+            now_year, pos, vel, acc, rb, apply_conformal=False,
+            position_series=pos_ser, velocity_series=vel_ser, acceleration_series=acc_ser,
+        )
         prov = eq.get("provenance", {})
         conformal = None
         try:
-            from cerebro_conformal import load_calibration
-            conformal = load_calibration()
+            from cerebro_conformal_v2 import load_contract
+            conformal = load_contract()
         except Exception:
             pass
         dist_weights = {}
@@ -448,6 +454,18 @@ def _load_chimera_export():
         return {}
 
 
+def _load_contract_report():
+    """Load contract windows report (coverage, s_hat, contract_status)."""
+    p = SCRIPT_DIR / "cerebro_data" / "contract_report.json"
+    if not p.exists():
+        return {}
+    try:
+        with open(p) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
 def _load_infinity_score():
     """Load Infinity Score (composite metric)."""
     p = SCRIPT_DIR / "cerebro_data" / "infinity_score.json"
@@ -666,6 +684,7 @@ def main():
         },
         "chimera": _load_chimera_export(),
         "infinity_score": _load_infinity_score(),
+        "contract_report": _load_contract_report(),
         "systemic_instability_index": _load_systemic_instability(df),
         "math_state": _build_math_state(df),
         "ticker_full": {},
@@ -741,6 +760,7 @@ def main():
             "figure8": data.get("figure8", {}),
             "chimera": data.get("chimera", {}),
             "infinity_score": data.get("infinity_score", {}),
+            "contract_report": data.get("contract_report", {}),
             "hazard_curve": data.get("hazard_curve", {}),
             "math_state": data.get("math_state", {}),
             "raw_series": raw_off,

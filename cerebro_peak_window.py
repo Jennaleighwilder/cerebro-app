@@ -32,26 +32,51 @@ def compute_peak_window(
     apply_conformal: bool = False,
     vel_weight: Optional[float] = None,
     acc_weight: Optional[float] = None,
+    position_series: Optional[list[float]] = None,
+    velocity_series: Optional[list[float]] = None,
+    acceleration_series: Optional[list[float]] = None,
 ) -> dict:
-    """Compute peak window. Optionally apply conformal calibration."""
+    """Compute peak window. Optionally apply conformal calibration. Confidence is calibrated (raw stored in confidence_pct_raw)."""
     out = _compute_peak_window_core(
         now_year, position, velocity, acceleration,
         ring_b_score, analogue_episodes, interval_alpha,
         vel_weight, acc_weight,
     )
+    try:
+        from chimera import chimera_confidence_calibrator
+        out = chimera_confidence_calibrator.calibrate_peak_window(
+            out,
+            position_series=position_series,
+            velocity_series=velocity_series,
+            acceleration_series=acceleration_series,
+        )
+    except Exception:
+        out["confidence_pct_raw"] = out.get("confidence_pct", 50)
+    # Contract windows (conformal v2): always attach status; widen if apply_conformal
+    contract = None
+    try:
+        from cerebro_conformal_v2 import load_contract
+        contract = load_contract()
+        out["contract_status"] = (contract or {}).get("contract_status", "UNKNOWN")
+        out["coverage_target"] = (contract or {}).get("coverage_target", 0.8)
+        out["window_widen_factor"] = (contract or {}).get("window_widen_factor", 1.0)
+    except Exception:
+        out["contract_status"] = "UNKNOWN"
+        out["coverage_target"] = 0.8
+        out["window_widen_factor"] = 1.0
+
     if apply_conformal:
         try:
-            from cerebro_conformal import load_calibration, apply_conformal as _apply
-            cal = load_calibration()
-            ws, we, s_hat, applied = _apply(
+            from cerebro_conformal_v2 import apply_conformal_v2 as _apply_v2
+            ws, we, s_hat, applied = _apply_v2(
                 out["window_start"], out["window_end"],
                 out.get("delta_p10", 0), out.get("delta_p90", 10),
-                cal,
+                contract,
             )
             if applied:
                 out["window_start"] = ws
                 out["window_end"] = we
-                out["window_label"] = "80% calibrated window" if (interval_alpha or 0.8) == 0.8 else out["window_label"]
+                out["window_label"] = "80% contract window" if (interval_alpha or 0.8) == 0.8 else out["window_label"]
                 out["conformal_applied"] = True
                 out["conformal_s_hat"] = round(s_hat, 4)
         except Exception:

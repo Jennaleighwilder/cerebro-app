@@ -24,8 +24,12 @@ echo ""
 echo ">>> Running phase1 harm clock ingest..."
 python3 cerebro_phase1_ingest.py
 echo ""
+echo ">>> Building OECD clocks..."
+python3 cerebro_oecd_clock_ingest.py || true
+echo ""
 echo ">>> Walk-forward + calibration + integrity (v2 dominance)..."
 python3 cerebro_walkforward.py || true
+python3 cerebro_conformal_v2.py || true
 python3 cerebro_calibration.py || true
 python3 cerebro_integrity.py || true
 python3 cerebro_stress.py || true
@@ -53,6 +57,9 @@ echo ">>> Figure-8 self-tune (distance weights, conformal, regime markov)..."
 python3 cerebro_fit_distance_weights.py || true
 python3 cerebro_honeycomb_conformal.py || true
 python3 cerebro_regime_markov.py || true
+echo ""
+echo ">>> Synthetic adversarial worlds (stress-test saddle detection)..."
+python3 chimera/chimera_synthetic_worlds.py || true
 echo ""
 echo ">>> CHIMERA (reconstruction, simulation, stress, coupling, evolution, entropy, validation, archive)..."
 python3 cerebro_chimera/chimera_engine.py || true
