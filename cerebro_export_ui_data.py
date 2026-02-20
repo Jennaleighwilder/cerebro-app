@@ -280,6 +280,28 @@ def _load_spillover_metrics():
         return {}
 
 
+def _load_placebo_test():
+    p = SCRIPT_DIR / "cerebro_data" / "placebo_test.json"
+    if not p.exists():
+        return {}
+    try:
+        with open(p) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def _load_candidate_sweep():
+    p = SCRIPT_DIR / "cerebro_data" / "candidate_sweep.json"
+    if not p.exists():
+        return {}
+    try:
+        with open(p) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
 def _load_systemic_instability(df):
     try:
         from cerebro_coupling import systemic_instability_index
@@ -463,6 +485,8 @@ def main():
         "model_metrics": _load_model_metrics(),
         "walkforward_metrics": _load_walkforward_metrics(),
         "calibration_curve": _load_calibration_curve(),
+        "placebo_test": _load_placebo_test(),
+        "candidate_sweep": _load_candidate_sweep(),
         "hazard_curve": _load_hazard_curve(),
         "regime_probabilities": _load_regime_probabilities(),
         "spillover_metrics": _load_spillover_metrics(),

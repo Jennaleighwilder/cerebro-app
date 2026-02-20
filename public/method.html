@@ -28,6 +28,7 @@ a:hover{text-decoration:underline}
   <h1>Method Transparency</h1>
   <div class="method-block">
     <p><strong>Calibration is computed walk-forward (past-only analogues).</strong> Each episode's prediction uses only episodes with earlier saddle years. No future leakage.</p>
+    <p><strong>Calibration expands candidate years for statistical power;</strong> production triggers remain core saddles only (detect_saddle_canonical).</p>
   </div>
   <div class="method-block">
     <p>Position normalization uses expanding min/max and z-scores: at year t, statistics are computed from data ≤ t only. Early years may be NaN until sufficient history exists.</p>

@@ -1,0 +1,86 @@
+{
+  "mode_operational": {
+    "min_train": 3,
+    "brier": 0.0862,
+    "coverage_80": 0.9375,
+    "n_used": 32
+  },
+  "mode_strict": {
+    "min_train": 5,
+    "brier": 0.0775,
+    "coverage_80": 0.9333,
+    "n_used": 30
+  },
+  "bins": [
+    {
+      "conf_mid": 0.05,
+      "empirical_hit_rate": null,
+      "n": 0
+    },
+    {
+      "conf_mid": 0.15000000000000002,
+      "empirical_hit_rate": null,
+      "n": 0
+    },
+    {
+      "conf_mid": 0.25,
+      "empirical_hit_rate": null,
+      "n": 0
+    },
+    {
+      "conf_mid": 0.35,
+      "empirical_hit_rate": null,
+      "n": 0
+    },
+    {
+      "conf_mid": 0.45,
+      "empirical_hit_rate": null,
+      "n": 0
+    },
+    {
+      "conf_mid": 0.55,
+      "empirical_hit_rate": 1.0,
+      "n": 3
+    },
+    {
+      "conf_mid": 0.6499999999999999,
+      "empirical_hit_rate": null,
+      "n": 0
+    },
+    {
+      "conf_mid": 0.75,
+      "empirical_hit_rate": null,
+      "n": 0
+    },
+    {
+      "conf_mid": 0.85,
+      "empirical_hit_rate": 0.963,
+      "n": 27
+    },
+    {
+      "conf_mid": 0.95,
+      "empirical_hit_rate": 0.5,
+      "n": 2
+    }
+  ],
+  "brier_score": 0.0862,
+  "coverage_80": 0.9375,
+  "coverage_80_ci_lower": 0.8,
+  "coverage_80_ci_upper": 0.98,
+  "interval_width_mean": 3.53,
+  "interval_width_std": 0.87,
+  "mean_n_eff": 15.78,
+  "n_eff_interpretation": "stable",
+  "n_episodes": 32,
+  "n_used": 32,
+  "min_train": 3,
+  "method": "walkforward",
+  "candidate_years_total": 35,
+  "candidate_years_used": 32,
+  "core_saddles_used": 20,
+  "score_saddles_used": 15,
+  "near_saddles_used": 0,
+  "eval_only_candidate_expansion": true,
+  "production_saddle_rule": "detect_saddle_canonical(|v|<0.15 AND sign(a) opposes sign(v))",
+  "calibration_candidate_rule": "saddle_score>=2 OR near-saddle threshold; eval-only"
+}

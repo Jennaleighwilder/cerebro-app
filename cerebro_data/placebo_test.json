@@ -1,0 +1,9 @@
+{
+  "real_brier": 0.0862,
+  "real_coverage_80": 0.9375,
+  "n_placebo": 1000,
+  "p_value_brier": 0.0,
+  "p_value_coverage": 0.0,
+  "placebo_brier_mean": 0.2299,
+  "placebo_coverage_mean": 0.7144
+}

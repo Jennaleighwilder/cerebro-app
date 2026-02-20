@@ -1,0 +1,33 @@
+{
+  "thresholds": [
+    2.0,
+    2.5,
+    3.0
+  ],
+  "sweep": [
+    {
+      "threshold": 2.0,
+      "n_used": 32,
+      "brier": 0.0862,
+      "coverage_80": 0.9375,
+      "mean_n_eff": 15.78,
+      "interval_width_mean": 3.53
+    },
+    {
+      "threshold": 2.5,
+      "n_used": 17,
+      "brier": 0.1518,
+      "coverage_80": 0.8235,
+      "mean_n_eff": 9.38,
+      "interval_width_mean": 3.65
+    },
+    {
+      "threshold": 3.0,
+      "n_used": 17,
+      "brier": 0.1518,
+      "coverage_80": 0.8235,
+      "mean_n_eff": 9.38,
+      "interval_width_mean": 3.65
+    }
+  ]
+}
