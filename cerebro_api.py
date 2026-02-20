@@ -21,15 +21,28 @@ PUBLIC_DIR = SCRIPT_DIR / "public"
 app = Flask(__name__, static_folder=str(PUBLIC_DIR), static_url_path="")
 
 
-@app.route("/health")
-def health():
-    """Health check with Infinity Score."""
+def _get_infinity_score() -> float:
+    """Read infinity_score from same source as compute_infinity_score(): cerebro_data/infinity_score.json."""
+    path = SCRIPT_DIR / "cerebro_data" / "infinity_score.json"
+    if path.exists():
+        try:
+            with open(path) as f:
+                data = json.load(f)
+            return float(data.get("infinity_score", 0))
+        except Exception:
+            pass
     try:
         from chimera.chimera_infinity_score import compute_infinity_score
         s = compute_infinity_score()
-        inf = s.get("infinity_score", 0)
+        return float(s.get("infinity_score", 0))
     except Exception:
-        inf = 0
+        return 0.0
+
+
+@app.route("/health")
+def health():
+    """Health check with Infinity Score from same source as compute_infinity_score()."""
+    inf = _get_infinity_score()
     return jsonify({"status": "ok", "infinity_score": inf})
 
 
