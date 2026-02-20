@@ -70,26 +70,11 @@ class TestCoreCoverage(unittest.TestCase):
         self.assertIn("peak_year", pw)
         self.assertIn("method", pw)
 
-    def test_compute_peak_window_multi_clock_fused(self):
-        """Triggers _load_analogue_episodes_fused and weighted distance when class_state, sexual_state provided."""
-        from cerebro_core import compute_peak_window
-        pw = compute_peak_window(
-            2022, -0.5, -0.1, 0.05, None, None,
-            class_state=(-0.3, 0.02, 0.01),
-            sexual_state=(0.2, -0.03, 0.02),
-        )
-        self.assertIn("peak_year", pw)
-        self.assertIn("method", pw)
-
-    def test_load_analogue_episodes_class_sexual(self):
-        """Triggers _load_analogue_episodes with clock=class and clock=sexual."""
+    def test_load_analogue_episodes_returns_list(self):
+        """_load_analogue_episodes returns list of episodes (core frozen, no clock param)."""
         from cerebro_core import _load_analogue_episodes
-        harm_ep = _load_analogue_episodes("harm")
-        class_ep = _load_analogue_episodes("class")
-        sexual_ep = _load_analogue_episodes("sexual")
-        self.assertIsInstance(harm_ep, list)
-        self.assertIsInstance(class_ep, list)
-        self.assertIsInstance(sexual_ep, list)
+        ep = _load_analogue_episodes()
+        self.assertIsInstance(ep, list)
 
 
 class TestCouplingCoverage(unittest.TestCase):
