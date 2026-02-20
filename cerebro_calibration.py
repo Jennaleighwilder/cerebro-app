@@ -17,10 +17,10 @@ OECD_DIR = SCRIPT_DIR / "cerebro_data" / "oecd"
 EVENT_TOLERANCE = 13
 OECD_EVENT_YEARS = {
     "UK": [1979, 1997, 2010, 2016, 2020],  # 2010: Coalition gov't (2008 was crisis onset)
-    "DE": [1989, 1990, 2005, 2009, 2015, 2020],
+    "DE": [1990, 1998, 2002, 2005, 2010, 2017, 2021],  # reunification, Schröder reforms, Merkel era shifts
     "FR": [1981, 1995, 2002, 2008, 2017, 2020],
     "JP": [1989, 1997, 2001, 2008, 2011, 2020],
-    "CA": [1984, 1993, 2006, 2015, 2020],  # 2006: Harper first Conservative gov't
+    "CA": [1993, 2006, 2011, 2015, 2019],  # major government transitions
     "AU": [1975, 1983, 1996, 2007, 2013, 2020],
     "SE": [1976, 1991, 2006, 2014, 2020],
     "BR": [1985, 1994, 2002, 2013, 2016, 2018],  # 2016: Dilma impeachment / Temer
@@ -31,7 +31,7 @@ OECD_EVENT_YEARS = {
     "AR": [1983, 1995, 2001, 2015, 2019],
     "GR": [2010, 2012, 2015],
     "ES": [2008, 2011, 2017],
-    "IT": [1992, 2011, 2018],
+    "IT": [1994, 2001, 2008, 2011, 2013, 2018, 2021],  # Berlusconi cycles, austerity, populist surge
     "IN": [1991, 2002, 2014, 2019],
     "MX": [1994, 2000, 2006, 2018],
     "CO": [1991, 2002, 2016],
@@ -186,6 +186,9 @@ def _load_episodes(score_threshold: float = 2.0):
 
 
 CALIBRATION_QUALITY_GATE_POS_STD = 0.5  # Exclude flat clocks (position std < this)
+
+# Finer mid-confidence bins for isotonic: split 0.55 into 0.50/0.60 sub-bins
+CALIBRATION_BIN_EDGES = [0.45, 0.50, 0.55, 0.60, 0.65, 0.75, 0.85, 1.0]
 
 
 def _calibration_quality_gate(country: str, clock_df, oecd_status: dict) -> tuple[bool, str]:
@@ -441,15 +444,18 @@ def _print_55_bin_diagnostic(episodes: list) -> None:
     print("---\n")
 
 
-def _build_weighted_bins(episodes: list, n_bins: int = 10) -> list:
+def _build_weighted_bins(episodes: list, n_bins: int | None = None, bin_edges: list[float] | None = None) -> list:
     """
     Build calibration bins using quality_score as sample weight.
     weighted_hit_rate = Σ(quality_score * hit) / Σ(quality_score)
     weighted_n = Σ(quality_score) for ECE weighting
+    Uses CALIBRATION_BIN_EDGES when bin_edges is None (finer mid-confidence split for isotonic).
     """
+    if bin_edges is None:
+        bin_edges = CALIBRATION_BIN_EDGES
     bins = []
-    for i in range(n_bins):
-        lo, hi = i / n_bins, (i + 1) / n_bins
+    for i in range(len(bin_edges) - 1):
+        lo, hi = bin_edges[i], bin_edges[i + 1]
         subset = [e for e in episodes if lo <= e.get("confidence", 0) < hi]
         if not subset:
             bins.append({"conf_mid": round((lo + hi) / 2, 2), "empirical_hit_rate": None, "n": 0, "weighted_n": 0})
@@ -542,7 +548,7 @@ def get_calibration_setup(score_threshold: float = 1.5) -> tuple[list, list, dic
         if not passes:
             continue
         event_years = OECD_EVENT_YEARS.get(country, [yr + 5 for yr in range(1970, 2020, 10)])
-        uk_threshold = 1.2 if country == "UK" else score_threshold
+        uk_threshold = 1.2 if country in ("UK", "DE", "CA", "IT") else score_threshold
         raw_oecd, _ = _build_oecd_episodes(country, clock_df, event_years, score_threshold=uk_threshold)
         if len(raw_oecd) >= MIN_TRAIN_OPERATIONAL + 2:
             raw.extend(raw_oecd)
@@ -591,8 +597,8 @@ def run_calibration(score_threshold: float = 1.5) -> dict:
         event_years = OECD_EVENT_YEARS.get(country, [])
         if not event_years:
             event_years = [yr + 5 for yr in range(1970, 2020, 10)]
-        # UK: 1.2 (scores 0,1,2 → 1.2=1.3; only 1.0 adds score-1 years)
-        uk_threshold = 1.2 if country == "UK" else score_threshold
+        # UK, DE, CA, IT: 1.2 (relaxed to capture more quality episodes)
+        uk_threshold = 1.2 if country in ("UK", "DE", "CA", "IT") else score_threshold
         raw_oecd, diag_oecd = _build_oecd_episodes(country, clock_df, event_years, score_threshold=uk_threshold)
         if len(raw_oecd) >= MIN_TRAIN_OPERATIONAL + 2:
             raw.extend(raw_oecd)
@@ -695,7 +701,7 @@ def run_calibration(score_threshold: float = 1.5) -> dict:
         d = ep.get("confidence_decile", 9)
         decile_dist_after[str(d)] = decile_dist_after.get(str(d), 0) + 1
 
-    bins = _build_weighted_bins(episodes_balanced, n_bins=10)
+    bins = _build_weighted_bins(episodes_balanced)
     bins = _add_calibrated_conf_mid(bins)
     _print_55_bin_diagnostic(episodes_balanced)
 

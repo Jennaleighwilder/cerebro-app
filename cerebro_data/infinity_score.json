@@ -5,25 +5,25 @@
   "penalty": 1.0,
   "signals": {
     "accuracy": 0.0,
-    "calibration": 0.3966,
-    "interval": 0.7142,
+    "calibration": 0.561,
+    "interval": 0.7273,
     "support": 0.8544,
     "robustness": 0.7716
   },
   "subscores": {
     "accuracy": 0.0,
-    "calibration": 0.3966,
-    "interval": 0.7142,
+    "calibration": 0.561,
+    "interval": 0.7273,
     "support": 0.8544,
     "robustness": 0.7716
   },
   "diagnostics": {
-    "brier": 0.1935,
-    "ece": 0.0608,
-    "n_used": 45,
-    "coverage_80": 0.7586,
-    "interval_width_mean": 5.45,
-    "mean_n_eff": 45.0,
+    "brier": 0.1709,
+    "ece": 0.0011,
+    "n_used": 35,
+    "coverage_80": 0.8348,
+    "interval_width_mean": 5.41,
+    "mean_n_eff": 35.0,
     "synthetic_fp_rate": 0.1378,
     "synthetic_noise_conf_cal": 0.6933,
     "integrity": 0.73,
@@ -56,5 +56,5 @@
     "parameter_stability": true,
     "synthetic_worlds": true
   },
-  "timestamp": "2026-02-20T22:50:36.374437Z"
+  "timestamp": "2026-02-20T23:34:19.338672Z"
 }

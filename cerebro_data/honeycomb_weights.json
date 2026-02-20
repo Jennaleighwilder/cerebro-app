@@ -1,12 +1,12 @@
 {
-  "core_mae": 1.2308,
-  "sister_mae": 1.5385,
-  "sim_mae": 1.6923,
+  "core_mae": 2.0,
+  "sister_mae": 1.8571,
+  "sim_mae": 1.7143,
   "weights": {
-    "core": 0.3957,
-    "sister": 0.3165,
-    "simulation": 0.2878
+    "core": 0.3083,
+    "sister": 0.332,
+    "simulation": 0.3597
   },
-  "n_episodes": 13,
-  "worst_component": "simulation"
+  "n_episodes": 35,
+  "worst_component": "core"
 }
