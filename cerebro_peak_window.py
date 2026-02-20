@@ -30,6 +30,11 @@ CSV_PATH = SCRIPT_DIR / "cerebro_harm_clock_data.csv"
 # Thresholds (explicit, for /method and Show math)
 V_THRESH = 0.15  # |v| below this = near turning point
 SADDLE_SIGN_OPPOSE = True  # sign(a) opposes sign(v) required
+# Distance weights in state_distance: pos² + VEL_WEIGHT*(vel)² + ACC_WEIGHT*(acc)²
+DIST_VEL_WEIGHT = 100
+DIST_ACC_WEIGHT = 2500
+# Interval alpha: 0.8 = p10–p90 (80% window), 0.5 = p25–p75 (50% window)
+INTERVAL_ALPHA = 0.8
 
 
 def detect_saddle_canonical(
@@ -89,15 +94,35 @@ def weighted_quantile(values: list[float], weights: list[float], q: float) -> fl
     return paired[-1][0]
 
 
+def _get_distance_weights() -> tuple[float, float]:
+    """Load from distance_weights.json if exists, else use module defaults."""
+    p = SCRIPT_DIR / "cerebro_data" / "distance_weights.json"
+    if p.exists():
+        try:
+            with open(p) as f:
+                d = json.load(f)
+            return (float(d.get("vel_weight", DIST_VEL_WEIGHT)), float(d.get("acc_weight", DIST_ACC_WEIGHT)))
+        except Exception:
+            pass
+    return (DIST_VEL_WEIGHT, DIST_ACC_WEIGHT)
+
+
 def state_distance(
     pos1: float, vel1: float, acc1: float,
     pos2: float, vel2: float, acc2: float,
+    vel_weight: Optional[float] = None,
+    acc_weight: Optional[float] = None,
 ) -> float:
     """Euclidean distance in normalized state space (pos, vel*10, acc*50)."""
+    vw, aw = _get_distance_weights()
+    if vel_weight is not None:
+        vw = vel_weight
+    if acc_weight is not None:
+        aw = acc_weight
     return (
         (pos1 - pos2) ** 2
-        + 100 * (vel1 - vel2) ** 2
-        + 2500 * (acc1 - acc2) ** 2
+        + vw * (vel1 - vel2) ** 2
+        + aw * (acc1 - acc2) ** 2
     ) ** 0.5
 
 
@@ -108,6 +133,10 @@ def compute_peak_window(
     acceleration: float,
     ring_b_score: Optional[float] = None,
     analogue_episodes: Optional[list[dict]] = None,
+    interval_alpha: Optional[float] = None,
+    apply_conformal: bool = True,
+    vel_weight: Optional[float] = None,
+    acc_weight: Optional[float] = None,
 ) -> dict:
     """
     Compute peak window using analogue-based time-to-event.
@@ -119,8 +148,15 @@ def compute_peak_window(
         # Build from CSV if available
         analogue_episodes = _load_analogue_episodes()
 
+    alpha = interval_alpha if interval_alpha is not None else INTERVAL_ALPHA
+    if alpha == 0.8:
+        q_lo, q_hi = 0.10, 0.90
+        window_label = "80% window"
+    else:
+        q_lo, q_hi = 0.25, 0.75
+        window_label = "50% window"
+
     if not analogue_episodes:
-        # Fallback: use fixed window from velocity/acceleration heuristic
         delta_med = 5.0 if velocity < 0 else 8.0
         return {
             "peak_year": now_year + int(round(delta_med)),
@@ -129,9 +165,17 @@ def compute_peak_window(
             "confidence_pct": 50,
             "analogue_count": 0,
             "method": "heuristic_fallback",
+            "interval_alpha": alpha,
+            "window_label": window_label,
+            "quantile_lo": q_lo,
+            "quantile_hi": q_hi,
         }
 
-    # Compute similarity weights
+    vw, aw = _get_distance_weights()
+    if vel_weight is not None:
+        vw = vel_weight
+    if acc_weight is not None:
+        aw = acc_weight
     deltas = []
     weights = []
     for ep in analogue_episodes:
@@ -139,32 +183,53 @@ def compute_peak_window(
         dist = state_distance(
             position, velocity, acceleration,
             ep.get("position", 0), ep.get("velocity", 0), ep.get("acceleration", 0),
+            vel_weight=vw, acc_weight=aw,
         )
-        w = 1.0 / (1.0 + dist)  # closer = higher weight
+        w = 1.0 / (1.0 + dist)
         deltas.append(float(dt))
         weights.append(w)
 
     med = weighted_median(deltas, weights)
-    p25 = weighted_quantile(deltas, weights, 0.25)
-    p75 = weighted_quantile(deltas, weights, 0.75)
+    p_lo = weighted_quantile(deltas, weights, q_lo)
+    p_hi = weighted_quantile(deltas, weights, q_hi)
 
-    # Dispersion affects confidence
-    disp = p75 - p25 if len(deltas) > 1 else 5.0
+    disp = p_hi - p_lo if len(deltas) > 1 else 5.0
     conf = 95 - min(40, int(disp * 3))
     if ring_b_score is not None and abs(ring_b_score) > 0.3:
         conf = min(95, conf + 5)
 
-    return {
+    ws = now_year + int(round(p_lo))
+    we = now_year + int(round(p_hi))
+    s_hat_used = 0.0
+    conformal_applied = False
+    if apply_conformal:
+        try:
+            from cerebro_conformal import load_calibration, apply_conformal as _apply
+            cal = load_calibration()
+            ws, we, s_hat_used, conformal_applied = _apply(ws, we, p_lo, p_hi, cal)
+        except Exception:
+            pass
+
+    out = {
         "peak_year": now_year + int(round(med)),
-        "window_start": now_year + int(round(p25)),
-        "window_end": now_year + int(round(p75)),
+        "window_start": ws,
+        "window_end": we,
         "confidence_pct": max(50, conf),
         "analogue_count": len(analogue_episodes),
         "delta_median": round(med, 1),
-        "delta_p25": round(p25, 1),
-        "delta_p75": round(p75, 1),
+        "delta_p25": round(weighted_quantile(deltas, weights, 0.25), 1),
+        "delta_p75": round(weighted_quantile(deltas, weights, 0.75), 1),
+        "delta_p10": round(weighted_quantile(deltas, weights, 0.10), 1),
+        "delta_p90": round(weighted_quantile(deltas, weights, 0.90), 1),
         "method": "analogue_weighted",
+        "interval_alpha": alpha,
+        "window_label": "80% calibrated window" if (conformal_applied and alpha == 0.8) else window_label,
+        "quantile_lo": q_lo,
+        "quantile_hi": q_hi,
+        "conformal_applied": conformal_applied,
+        "conformal_s_hat": round(s_hat_used, 4) if conformal_applied else None,
     }
+    return out
 
 
 def _load_analogue_episodes() -> list[dict]:
@@ -217,6 +282,10 @@ def _load_analogue_episodes() -> list[dict]:
 
 def get_method_equations() -> dict:
     """Return explicit equations for /method and Show math."""
+    vw, aw = _get_distance_weights()
+    alpha = INTERVAL_ALPHA
+    q_lo, q_hi = (0.10, 0.90) if alpha == 0.8 else (0.25, 0.75)
+    wl = "80% window" if alpha == 0.8 else "50% window"
     return {
         "saddle_rule": (
             "Saddle when: |v| < v_thresh AND sign(a) opposes sign(v). "
@@ -224,13 +293,22 @@ def get_method_equations() -> dict:
             "Saddle intensity = 0.4×v_factor + 0.35×a_factor + 0.25×ring_B."
         ),
         "peak_window_rule": (
-            "Peak year = now_year + weighted_median(Δt_i). "
-            "Window = [now_year + weighted_p25(Δt_i), now_year + weighted_p75(Δt_i)]. "
+            f"Peak year = now_year + weighted_median(Δt_i). "
+            f"Window = [now_year + weighted_p{int(q_lo*100)}(Δt_i), now_year + weighted_p{int(q_hi*100)}(Δt_i)] ({wl}). "
             "Δt_i = event_year_i - saddle_year_i per analogue episode i. "
             "Weight w_i = 1/(1 + distance(state_now, state_i))."
         ),
         "thresholds": {
             "v_thresh": V_THRESH,
             "saddle_sign_oppose": SADDLE_SIGN_OPPOSE,
+        },
+        "provenance": {
+            "v_thresh": V_THRESH,
+            "distance_vel_weight": vw,
+            "distance_acc_weight": aw,
+            "interval_alpha": alpha,
+            "quantile_lo": q_lo,
+            "quantile_hi": q_hi,
+            "window_label": wl,
         },
     }
