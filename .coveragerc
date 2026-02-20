@@ -1,0 +1,6 @@
+[run]
+source = cerebro_core,cerebro_peak_window,cerebro_energy,cerebro_coupling,cerebro_integrity
+
+[report]
+fail_under = 85
+show_missing = True

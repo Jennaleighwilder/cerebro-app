@@ -13,3 +13,4 @@ cerebro_data/GLOPOP-S/
 # GBCD: clone separately (git clone .../GBCD) or keep locally; data in cerebro_data.json
 .vercel
 .env*.local
+.coverage
