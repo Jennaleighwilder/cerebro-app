@@ -1,0 +1,40 @@
+{
+  "cells": {
+    "(1, 2, 1)": {
+      "w_core": 0.5,
+      "w_sister": 0.5,
+      "mae_core": 1.0,
+      "mae_sister": 1.0,
+      "n": 1
+    },
+    "(1, 3, 2)": {
+      "w_core": 0.7311,
+      "w_sister": 0.2689,
+      "mae_core": 1.0,
+      "mae_sister": 2.0,
+      "n": 1
+    },
+    "(1, 1, 2)": {
+      "w_core": 0.9997,
+      "w_sister": 0.0003,
+      "mae_core": 1.0,
+      "mae_sister": 9.0,
+      "n": 1
+    },
+    "(1, 2, 2)": {
+      "w_core": 0.6055,
+      "w_sister": 0.3945,
+      "mae_core": 1.14,
+      "mae_sister": 1.57,
+      "n": 7
+    },
+    "(1, 3, 3)": {
+      "w_core": 0.3775,
+      "w_sister": 0.6225,
+      "mae_core": 2.25,
+      "mae_sister": 1.75,
+      "n": 4
+    }
+  },
+  "tau": 1.0
+}

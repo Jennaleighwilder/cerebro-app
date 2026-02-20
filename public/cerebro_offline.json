@@ -1,17 +1,17 @@
 {
   "harm_clock": {
     "latest_year": 2022,
-    "position": -2.6,
-    "velocity": 0.0144,
-    "acceleration": 0.0074,
+    "position": -1.56,
+    "velocity": 0.0773,
+    "acceleration": 0.05,
     "saddle_score": 2,
     "saddle_label": "MODERATE SADDLE",
-    "ring_B_pct": -90.0,
-    "ring_A_pct": 25.0,
-    "ring_C_pct": -30.0,
+    "ring_B_pct": 32.0,
+    "ring_A_pct": -24.0,
+    "ring_C_pct": -29.0,
     "trend_7d": 0.0,
-    "trend_30d": 0.0,
-    "trend_90d": 0.0,
+    "trend_30d": 0.01,
+    "trend_90d": 0.02,
     "confidence": 95,
     "ring_weights": {
       "A": 0.4,
@@ -21,20 +21,20 @@
     "saddle_load": 67.0,
     "analogues": [
       [
+        2012,
+        99.0
+      ],
+      [
         2016,
-        86.0
+        96.0
       ],
       [
-        2021,
-        81.0
-      ],
-      [
-        2020,
-        74.0
+        2014,
+        88.0
       ]
     ],
-    "delta_year_pct": 2.8,
-    "energy_score": 1.3009,
+    "delta_year_pct": 24.4,
+    "energy_score": 0.7815,
     "release_risk": "LOW"
   },
   "apogees": {
@@ -415,14 +415,14 @@
       "core_version": "1.0.0"
     },
     "peak_window": {
-      "peak_year": 2028,
+      "peak_year": 2031,
       "window_start": 2023,
       "window_end": 2035,
       "confidence_pct": 64,
-      "analogue_count": 21,
-      "delta_median": 6.0,
-      "delta_p25": 3.0,
-      "delta_p75": 10.0,
+      "analogue_count": 10,
+      "delta_median": 9.0,
+      "delta_p25": 2.0,
+      "delta_p75": 12.0,
       "delta_p10": 1.0,
       "delta_p90": 13.0,
       "method": "analogue_weighted",
@@ -431,7 +431,7 @@
       "quantile_lo": 0.1,
       "quantile_hi": 0.9,
       "conformal_applied": false,
-      "energy_score": 1.3009,
+      "energy_score": 0.7815,
       "release_risk": "LOW"
     },
     "conformal_calibration": null,
@@ -474,10 +474,116 @@
     "method": "walkforward",
     "stored_in": "/Users/jenniferwest/Downloads/files (88)/cerebro_data/backtest_metrics.json"
   },
+  "ensemble": {
+    "sister_hazard": {
+      "P_1yr": 0.349,
+      "P_3yr": 0.7133,
+      "P_5yr": 0.7133,
+      "P_10yr": 0.7133,
+      "peak_year": 2021,
+      "window_start": 2019,
+      "window_end": 2028,
+      "now_year": 2018,
+      "method": "sister_logistic",
+      "n_train": 18
+    },
+    "honeycomb_hazard": {
+      "P_1yr": 0.2172,
+      "P_3yr": 0.6328,
+      "P_5yr": 0.8216,
+      "P_10yr": 0.8216,
+      "peak_year": 2021,
+      "window_start": 2019,
+      "window_end": 2026,
+      "now_year": 2018,
+      "method": "honeycomb",
+      "w_core": 0.3775,
+      "w_sister": 0.6225,
+      "cell": [
+        1,
+        3,
+        3
+      ]
+    },
+    "ensemble_backtest": {
+      "evaluation_candidates": "expanded",
+      "production_trigger": "core saddles only",
+      "n_episodes": 14,
+      "core": {
+        "mae": 1.43,
+        "coverage_80": 0.9286,
+        "brier_5yr": 0.0752,
+        "interval_width_mean": 3.57
+      },
+      "sister": {
+        "mae": 2.14,
+        "coverage_80": 0.8571,
+        "brier_5yr": 0.1129,
+        "interval_width_mean": 8.21
+      },
+      "honeycomb": {
+        "mae": 1.36,
+        "coverage_80": 0.9286,
+        "brier_5yr": 0.0877,
+        "interval_width_mean": 5.43
+      },
+      "winner": "honeycomb"
+    },
+    "honeycomb_weights": {
+      "cells": {
+        "(1, 2, 1)": {
+          "w_core": 0.5,
+          "w_sister": 0.5,
+          "mae_core": 1.0,
+          "mae_sister": 1.0,
+          "n": 1
+        },
+        "(1, 3, 2)": {
+          "w_core": 0.7311,
+          "w_sister": 0.2689,
+          "mae_core": 1.0,
+          "mae_sister": 2.0,
+          "n": 1
+        },
+        "(1, 1, 2)": {
+          "w_core": 0.9997,
+          "w_sister": 0.0003,
+          "mae_core": 1.0,
+          "mae_sister": 9.0,
+          "n": 1
+        },
+        "(1, 2, 2)": {
+          "w_core": 0.6055,
+          "w_sister": 0.3945,
+          "mae_core": 1.14,
+          "mae_sister": 1.57,
+          "n": 7
+        },
+        "(1, 3, 3)": {
+          "w_core": 0.3775,
+          "w_sister": 0.6225,
+          "mae_core": 2.25,
+          "mae_sister": 1.75,
+          "n": 4
+        }
+      },
+      "tau": 1.0
+    }
+  },
+  "hazard_curve": {
+    "P_1yr": 0.0,
+    "P_3yr": 0.4,
+    "P_5yr": 0.8,
+    "P_10yr": 1.0,
+    "peak_year": 2021,
+    "window_start": 2020,
+    "window_end": 2025,
+    "now_year": 2019
+  },
   "math_state": {
-    "position": -2.6016,
-    "velocity": 0.0144,
-    "acceleration": 0.0074,
+    "position": -1.557,
+    "velocity": 0.0773,
+    "acceleration": 0.05,
     "saddle_score": 2,
     "thresholds": {
       "v_thresh": 0.15,
@@ -496,546 +602,328 @@
     "latest_year": 2022
   },
   "raw_series": {
-    "1939": {
-      "clock_position_10pt": -0.0658,
-      "velocity": null,
-      "acceleration": null,
-      "saddle_score": null
-    },
-    "1940": {
-      "clock_position_10pt": 0.3621,
-      "velocity": null,
-      "acceleration": null,
-      "saddle_score": null
-    },
-    "1941": {
-      "clock_position_10pt": 2.6525,
-      "velocity": null,
-      "acceleration": null,
-      "saddle_score": null
-    },
-    "1942": {
-      "clock_position_10pt": 5.0667,
-      "velocity": 0.1711,
-      "acceleration": null,
-      "saddle_score": null
-    },
-    "1943": {
-      "clock_position_10pt": 6.0,
-      "velocity": 0.1879,
-      "acceleration": null,
-      "saddle_score": null
-    },
-    "1944": {
-      "clock_position_10pt": 6.0,
-      "velocity": 0.1116,
-      "acceleration": null,
-      "saddle_score": null
-    },
-    "1945": {
-      "clock_position_10pt": 4.4387,
-      "velocity": -0.0209,
-      "acceleration": -0.064,
-      "saddle_score": 1.0
-    },
-    "1946": {
-      "clock_position_10pt": 2.1304,
-      "velocity": -0.129,
-      "acceleration": -0.1056,
-      "saddle_score": 1.0
-    },
-    "1947": {
-      "clock_position_10pt": 1.2238,
-      "velocity": -0.1592,
-      "acceleration": -0.0903,
-      "saddle_score": 1.0
-    },
-    "1948": {
-      "clock_position_10pt": 1.6872,
-      "velocity": -0.0917,
-      "acceleration": -0.0236,
-      "saddle_score": 1.0
-    },
-    "1949": {
-      "clock_position_10pt": 1.5819,
-      "velocity": -0.0183,
-      "acceleration": 0.0369,
-      "saddle_score": 3.0
-    },
-    "1950": {
-      "clock_position_10pt": 1.6146,
-      "velocity": 0.013,
-      "acceleration": 0.0574,
-      "saddle_score": 2.0
-    },
-    "1951": {
-      "clock_position_10pt": 1.5887,
-      "velocity": -0.0033,
-      "acceleration": 0.0295,
-      "saddle_score": 3.0
-    },
-    "1952": {
-      "clock_position_10pt": 1.332,
-      "velocity": -0.0083,
-      "acceleration": 0.0033,
-      "saddle_score": 2.0
-    },
-    "1953": {
-      "clock_position_10pt": 1.5395,
-      "velocity": -0.0025,
-      "acceleration": -0.0052,
-      "saddle_score": 1.0
-    },
-    "1954": {
-      "clock_position_10pt": 1.2912,
-      "velocity": -0.0099,
-      "acceleration": -0.0022,
-      "saddle_score": 1.0
-    },
-    "1955": {
-      "clock_position_10pt": 0.6528,
-      "velocity": -0.0226,
-      "acceleration": -0.0048,
-      "saddle_score": 1.0
-    },
-    "1956": {
-      "clock_position_10pt": 0.8318,
-      "velocity": -0.0236,
-      "acceleration": -0.007,
-      "saddle_score": 1.0
-    },
-    "1957": {
-      "clock_position_10pt": 0.6213,
-      "velocity": -0.0223,
-      "acceleration": -0.0041,
-      "saddle_score": 1.0
-    },
-    "1958": {
-      "clock_position_10pt": 0.1007,
-      "velocity": -0.0184,
-      "acceleration": 0.0014,
-      "saddle_score": 3.0
-    },
-    "1959": {
-      "clock_position_10pt": 0.0504,
-      "velocity": -0.026,
-      "acceleration": -0.0008,
-      "saddle_score": 1.0
-    },
-    "1960": {
-      "clock_position_10pt": -0.0821,
-      "velocity": -0.0234,
-      "acceleration": -0.0004,
-      "saddle_score": 1.0
-    },
-    "1961": {
-      "clock_position_10pt": -0.3154,
-      "velocity": -0.0139,
-      "acceleration": 0.0015,
-      "saddle_score": 3.0
-    },
-    "1962": {
-      "clock_position_10pt": 0.0733,
-      "velocity": 0.0008,
-      "acceleration": 0.0089,
-      "saddle_score": 2.0
-    },
-    "1963": {
-      "clock_position_10pt": 0.1289,
-      "velocity": 0.007,
-      "acceleration": 0.0102,
-      "saddle_score": 2.0
-    },
-    "1964": {
-      "clock_position_10pt": 0.3277,
-      "velocity": 0.0214,
-      "acceleration": 0.0118,
-      "saddle_score": 1.0
-    },
-    "1965": {
-      "clock_position_10pt": 0.633,
-      "velocity": 0.0187,
-      "acceleration": 0.006,
-      "saddle_score": 1.0
-    },
-    "1966": {
-      "clock_position_10pt": 1.1946,
-      "velocity": 0.0355,
-      "acceleration": 0.0095,
-      "saddle_score": 1.0
-    },
-    "1967": {
-      "clock_position_10pt": 1.4596,
-      "velocity": 0.0377,
-      "acceleration": 0.0054,
-      "saddle_score": 1.0
-    },
     "1968": {
-      "clock_position_10pt": 1.5718,
-      "velocity": 0.0313,
-      "acceleration": 0.0042,
-      "saddle_score": 1.0
-    },
-    "1969": {
-      "clock_position_10pt": 1.331,
-      "velocity": 0.0045,
-      "acceleration": -0.0103,
-      "saddle_score": 0.0
+      "clock_position_10pt": 7.5406,
+      "velocity": null,
+      "acceleration": null,
+      "saddle_score": null
     },
     "1970": {
-      "clock_position_10pt": 1.1237,
-      "velocity": -0.0112,
-      "acceleration": -0.0163,
-      "saddle_score": 1.0
-    },
-    "1971": {
-      "clock_position_10pt": 0.7633,
-      "velocity": -0.027,
-      "acceleration": -0.0194,
-      "saddle_score": 1.0
+      "clock_position_10pt": 6.3549,
+      "velocity": null,
+      "acceleration": null,
+      "saddle_score": null
     },
     "1972": {
-      "clock_position_10pt": 0.9024,
-      "velocity": -0.0143,
-      "acceleration": -0.0063,
-      "saddle_score": 1.0
-    },
-    "1973": {
-      "clock_position_10pt": 1.0025,
-      "velocity": -0.004,
-      "acceleration": 0.0024,
-      "saddle_score": 3.0
+      "clock_position_10pt": 5.6806,
+      "velocity": null,
+      "acceleration": null,
+      "saddle_score": null
     },
     "1974": {
-      "clock_position_10pt": 0.287,
-      "velocity": -0.0159,
-      "acceleration": 0.0037,
-      "saddle_score": 3.0
-    },
-    "1975": {
-      "clock_position_10pt": -0.8057,
-      "velocity": -0.0569,
-      "acceleration": -0.0142,
-      "saddle_score": 1.0
+      "clock_position_10pt": 3.8949,
+      "velocity": -0.1215,
+      "acceleration": null,
+      "saddle_score": null
     },
     "1976": {
-      "clock_position_10pt": -0.8932,
-      "velocity": -0.0632,
-      "acceleration": -0.0197,
-      "saddle_score": 1.0
-    },
-    "1977": {
-      "clock_position_10pt": -1.6198,
-      "velocity": -0.0636,
-      "acceleration": -0.0159,
-      "saddle_score": 1.0
+      "clock_position_10pt": 4.2562,
+      "velocity": -0.07,
+      "acceleration": null,
+      "saddle_score": null
     },
     "1978": {
-      "clock_position_10pt": -1.7623,
-      "velocity": -0.0319,
-      "acceleration": 0.0084,
-      "saddle_score": 3.0
+      "clock_position_10pt": 3.21,
+      "velocity": -0.0824,
+      "acceleration": null,
+      "saddle_score": null
     },
     "1979": {
-      "clock_position_10pt": -5.0328,
-      "velocity": -0.138,
-      "acceleration": -0.0249,
-      "saddle_score": 1.0
-    },
-    "1980": {
-      "clock_position_10pt": -5.3418,
-      "velocity": -0.1241,
-      "acceleration": -0.0202,
-      "saddle_score": 1.0
-    },
-    "1981": {
-      "clock_position_10pt": -1.9798,
-      "velocity": -0.0072,
-      "acceleration": 0.0082,
-      "saddle_score": 3.0
-    },
-    "1982": {
-      "clock_position_10pt": -4.2504,
-      "velocity": 0.0261,
-      "acceleration": 0.0547,
+      "clock_position_10pt": 2.8302,
+      "velocity": -0.0355,
+      "acceleration": 0.0287,
       "saddle_score": 2.0
     },
-    "1983": {
-      "clock_position_10pt": -1.6785,
-      "velocity": 0.1221,
-      "acceleration": 0.0821,
+    "1980": {
+      "clock_position_10pt": 3.0406,
+      "velocity": -0.0405,
+      "acceleration": 0.0098,
+      "saddle_score": 2.0
+    },
+    "1982": {
+      "clock_position_10pt": 2.5496,
+      "velocity": -0.022,
+      "acceleration": 0.0201,
       "saddle_score": 2.0
     },
     "1984": {
-      "clock_position_10pt": -2.7552,
-      "velocity": -0.0258,
-      "acceleration": -0.0062,
+      "clock_position_10pt": 3.571,
+      "velocity": 0.0247,
+      "acceleration": 0.0201,
       "saddle_score": 1.0
     },
     "1985": {
-      "clock_position_10pt": -2.7698,
-      "velocity": 0.0494,
-      "acceleration": 0.0078,
+      "clock_position_10pt": 3.037,
+      "velocity": -0.0001,
+      "acceleration": 0.0135,
       "saddle_score": 2.0
     },
     "1986": {
-      "clock_position_10pt": -2.7179,
-      "velocity": -0.0346,
-      "acceleration": -0.0523,
-      "saddle_score": 1.0
-    },
-    "1987": {
-      "clock_position_10pt": -2.6426,
-      "velocity": 0.0038,
-      "acceleration": 0.0099,
+      "clock_position_10pt": 2.4767,
+      "velocity": -0.0024,
+      "acceleration": 0.0065,
       "saddle_score": 2.0
     },
+    "1987": {
+      "clock_position_10pt": 2.2664,
+      "velocity": -0.0435,
+      "acceleration": -0.0227,
+      "saddle_score": 1.0
+    },
     "1988": {
-      "clock_position_10pt": -2.874,
-      "velocity": -0.0035,
-      "acceleration": -0.0176,
-      "saddle_score": 1.0
-    },
-    "1989": {
-      "clock_position_10pt": -2.9217,
-      "velocity": -0.0068,
-      "acceleration": 0.0093,
-      "saddle_score": 3.0
-    },
-    "1990": {
-      "clock_position_10pt": -3.921,
-      "velocity": -0.0426,
-      "acceleration": -0.0155,
-      "saddle_score": 1.0
-    },
-    "1991": {
-      "clock_position_10pt": -2.9538,
-      "velocity": -0.0027,
-      "acceleration": 0.0003,
-      "saddle_score": 3.0
-    },
-    "1992": {
-      "clock_position_10pt": -5.0818,
-      "velocity": -0.072,
-      "acceleration": -0.0217,
-      "saddle_score": 1.0
-    },
-    "1993": {
-      "clock_position_10pt": -5.1065,
-      "velocity": -0.0395,
-      "acceleration": 0.001,
-      "saddle_score": 3.0
-    },
-    "1994": {
-      "clock_position_10pt": -4.797,
-      "velocity": -0.0614,
+      "clock_position_10pt": 1.2687,
+      "velocity": -0.0589,
       "acceleration": -0.0196,
       "saddle_score": 1.0
     },
-    "1995": {
-      "clock_position_10pt": -4.3547,
-      "velocity": 0.0242,
-      "acceleration": 0.0321,
-      "saddle_score": 2.0
-    },
-    "1996": {
-      "clock_position_10pt": -3.2094,
-      "velocity": 0.0632,
-      "acceleration": 0.0343,
-      "saddle_score": 2.0
-    },
-    "1997": {
-      "clock_position_10pt": -3.1532,
-      "velocity": 0.0548,
-      "acceleration": 0.0387,
-      "saddle_score": 2.0
-    },
-    "1998": {
-      "clock_position_10pt": -2.4561,
-      "velocity": 0.0633,
-      "acceleration": 0.013,
+    "1989": {
+      "clock_position_10pt": 0.5034,
+      "velocity": -0.0658,
+      "acceleration": -0.0211,
       "saddle_score": 1.0
     },
-    "1999": {
-      "clock_position_10pt": -1.9516,
-      "velocity": 0.0419,
-      "acceleration": -0.0071,
-      "saddle_score": 0.0
-    },
-    "2000": {
-      "clock_position_10pt": -1.8589,
-      "velocity": 0.0431,
-      "acceleration": -0.0039,
-      "saddle_score": 0.0
-    },
-    "2001": {
-      "clock_position_10pt": -0.3632,
-      "velocity": 0.0698,
-      "acceleration": 0.0022,
-      "saddle_score": 2.0
-    },
-    "2002": {
-      "clock_position_10pt": -0.915,
-      "velocity": 0.0346,
-      "acceleration": -0.0025,
-      "saddle_score": 0.0
-    },
-    "2003": {
-      "clock_position_10pt": -2.1326,
-      "velocity": -0.0091,
-      "acceleration": -0.0174,
+    "1990": {
+      "clock_position_10pt": -0.4911,
+      "velocity": -0.0919,
+      "acceleration": -0.0161,
       "saddle_score": 1.0
     },
-    "2004": {
-      "clock_position_10pt": -1.7323,
-      "velocity": -0.0456,
-      "acceleration": -0.0385,
+    "1991": {
+      "clock_position_10pt": -0.7373,
+      "velocity": -0.0669,
+      "acceleration": -0.0026,
       "saddle_score": 1.0
     },
-    "2005": {
-      "clock_position_10pt": -2.5645,
-      "velocity": -0.055,
-      "acceleration": -0.0298,
+    "1992": {
+      "clock_position_10pt": -1.8895,
+      "velocity": -0.0798,
+      "acceleration": -0.0047,
       "saddle_score": 1.0
     },
-    "2006": {
-      "clock_position_10pt": -2.4312,
-      "velocity": -0.01,
-      "acceleration": -0.0003,
-      "saddle_score": 1.0
-    },
-    "2007": {
-      "clock_position_10pt": -2.8591,
-      "velocity": -0.0376,
-      "acceleration": 0.0027,
-      "saddle_score": 3.0
-    },
-    "2008": {
-      "clock_position_10pt": -3.1828,
-      "velocity": -0.0206,
+    "1993": {
+      "clock_position_10pt": -2.2165,
+      "velocity": -0.0575,
       "acceleration": 0.0115,
       "saddle_score": 3.0
     },
+    "1994": {
+      "clock_position_10pt": -2.8462,
+      "velocity": -0.0703,
+      "acceleration": -0.0011,
+      "saddle_score": 1.0
+    },
+    "1995": {
+      "clock_position_10pt": -3.3634,
+      "velocity": -0.0491,
+      "acceleration": 0.0102,
+      "saddle_score": 3.0
+    },
+    "1996": {
+      "clock_position_10pt": -2.2256,
+      "velocity": -0.0003,
+      "acceleration": 0.0191,
+      "saddle_score": 3.0
+    },
+    "1997": {
+      "clock_position_10pt": -2.9695,
+      "velocity": -0.0041,
+      "acceleration": 0.0221,
+      "saddle_score": 3.0
+    },
+    "1998": {
+      "clock_position_10pt": -1.9152,
+      "velocity": 0.0483,
+      "acceleration": 0.0325,
+      "saddle_score": 1.0
+    },
+    "1999": {
+      "clock_position_10pt": -2.5938,
+      "velocity": -0.0123,
+      "acceleration": -0.004,
+      "saddle_score": 1.0
+    },
+    "2000": {
+      "clock_position_10pt": -1.4863,
+      "velocity": 0.0494,
+      "acceleration": 0.0179,
+      "saddle_score": 2.0
+    },
+    "2001": {
+      "clock_position_10pt": -1.4982,
+      "velocity": 0.0139,
+      "acceleration": -0.0115,
+      "saddle_score": 0.0
+    },
+    "2002": {
+      "clock_position_10pt": -1.5418,
+      "velocity": 0.0351,
+      "acceleration": 0.0158,
+      "saddle_score": 2.0
+    },
+    "2003": {
+      "clock_position_10pt": -2.9099,
+      "velocity": -0.0475,
+      "acceleration": -0.0323,
+      "saddle_score": 1.0
+    },
+    "2004": {
+      "clock_position_10pt": -1.6601,
+      "velocity": -0.0054,
+      "acceleration": -0.0064,
+      "saddle_score": 1.0
+    },
+    "2005": {
+      "clock_position_10pt": -3.5299,
+      "velocity": -0.0663,
+      "acceleration": -0.0338,
+      "saddle_score": 1.0
+    },
+    "2006": {
+      "clock_position_10pt": -2.4174,
+      "velocity": 0.0164,
+      "acceleration": 0.0213,
+      "saddle_score": 2.0
+    },
+    "2007": {
+      "clock_position_10pt": -4.2995,
+      "velocity": -0.088,
+      "acceleration": -0.0275,
+      "saddle_score": 1.0
+    },
+    "2008": {
+      "clock_position_10pt": -2.3543,
+      "velocity": 0.0392,
+      "acceleration": 0.0352,
+      "saddle_score": 2.0
+    },
     "2009": {
-      "clock_position_10pt": -3.9615,
-      "velocity": -0.051,
-      "acceleration": -0.0137,
+      "clock_position_10pt": -4.4033,
+      "velocity": -0.0662,
+      "acceleration": -0.0275,
       "saddle_score": 1.0
     },
     "2010": {
-      "clock_position_10pt": -3.9449,
-      "velocity": -0.0362,
-      "acceleration": 0.0005,
-      "saddle_score": 3.0
+      "clock_position_10pt": -1.9768,
+      "velocity": 0.0774,
+      "acceleration": 0.0551,
+      "saddle_score": 2.0
     },
     "2011": {
-      "clock_position_10pt": -4.0801,
-      "velocity": -0.0299,
-      "acceleration": -0.0031,
+      "clock_position_10pt": -4.3565,
+      "velocity": -0.0667,
+      "acceleration": -0.0353,
       "saddle_score": 1.0
     },
     "2012": {
-      "clock_position_10pt": -3.8413,
-      "velocity": 0.004,
-      "acceleration": 0.0183,
+      "clock_position_10pt": -1.5154,
+      "velocity": 0.0963,
+      "acceleration": 0.0542,
       "saddle_score": 2.0
     },
     "2013": {
-      "clock_position_10pt": -3.4494,
-      "velocity": 0.0165,
-      "acceleration": 0.0176,
-      "saddle_score": 2.0
+      "clock_position_10pt": -3.745,
+      "velocity": -0.0589,
+      "acceleration": -0.0455,
+      "saddle_score": 1.0
     },
     "2014": {
-      "clock_position_10pt": -3.6269,
-      "velocity": 0.0151,
-      "acceleration": 0.015,
+      "clock_position_10pt": -1.1479,
+      "velocity": 0.107,
+      "acceleration": 0.0579,
       "saddle_score": 2.0
     },
     "2015": {
-      "clock_position_10pt": -3.7106,
-      "velocity": 0.0044,
-      "acceleration": 0.0001,
+      "clock_position_10pt": -4.0828,
+      "velocity": -0.0856,
+      "acceleration": -0.0606,
       "saddle_score": 1.0
     },
     "2016": {
-      "clock_position_10pt": -2.8034,
-      "velocity": 0.0215,
-      "acceleration": 0.0017,
-      "saddle_score": 1.0
+      "clock_position_10pt": -1.6949,
+      "velocity": 0.0683,
+      "acceleration": 0.0424,
+      "saddle_score": 2.0
     },
     "2017": {
-      "clock_position_10pt": -3.396,
-      "velocity": 0.0077,
-      "acceleration": -0.0025,
-      "saddle_score": 0.0
+      "clock_position_10pt": -4.401,
+      "velocity": -0.1084,
+      "acceleration": -0.0718,
+      "saddle_score": 1.0
     },
     "2018": {
-      "clock_position_10pt": -3.143,
-      "velocity": 0.0189,
-      "acceleration": 0.0049,
+      "clock_position_10pt": -1.0046,
+      "velocity": 0.1026,
+      "acceleration": 0.0627,
       "saddle_score": 2.0
     },
     "2019": {
-      "clock_position_10pt": -3.0343,
-      "velocity": -0.0077,
-      "acceleration": -0.0097,
+      "clock_position_10pt": -3.8766,
+      "velocity": -0.0727,
+      "acceleration": -0.047,
       "saddle_score": 1.0
     },
     "2020": {
-      "clock_position_10pt": -2.9835,
-      "velocity": 0.0137,
-      "acceleration": 0.002,
+      "clock_position_10pt": -3.4887,
+      "velocity": 0.0304,
+      "acceleration": 0.0463,
       "saddle_score": 2.0
     },
     "2021": {
-      "clock_position_10pt": -2.8772,
-      "velocity": 0.0089,
-      "acceleration": -0.0034,
-      "saddle_score": 0.0
+      "clock_position_10pt": -3.995,
+      "velocity": -0.0997,
+      "acceleration": -0.0674,
+      "saddle_score": 1.0
     },
     "2022": {
-      "clock_position_10pt": -2.6016,
-      "velocity": 0.0144,
-      "acceleration": 0.0074,
+      "clock_position_10pt": -1.557,
+      "velocity": 0.0773,
+      "acceleration": 0.05,
       "saddle_score": 2.0
     }
   },
   "indicators": {
-    "unemployment": 3.7,
+    "unemployment": null,
     "homicide_rate": 6.3,
     "incarceration": 350,
     "overdose_rate": 32.0
   },
   "ring_b_loaded": true,
   "cultural_velocity": {
-    "cultural_velocity": 13.83,
-    "cultural_velocity_smooth": 6.79,
-    "reform_index": 10.3,
-    "punitive_index": 13.0,
+    "cultural_velocity": 10.12,
+    "cultural_velocity_smooth": 6.57,
+    "reform_index": 10.0,
+    "punitive_index": 13.3,
     "year": 2026,
     "month": 2,
     "lead_time_months": "3\u201312"
   },
   "class_velocity": {
-    "velocity_smooth": 15.17,
+    "velocity_smooth": 16.4,
     "year": 2026,
     "month": 2
   },
   "sexual_velocity": {
-    "velocity_smooth": -2.31,
+    "velocity_smooth": 0.51,
     "year": 2026,
     "month": 2
   },
   "aux_indicators": {
-    "gini": 0.456,
-    "consumer_sentiment": 57.6,
     "sti_rate": 675.2,
     "ucdp_conflicts": 61
   },
   "system": {
-    "export_ts": 1771563262,
-    "freshness_sec": 2482,
+    "export_ts": 1771563898,
+    "freshness_sec": 87937,
     "data_source": "PRIMARY",
     "backup_active": false,
     "confidence_pct": 95,
@@ -1045,10 +933,10 @@
     "historical_percentile": 88,
     "next_update_min": 4,
     "integrity": {
-      "anomaly_score": 34.1,
+      "anomaly_score": 21.2,
       "validation_ok": true,
       "suppress_display": false,
-      "timestamp": 1771563262
+      "timestamp": 1771563898
     },
     "deep_sources": {
       "glopop_s": {
@@ -1099,15 +987,15 @@
     }
   },
   "ticker_full": {
-    "l1_harm": 6.79,
-    "l1_class": 15.17,
-    "l1_sexual": -2.31,
-    "gini": 0.456,
+    "l1_harm": 6.57,
+    "l1_class": 16.4,
+    "l1_sexual": 0.51,
+    "gini": null,
     "sti": 675.2,
     "conflicts": 61,
     "gdelt_tone": -2.3,
     "metaculus": 72,
-    "fred_unrate": 3.7,
+    "fred_unrate": null,
     "cdc_update": "12h ago",
     "ucdp_active": 61,
     "acled_events": 143,
@@ -1117,5 +1005,5 @@
     "next_update_min": 4
   },
   "offline": true,
-  "export_ts": 1771563262
+  "export_ts": 1771563898
 }

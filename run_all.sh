@@ -41,6 +41,11 @@ python3 cerebro_regime.py || true
 python3 cerebro_spillover.py || true
 python3 cerebro_rolling_origin.py || true
 echo ""
+echo ">>> Sister engine + Honeycomb ensemble..."
+python3 cerebro_sister_engine.py || true
+python3 cerebro_honeycomb.py || true
+python3 cerebro_ensemble_backtest.py || true
+echo ""
 echo ">>> Running tests..."
 python3 test_data_gather.py || true
 python3 tests/test_core_frozen.py -v || true

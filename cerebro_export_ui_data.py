@@ -302,6 +302,50 @@ def _load_candidate_sweep():
         return {}
 
 
+def _load_hazard_curve_sister():
+    p = SCRIPT_DIR / "cerebro_data" / "hazard_curve_sister.json"
+    if not p.exists():
+        return {}
+    try:
+        with open(p) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def _load_hazard_curve_honeycomb():
+    p = SCRIPT_DIR / "cerebro_data" / "hazard_curve_honeycomb.json"
+    if not p.exists():
+        return {}
+    try:
+        with open(p) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def _load_ensemble_backtest():
+    p = SCRIPT_DIR / "cerebro_data" / "ensemble_backtest.json"
+    if not p.exists():
+        return {}
+    try:
+        with open(p) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def _load_honeycomb_weights():
+    p = SCRIPT_DIR / "cerebro_data" / "honeycomb_weights.json"
+    if not p.exists():
+        return {}
+    try:
+        with open(p) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
 def _load_systemic_instability(df):
     try:
         from cerebro_coupling import systemic_instability_index
@@ -488,6 +532,12 @@ def main():
         "placebo_test": _load_placebo_test(),
         "candidate_sweep": _load_candidate_sweep(),
         "hazard_curve": _load_hazard_curve(),
+        "ensemble": {
+            "sister_hazard": _load_hazard_curve_sister(),
+            "honeycomb_hazard": _load_hazard_curve_honeycomb(),
+            "ensemble_backtest": _load_ensemble_backtest(),
+            "honeycomb_weights": _load_honeycomb_weights(),
+        },
         "regime_probabilities": _load_regime_probabilities(),
         "spillover_metrics": _load_spillover_metrics(),
         "systemic_instability_index": _load_systemic_instability(df),
@@ -561,6 +611,8 @@ def main():
             "country_risk": data.get("country_risk", {}),
             "method_data": data.get("method_data", {}),
             "backtest_metrics": data.get("backtest_metrics", {}),
+            "ensemble": data.get("ensemble", {}),
+            "hazard_curve": data.get("hazard_curve", {}),
             "math_state": data.get("math_state", {}),
             "raw_series": raw_off,
             "indicators": data["indicators"],

@@ -398,10 +398,12 @@ function renderAll(){
   const l1=layers.length?' + '+layers.join(' + '):'';
   const cal=DATA.calibration_curve;const calNote=cal&&cal.bins?.length?' · Confidence calibrated against historical reliability':'';
   const hc=DATA.hazard_curve;const hazNote=hc&&hc.P_5yr!=null?` · P(5yr)=${(hc.P_5yr*100).toFixed(0)}%`:('');
+  const ens=DATA.ensemble||{};const sis=ens.sister_hazard||{};const hon=ens.honeycomb_hazard||{};
+  const modelStack=(sis.P_5yr!=null||hon.P_5yr!=null)?`<br><span style="font-size:9px;color:var(--dim)">Model stack: Core ${((hc?.P_5yr??0)*100).toFixed(0)}% · Sister ${((sis.P_5yr??0)*100).toFixed(0)}% · Honeycomb ${((hon.P_5yr??0)*100).toFixed(0)}% · ${(hon.w_core??0.5)>=0.5?'Core↑':'Sister↑'}</span>`:'';
   const reg=DATA.regime_probabilities;const regNote=reg&&reg.Redistribution!=null?` · Regime: ${Object.entries(reg).sort((a,b)=>b[1]-a[1]).slice(0,2).map(([k,v])=>k+' '+(v*100).toFixed(0)+'%').join(', ')}`:('');
   const pt=DATA.placebo_test;const placeboNote=pt&&pt.p_value_brier!=null?`<br><span style="font-size:9px;color:var(--dim)">Placebo p_brier=${pt.p_value_brier} · p_coverage=${pt.p_value_coverage}</span>`:'';
   const cs=DATA.candidate_sweep;let sweepBadge='';if(cs&&cs.sweep?.length>=2){const covs=cs.sweep.map(s=>s.coverage_80).filter(x=>x!=null);const briers=cs.sweep.map(s=>s.brier).filter(x=>x!=null);const m=(a)=>a.reduce((x,y)=>x+y,0)/a.length;const covStd=covs.length>=2?Math.sqrt(covs.reduce((a,v)=>a+(v-m(covs))**2,0)/(covs.length-1)):0;const brierStd=briers.length>=2?Math.sqrt(briers.reduce((a,v)=>a+(v-m(briers))**2,0)/(briers.length-1)):0;if(covStd<0.1&&brierStd<0.05)sweepBadge=' · <span style="font-size:9px;color:var(--green)">stable across thresholds</span>';}
-  const fl=document.getElementById('footerLeft');if(fl)fl.innerHTML=`<span class="live-dot"></span>LIVE DATA · FRED + GSS + PEW + STI + UCDP${l1}<br>RING B LOADED · CONFIDENCE ${conf}%${calNote}${hazNote}${regNote}${sweepBadge}${placeboNote}<button class="sync-btn" id="syncBtn" onclick="syncNow()" title="Sync when connection restored">SYNC</button>`;
+  const fl=document.getElementById('footerLeft');if(fl)fl.innerHTML=`<span class="live-dot"></span>LIVE DATA · FRED + GSS + PEW + STI + UCDP${l1}<br>RING B LOADED · CONFIDENCE ${conf}%${calNote}${hazNote}${regNote}${sweepBadge}${placeboNote}${modelStack}<button class="sync-btn" id="syncBtn" onclick="syncNow()" title="Sync when connection restored">SYNC</button>`;
 }
 loadData();
 window.addEventListener('online',updateDataBadge);

@@ -21,7 +21,7 @@ NEAR_SADDLE_V_THRESH = 0.20  # optional: include |v| < 0.20 + opposes for calibr
 
 def _get_labeled_events():
     from cerebro_event_loader import load_event_years
-    return load_event_years(country="US", include_global=False)
+    return load_event_years(country="US")
 
 
 def _is_candidate_year(row, include_near_saddle: bool = True, score_threshold: float = 2.0) -> tuple[bool, str]:

@@ -1,0 +1,12 @@
+{
+  "P_1yr": 0.349,
+  "P_3yr": 0.7133,
+  "P_5yr": 0.7133,
+  "P_10yr": 0.7133,
+  "peak_year": 2021,
+  "window_start": 2019,
+  "window_end": 2028,
+  "now_year": 2018,
+  "method": "sister_logistic",
+  "n_train": 18
+}
