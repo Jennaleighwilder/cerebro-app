@@ -82,6 +82,29 @@ def compute_peak_window(
         except Exception:
             pass
     out.setdefault("conformal_applied", False)
+
+    # Hallucination guard: forward-pass confidence discipline
+    try:
+        from chimera.chimera_hallucination_guard import apply_guard, load_diagnostics_bundle
+        diag = load_diagnostics_bundle()
+        diag["n_eff"] = diag.get("n_eff") or out.get("analogue_count")
+        diag["interval_width"] = out.get("window_end", 0) - out.get("window_start", 0) if ("window_start" in out and "window_end" in out) else diag.get("interval_width")
+        pred_for_guard = {
+            "confidence_pct": out.get("confidence_pct", 50),
+            "window_start": out.get("window_start"),
+            "window_end": out.get("window_end"),
+            "analogue_count": out.get("analogue_count"),
+        }
+        guarded = apply_guard(pred_for_guard, diagnostics=diag)
+        if guarded["clamped"]:
+            out["confidence_pct"] = int(round(guarded["confidence_after"]))
+            if guarded.get("window_start") is not None and guarded.get("window_end") is not None:
+                out["window_start"] = guarded["window_start"]
+                out["window_end"] = guarded["window_end"]
+        out["guard_state"] = guarded
+    except Exception:
+        out["guard_state"] = {"confidence_before": out.get("confidence_pct", 50), "confidence_after": out.get("confidence_pct", 50), "clamped": False, "reasons": []}
+
     return out
 
 
