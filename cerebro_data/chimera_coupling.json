@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "cross_correlation_matrix": {
+    "harm_class": -0.3271,
+    "harm_sexual": 0.3806,
+    "class_sexual": -0.294
+  },
+  "lead_lag_matrix": {
+    "harm_class": {
+      "lag": -2,
+      "corr": -0.6743
+    },
+    "harm_sexual": {
+      "lag": 4,
+      "corr": 0.5768
+    },
+    "class_sexual": {
+      "lag": 5,
+      "corr": -0.5573
+    }
+  },
+  "saddle_sync_rate": 0.0,
+  "variance_inflation": 3.2642,
+  "systemic_instability_index": 0.3336,
+  "harm_saddle_count": 5,
+  "clocks_loaded": [
+    "harm",
+    "class",
+    "sexual"
+  ]
+}

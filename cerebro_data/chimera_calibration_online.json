@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "conformal_q80": 0.0,
+  "residual_count": 25,
+  "coverage_last_50": 0.88,
+  "coverage_last_200": 0.88,
+  "target_coverage": 0.8
+}

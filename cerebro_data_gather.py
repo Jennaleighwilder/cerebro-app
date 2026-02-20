@@ -10,6 +10,7 @@ Run: python cerebro_data_gather.py
 Output: ./cerebro_data/*.csv and *.xlsx
 """
 
+import json
 import os
 import sys
 import time
@@ -317,8 +318,18 @@ def main():
         df_fred.to_csv(OUTPUT_DIR / "FRED_combined.csv")
         print(f"  → Saved FRED_combined.csv ({len(df_fred)} rows)")
 
-    # 2. World Bank
+    # 2. World Bank (US + OECD + Global 30)
     print("\n[2/5] WORLD BANK")
+    GLOBAL_COUNTRIES = {
+        "UK": "GBR", "DE": "DEU", "FR": "FRA", "JP": "JPN", "CA": "CAN",
+        "AU": "AUS", "SE": "SWE",
+        "BR": "BRA", "IN": "IND", "ZA": "ZAF", "TR": "TUR", "KR": "KOR",
+        "PL": "POL", "MX": "MEX", "AR": "ARG", "NG": "NGA", "EG": "EGY",
+        "ID": "IDN", "TH": "THA", "CO": "COL", "CL": "CHL", "PE": "PER",
+        "HU": "HUN", "CZ": "CZE", "GR": "GRC", "PT": "PRT", "NL": "NLD",
+        "BE": "BEL", "ES": "ESP", "IT": "ITA",
+    }
+    oecd_iso = {"US": "US", **GLOBAL_COUNTRIES}
     wb_homicide = worldbank_series("VC.IHR.PSRC.P5", country="US")
     if wb_homicide:
         df_wb = pd.DataFrame([
@@ -327,6 +338,78 @@ def main():
         ])
         df_wb.to_csv(OUTPUT_DIR / "WorldBank_homicide_US.csv", index=False)
 
+    # US leading indicators (youth unemp, tertiary enrollment, birth rate)
+    print("\n[2b/5] WORLD BANK — LEADING INDICATORS (US)")
+    wb_youth_unemp = worldbank_series("SL.UEM.1524.ZS", country="US")
+    wb_tertiary = worldbank_series("SE.TER.ENRR", country="US")
+    wb_birth_rate = worldbank_series("SP.DYN.CBRT.IN", country="US")
+    if wb_youth_unemp or wb_tertiary or wb_birth_rate:
+        years_li = sorted(set().union(
+            set(wb_youth_unemp.keys()) if wb_youth_unemp else set(),
+            set(wb_tertiary.keys()) if wb_tertiary else set(),
+            set(wb_birth_rate.keys()) if wb_birth_rate else set(),
+        ))
+        df_li = pd.DataFrame(index=years_li)
+        df_li.index.name = "year"
+        if wb_youth_unemp:
+            df_li["youth_unemployment_pct"] = df_li.index.map(wb_youth_unemp)
+        if wb_tertiary:
+            df_li["tertiary_enrollment_pct"] = df_li.index.map(wb_tertiary)
+        if wb_birth_rate:
+            df_li["birth_rate_per_1000"] = df_li.index.map(wb_birth_rate)
+        df_li = df_li.reset_index()
+        df_li.to_csv(OUTPUT_DIR / "WorldBank_leading_indicators_US.csv", index=False)
+        print(f"  ✓ Leading indicators US: youth_unemp, tertiary_enrollment, birth_rate → WorldBank_leading_indicators_US.csv")
+    time.sleep(0.5)
+
+    oecd_status = {}
+    for label, iso in oecd_iso.items():
+        if iso == "US":
+            continue
+        # Core: homicide, Gini, unemployment. Leading: youth unemployment.
+        h = worldbank_series("VC.IHR.PSRC.P5", country=iso)
+        g = worldbank_series("SI.POV.GINI", country=iso)
+        u = worldbank_series("SL.UEM.TOTL.ZS", country=iso)
+        u_youth = worldbank_series("SL.UEM.1524.ZS", country=iso)
+        if h or g or u or u_youth:
+            years = sorted(set().union(
+                set(h.keys()) if h else set(),
+                set(g.keys()) if g else set(),
+                set(u.keys()) if u else set(),
+                set(u_youth.keys()) if u_youth else set(),
+            ))
+            df_oecd = pd.DataFrame(index=years)
+            df_oecd.index.name = "year"
+            if h:
+                df_oecd["homicide_rate_per_100k"] = df_oecd.index.map(h)
+            if g:
+                df_oecd["gini"] = df_oecd.index.map(g)
+            if u:
+                df_oecd["unemployment_pct"] = df_oecd.index.map(u)
+            if u_youth:
+                df_oecd["youth_unemployment_pct"] = df_oecd.index.map(u_youth)
+            df_oecd = df_oecd.reset_index()
+            df_oecd.to_csv(OUTPUT_DIR / f"WorldBank_OECD_{iso}.csv", index=False)
+            n_h = df_oecd["homicide_rate_per_100k"].notna().sum() if "homicide_rate_per_100k" in df_oecd.columns else 0
+            n_g = df_oecd["gini"].notna().sum() if "gini" in df_oecd.columns else 0
+            n_u = df_oecd["unemployment_pct"].notna().sum() if "unemployment_pct" in df_oecd.columns else 0
+            min_rows = min(n_h, n_g, n_u) if (n_h and n_g and n_u) else 0
+            status = "ok" if min_rows >= 30 else "insufficient"
+            if status != "ok":
+                print(f"  ⚠ World Bank OECD {label} ({iso}): {len(df_oecd)} rows, min non-null={min_rows} (need 30)")
+            else:
+                print(f"  ✓ World Bank OECD {label} ({iso}): {len(df_oecd)} rows")
+            oecd_status[label] = {"rows": len(df_oecd), "homicide_n": int(n_h), "gini_n": int(n_g), "unemp_n": int(n_u), "status": status}
+        else:
+            print(f"  ✗ World Bank OECD {label} ({iso}): no data")
+            oecd_status[label] = {"rows": 0, "status": "missing"}
+        time.sleep(0.5)
+
+    (OUTPUT_DIR / "oecd").mkdir(exist_ok=True)
+    with open(OUTPUT_DIR / "oecd" / "oecd_status.json", "w") as f:
+        json.dump(oecd_status, f, indent=2)
+    print(f"  → oecd/oecd_status.json")
+
     time.sleep(1)
 
     # 3. UCDP
@@ -334,6 +417,18 @@ def main():
     download_file(UCDP_ACD_URL, "UCDP_armed_conflict_251.xlsx", "UCDP Armed Conflict")
     time.sleep(0.5)
     download_file(UCDP_BRD_URL, "UCDP_battle_deaths_251.xlsx", "UCDP Battle Deaths")
+    download_file("https://ucdp.uu.se/downloads/ged/ged251-csv.zip", "ucdp_ged.zip", "UCDP GED")
+    ucdp_ged_zip = OUTPUT_DIR / "ucdp_ged.zip"
+    if ucdp_ged_zip.exists():
+        import zipfile
+        ucdp_raw = OUTPUT_DIR / "ucdp_raw"
+        ucdp_raw.mkdir(exist_ok=True)
+        try:
+            with zipfile.ZipFile(ucdp_ged_zip) as z:
+                z.extractall(ucdp_raw)
+            print(f"  ✓ UCDP GED extracted → {ucdp_raw}")
+        except Exception as e:
+            print(f"  ✗ UCDP GED extract: {e}")
     # Extract annual global conflict count
     ucdp_path = OUTPUT_DIR / "UCDP_armed_conflict_251.xlsx"
     if ucdp_path.exists():
@@ -392,6 +487,24 @@ def main():
         if "year" in ucdp_df.columns and "conflict_count" in ucdp_df.columns:
             ucdp_dict = dict(zip(ucdp_df["year"], ucdp_df["conflict_count"]))
             df["ucdp_conflict_count"] = df.index.map(ucdp_dict)
+
+    # Merge leading indicators (US)
+    li_path = OUTPUT_DIR / "WorldBank_leading_indicators_US.csv"
+    if li_path.exists():
+        li_df = pd.read_csv(li_path)
+        for col in ["youth_unemployment_pct", "tertiary_enrollment_pct", "birth_rate_per_1000"]:
+            if col in li_df.columns and "year" in li_df.columns:
+                li_dict = dict(zip(li_df["year"].astype(int), li_df[col]))
+                df[col] = df.index.map(li_dict)
+
+    # Merge ACLED protest annual (if user has placed cerebro_data/ACLED_protest_annual.csv)
+    acled_path = OUTPUT_DIR / "ACLED_protest_annual.csv"
+    if acled_path.exists():
+        acled_df = pd.read_csv(acled_path)
+        if "year" in acled_df.columns and "protest_count" in acled_df.columns:
+            acled_dict = dict(zip(acled_df["year"].astype(int), acled_df["protest_count"]))
+            df["acled_protest_count"] = df.index.map(acled_dict)
+            print(f"  ✓ ACLED protest annual merged ({len(acled_dict)} years)")
 
     df.to_csv(OUTPUT_DIR / "cerebro_gathered_raw.csv")
     print(f"  ✓ cerebro_gathered_raw.csv ({len(df)} rows, {len(df.columns)} cols)")

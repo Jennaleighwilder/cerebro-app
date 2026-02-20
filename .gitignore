@@ -10,6 +10,9 @@ __pycache__/
 # Large datasets (keep locally, pre-exported JSON in public/ for deploy)
 cerebro_data/world_development_indicators.csv
 cerebro_data/GLOPOP-S/
+cerebro_data/GLOPOP_update.zip
+cerebro_data/ucdp_ged.zip
+cerebro_data/ucdp_raw/
 # GBCD: clone separately (git clone .../GBCD) or keep locally; data in cerebro_data.json
 GBCD/
 .vercel

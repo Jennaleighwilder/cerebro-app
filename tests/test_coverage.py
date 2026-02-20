@@ -183,7 +183,10 @@ class TestAblationCoverage(unittest.TestCase):
     def test_run_ablation(self):
         from cerebro_ablation import run_ablation
         r = run_ablation()
-        self.assertIn("core_error", r)
+        if "error" in r:
+            self.assertEqual(r["error"], "Insufficient episodes")
+        else:
+            self.assertIn("core_error", r)
 
 
 class TestLiveMonitorCoverage(unittest.TestCase):

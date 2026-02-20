@@ -1,0 +1,111 @@
+{
+  "n_episodes": 47,
+  "mae": 2.21,
+  "mean_error_bias": 0.38,
+  "bias_early_count": 6,
+  "bias_late_count": 12,
+  "bias_neutral_count": 29,
+  "interpretation": "no strong systematic bias",
+  "worst_10": [
+    {
+      "saddle_year": 1994,
+      "country": "SE",
+      "event_year": 2006,
+      "pred_peak_year": 1995,
+      "error": -11
+    },
+    {
+      "saddle_year": 2011,
+      "country": "JP",
+      "event_year": 2020,
+      "pred_peak_year": 2013,
+      "error": -7
+    },
+    {
+      "saddle_year": 2012,
+      "country": "SE",
+      "event_year": 2014,
+      "pred_peak_year": 2020,
+      "error": 6
+    },
+    {
+      "saddle_year": 1985,
+      "country": "US",
+      "event_year": 1986,
+      "pred_peak_year": 1990,
+      "error": 4
+    },
+    {
+      "saddle_year": 2010,
+      "country": "US",
+      "event_year": 2017,
+      "pred_peak_year": 2013,
+      "error": -4
+    },
+    {
+      "saddle_year": 2014,
+      "country": "CA",
+      "event_year": 2015,
+      "pred_peak_year": 2019,
+      "error": 4
+    },
+    {
+      "saddle_year": 2019,
+      "country": "CA",
+      "event_year": 2020,
+      "pred_peak_year": 2024,
+      "error": 4
+    },
+    {
+      "saddle_year": 2018,
+      "country": "SE",
+      "event_year": 2020,
+      "pred_peak_year": 2024,
+      "error": 4
+    },
+    {
+      "saddle_year": 2015,
+      "country": "UK",
+      "event_year": 2016,
+      "pred_peak_year": 2020,
+      "error": 4
+    },
+    {
+      "saddle_year": 1996,
+      "country": "US",
+      "event_year": 2000,
+      "pred_peak_year": 1997,
+      "error": -3
+    }
+  ],
+  "by_country_mae": {
+    "US": 1.25,
+    "AU": 2.5,
+    "CA": 4.0,
+    "FR": 1.71,
+    "JP": 2.86,
+    "SE": 3.4,
+    "UK": 1.67
+  },
+  "by_country_bias": {
+    "US": 0.0,
+    "AU": 2.5,
+    "CA": 4.0,
+    "FR": 0.0,
+    "JP": -0.57,
+    "SE": 0.6,
+    "UK": 1.0
+  },
+  "by_era": {
+    "pre_1990": {
+      "n": 8,
+      "mae": 1.88,
+      "bias": -0.12
+    },
+    "post_1990": {
+      "n": 39,
+      "mae": 2.28,
+      "bias": 0.49
+    }
+  }
+}

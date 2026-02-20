@@ -1,0 +1,9 @@
+{
+  "signature": "d008c33d523a1a3744831c195bb23e86560b36f49f0aab6829710b8bc04ba683",
+  "timestamp": "2026-02-20T22:49:43.233861Z",
+  "files": [
+    "chimera_params.json",
+    "chimera_master.json",
+    "calibration_curve.json"
+  ]
+}

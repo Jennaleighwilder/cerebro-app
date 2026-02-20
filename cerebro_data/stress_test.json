@@ -1,0 +1,7 @@
+{
+  "peak_mean": 2004.59,
+  "peak_std": 0.49,
+  "window_robustness": 100.0,
+  "instability_flag": false,
+  "n_sims": 1000
+}

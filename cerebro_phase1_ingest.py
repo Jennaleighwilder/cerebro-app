@@ -288,6 +288,27 @@ df["overdose_death_rate_cdc"] = df.index.map(cdc_overdose)
 # Prefer FBI homicide, fill with World Bank where missing
 df["homicide_rate"] = df["homicide_rate_fbi"].fillna(df["homicide_rate_wb"])
 
+# Leading indicators (2–4 year lead on saddle points)
+DATA_DIR = os.path.join(OUTPUT_DIR, "cerebro_data")
+li_path = os.path.join(DATA_DIR, "WorldBank_leading_indicators_US.csv")
+acled_path = os.path.join(DATA_DIR, "ACLED_protest_annual.csv")
+if os.path.exists(li_path):
+    try:
+        li_df = pd.read_csv(li_path)
+        if "year" in li_df.columns:
+            for col in ["youth_unemployment_pct", "tertiary_enrollment_pct", "birth_rate_per_1000"]:
+                if col in li_df.columns:
+                    d = dict(zip(li_df["year"].astype(int), li_df[col]))
+                    df[col] = df.index.map(d)
+        print("  ✓ Leading indicators: youth_unemp, tertiary_enrollment, birth_rate")
+    except Exception:
+        pass
+# UCDP/ACLED protest: disabled — conflict counts ≠ protest intensity, contaminated signal
+# if os.path.exists(acled_path):
+#     try:
+#         acled_df = pd.read_csv(acled_path)
+#         ...
+
 
 # ─────────────────────────────────────────
 # SECTION 3: RING SCORING
@@ -413,9 +434,44 @@ else:
 df["ring_C_score"] = (rc1_homicide + rc2_overdose + rc3_incarcerate) / 3
 # Ring B set above (Pew trust or placeholder)
 
+# Leading component (signals precede saddle by 2–4 years)
+leading_components = []
+if "youth_unemployment_pct" in df.columns and df["youth_unemployment_pct"].notna().sum() > 10:
+    r_lead_youth = norm_causal(dict(zip(df.index, df["youth_unemployment_pct"])), invert=True)
+    leading_components.append(r_lead_youth.reindex(years))
+if "tertiary_enrollment_pct" in df.columns and df["tertiary_enrollment_pct"].notna().sum() > 10:
+    r_lead_tert = norm_causal(dict(zip(df.index, df["tertiary_enrollment_pct"])), invert=False)
+    leading_components.append(r_lead_tert.reindex(years))
+if "birth_rate_per_1000" in df.columns and df["birth_rate_per_1000"].notna().sum() > 10:
+    r_lead_birth = norm_causal(dict(zip(df.index, df["birth_rate_per_1000"])), invert=True)
+    leading_components.append(r_lead_birth.reindex(years))
+# UCDP protest: disabled (zero weight)
+if leading_components:
+    df["leading_score"] = pd.concat(leading_components, axis=1).mean(axis=1)
+    leading_available = True
+    names = []
+    if "youth_unemployment_pct" in df.columns and df["youth_unemployment_pct"].notna().sum() > 10:
+        names.append("youth_unemp")
+    if "tertiary_enrollment_pct" in df.columns and df["tertiary_enrollment_pct"].notna().sum() > 10:
+        names.append("tertiary")
+    if "birth_rate_per_1000" in df.columns and df["birth_rate_per_1000"].notna().sum() > 10:
+        names.append("birth_rate")
+    # UCDP protest: disabled
+    print("  ✓ Leading component:", ", ".join(names) if names else "none")
+else:
+    df["leading_score"] = pd.Series(0.0, index=years)
+    leading_available = False
+
 # CLOCK POSITION SCORE
-# Adjust weights based on what's available
-if fred_available:
+# Leading indicators get 15% when available (path to Brier 0.077)
+if fred_available and leading_available:
+    df["clock_position"] = (
+        0.35 * df["ring_A_score"] +
+        0.25 * df["ring_B_score"] +
+        0.25 * df["ring_C_score"] +
+        0.15 * df["leading_score"]
+    )
+elif fred_available:
     df["clock_position"] = (
         0.40 * df["ring_A_score"] +
         0.30 * df["ring_B_score"] +
@@ -423,11 +479,14 @@ if fred_available:
     )
 else:
     # Without FRED, weight Ring A less, Ring C more
+    w_lead = 0.15 if leading_available else 0
     df["clock_position"] = (
-        0.30 * df["ring_A_score"] +
+        (0.30 - w_lead * 0.5) * df["ring_A_score"] +
         0.20 * df["ring_B_score"] +
-        0.50 * df["ring_C_score"]
+        (0.50 - w_lead * 0.5) * df["ring_C_score"]
     )
+    if leading_available:
+        df["clock_position"] = df["clock_position"] + w_lead * df["leading_score"]
     print(f"  Weights adjusted: Ring A 30%, Ring B 20%, Ring C 50% (add FRED for full weighting)")
 
 # Scale to -10 to +10 for readability
@@ -443,6 +502,21 @@ print("[DYNAMICS] Computing velocity and acceleration...")
 pos_dict = df["clock_position"].dropna().to_dict()
 
 velocity_dict     = compute_velocity(pos_dict, window=3)
+# L1 Google Trends: blend cultural velocity when available (leading 3–12 months)
+trends_path = os.path.join(DATA_DIR, "GoogleTrends_cultural_velocity.csv")
+if os.path.exists(trends_path):
+    try:
+        trends_df = pd.read_csv(trends_path, index_col=0, parse_dates=True)
+        if "cultural_velocity_smooth" in trends_df.columns and "year" in trends_df.columns:
+            vy = trends_df.groupby("year")["cultural_velocity_smooth"].mean()
+            for yr in df.index:
+                if yr in velocity_dict and yr in vy.index:
+                    v_computed = velocity_dict[yr]
+                    v_trends = float(vy.loc[yr]) / 100.0
+                    velocity_dict[yr] = 0.85 * v_computed + 0.15 * v_trends
+            print("  ✓ L1 Google Trends cultural velocity blended into harm clock")
+    except Exception:
+        pass
 acceleration_dict = compute_acceleration(velocity_dict, window=3)
 saddle_dict       = detect_saddle(velocity_dict, acceleration_dict)
 

@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "reconstruction": {
+    "mae_mean": 1.364,
+    "coverage_80_mean": 0.8182,
+    "n_used": 11
+  },
+  "forward_simulation": {
+    "event_probability_5yr": 0.97,
+    "entropy_time_distribution": 1.3683
+  },
+  "stress_stability": 1.0,
+  "coupling": {
+    "systemic_instability_index": 0.3336
+  },
+  "evolution": {
+    "model_structure_drift": true,
+    "drift_magnitude_score": 1.0
+  },
+  "entropy": {
+    "version": 1,
+    "forward_event_entropy": 1.3683,
+    "regime_markov_10yr_entropy": 1.2501,
+    "analogue_weight_entropy": 2.3463,
+    "interpretation": "deterministic_drift"
+  },
+  "failure_mode": "OOD_Extrapolation",
+  "failure_severity": 0.722,
+  "validation_skill_score": 0.7151,
+  "archive_signature": "511e0aa3c017a63018f65e99516f7bfc3dd3df68589384a77b781ffb352030b3",
+  "adaptive": {
+    "vel_weight": 100,
+    "acc_weight": 2500,
+    "tau": 1.0,
+    "rolling_mae": 1.364,
+    "n_updates": 1,
+    "drift_mode": false,
+    "conformal_q80": 0.0,
+    "coverage_last_50": 0.88,
+    "next_regime": "Redistribution"
+  }
+}

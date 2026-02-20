@@ -1,0 +1,74 @@
+{
+  "harm": {
+    "harm": {
+      "best_lag": 0,
+      "correlation": 1.0
+    },
+    "sexual": {
+      "best_lag": 4,
+      "correlation": -0.1107
+    },
+    "class": {
+      "best_lag": 5,
+      "correlation": 0.1592
+    },
+    "evil": {
+      "best_lag": 0,
+      "correlation": 0.0
+    }
+  },
+  "sexual": {
+    "harm": {
+      "best_lag": 5,
+      "correlation": -0.2029
+    },
+    "sexual": {
+      "best_lag": 0,
+      "correlation": 1.0
+    },
+    "class": {
+      "best_lag": 2,
+      "correlation": -0.3413
+    },
+    "evil": {
+      "best_lag": 0,
+      "correlation": 0.0
+    }
+  },
+  "class": {
+    "harm": {
+      "best_lag": 5,
+      "correlation": 0.1028
+    },
+    "sexual": {
+      "best_lag": 3,
+      "correlation": 0.1709
+    },
+    "class": {
+      "best_lag": 0,
+      "correlation": 1.0
+    },
+    "evil": {
+      "best_lag": 0,
+      "correlation": 0.0
+    }
+  },
+  "evil": {
+    "harm": {
+      "best_lag": 0,
+      "correlation": 0.0
+    },
+    "sexual": {
+      "best_lag": 0,
+      "correlation": 0.0
+    },
+    "class": {
+      "best_lag": 0,
+      "correlation": 0.0
+    },
+    "evil": {
+      "best_lag": 0,
+      "correlation": 0.0
+    }
+  }
+}

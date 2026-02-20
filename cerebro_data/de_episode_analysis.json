@@ -1,0 +1,87 @@
+{
+  "n_candidates": 2,
+  "n_raw_episodes": 2,
+  "need_for_contribution": 5,
+  "gap": 3,
+  "candidates": [
+    {
+      "year": 2001,
+      "score": 2.0,
+      "qualifies_score": true,
+      "near_saddle": true,
+      "velocity": -0.122,
+      "acceleration": 0.3469,
+      "event_year": 2005,
+      "years_to_event": 4
+    },
+    {
+      "year": 2012,
+      "score": 2.0,
+      "qualifies_score": true,
+      "near_saddle": true,
+      "velocity": -0.1472,
+      "acceleration": 0.3094,
+      "event_year": 2015,
+      "years_to_event": 3
+    }
+  ],
+  "era_distribution": {
+    "1974-1989": 0,
+    "1990-1999": 0,
+    "2000-2009": 1,
+    "2010-2024": 1
+  },
+  "era_detail": {
+    "1974-1989": [],
+    "1990-1999": [],
+    "2000-2009": [
+      [
+        2001,
+        2.0,
+        true
+      ]
+    ],
+    "2010-2024": [
+      [
+        2012,
+        2.0,
+        true
+      ]
+    ]
+  },
+  "worldbank_years": [
+    1990,
+    1991,
+    1992,
+    1993,
+    1994,
+    "...",
+    2022,
+    2023,
+    2024
+  ],
+  "worldbank_span": "1990-2024",
+  "pre1990_clock_rows": 16,
+  "pre1990_worldbank_rows": 0,
+  "data_gap_explanation": "WorldBank DEU starts 1990; 1974-1989 use flat defaults \u2192 v=0, a=0, score=1 only",
+  "root_cause": [
+    "data_quality: WorldBank DEU has no pre-1990 data (reunification); clock 1974-1989 is flat",
+    "physics: pre-1990 flat clock yields score=1 only; no score>=2 or near_saddle (v=0,a=0 \u2192 no opposes)",
+    "physics: only 2 saddle candidates in 1990-2020; DE dynamics may show fewer tension peaks"
+  ],
+  "event_years": [
+    1989,
+    1990,
+    2005,
+    2009,
+    2015,
+    2020
+  ],
+  "event_tolerance": 13,
+  "raw_diag": {
+    "candidate_years_total": 2,
+    "core_saddles_used": 0,
+    "score_saddles_used": 2,
+    "near_saddles_used": 0
+  }
+}

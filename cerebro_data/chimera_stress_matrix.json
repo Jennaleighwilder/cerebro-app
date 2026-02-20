@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "base_peak": 2020,
+  "base_window_width": 3,
+  "mean_stability": 1.0,
+  "worst_case_peak_deviation": 0,
+  "window_inflation_rate": 0.0,
+  "n_perturbations": 5,
+  "stability_scores": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+  ]
+}

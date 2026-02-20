@@ -1,32 +1,32 @@
 {
   "version": 1,
   "p_1yr": {
-    "Stable": 0.0909,
-    "Redistribution": 0.3799,
-    "Crackdown": 0.0909,
-    "Reform": 0.0909,
-    "Polarization": 0.3475
+    "Stable": 0.1232,
+    "Redistribution": 0.471,
+    "Crackdown": 0.1232,
+    "Reform": 0.1232,
+    "Polarization": 0.1593
   },
   "p_3yr": {
-    "Stable": 0.0793,
-    "Redistribution": 0.403,
-    "Crackdown": 0.0793,
-    "Reform": 0.0793,
-    "Polarization": 0.3591
+    "Stable": 0.0961,
+    "Redistribution": 0.5441,
+    "Crackdown": 0.0961,
+    "Reform": 0.0961,
+    "Polarization": 0.1677
   },
   "p_5yr": {
-    "Stable": 0.0766,
-    "Redistribution": 0.4077,
-    "Crackdown": 0.0766,
-    "Reform": 0.0766,
-    "Polarization": 0.3626
+    "Stable": 0.0889,
+    "Redistribution": 0.5668,
+    "Crackdown": 0.0889,
+    "Reform": 0.0889,
+    "Polarization": 0.1665
   },
   "p_10yr": {
-    "Stable": 0.0758,
-    "Redistribution": 0.4091,
-    "Crackdown": 0.0758,
-    "Reform": 0.0758,
-    "Polarization": 0.3636
+    "Stable": 0.0862,
+    "Redistribution": 0.5753,
+    "Crackdown": 0.0862,
+    "Reform": 0.0862,
+    "Polarization": 0.1661
   },
   "dominant_path_10yr": [
     "Polarization",
@@ -40,5 +40,5 @@
     "Redistribution",
     "Redistribution"
   ],
-  "n_years_used": 42
+  "n_years_used": 36
 }

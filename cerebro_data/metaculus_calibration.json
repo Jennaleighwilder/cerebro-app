@@ -1,0 +1,267 @@
+{
+  "n": 29,
+  "brier": 0.25,
+  "episodes": [
+    {
+      "source": "metaculus",
+      "question_id": 41955,
+      "title": "Will the community prediction be higher than 26.00% on 2026-02-15 for the Metaculus question \"Will t",
+      "stated_confidence_pct": 50.0,
+      "hit": true,
+      "resolve_time": "2026-02-15T08:46:18Z",
+      "country": "GLOBAL"
+    },
+    {
+      "source": "metaculus",
+      "question_id": 41892,
+      "title": "Will the Liberal Democratic Party win a majority in the 2026 Japanese general election?",
+      "stated_confidence_pct": 50.0,
+      "hit": true,
+      "resolve_time": "2026-02-09T04:36:00Z",
+      "country": "GLOBAL"
+    },
+    {
+      "source": "metaculus",
+      "question_id": 41693,
+      "title": "Will the Liberal Democratic Party win a majority in the 2026 Japanese general election?",
+      "stated_confidence_pct": 50.0,
+      "hit": true,
+      "resolve_time": "2026-02-09T04:36:00Z",
+      "country": "GLOBAL"
+    },
+    {
+      "source": "metaculus",
+      "question_id": 41616,
+      "title": "Will the community prediction be higher than 24.00% on 2026-01-26 for the Metaculus question \"Will t",
+      "stated_confidence_pct": 50.0,
+      "hit": true,
+      "resolve_time": "2026-01-26T14:39:39Z",
+      "country": "GLOBAL"
+    },
+    {
+      "source": "metaculus",
+      "question_id": 41555,
+      "title": "Will Laura Fern\u00e1ndez Delgado win the Costa Rican presidential election?",
+      "stated_confidence_pct": 50.0,
+      "hit": true,
+      "resolve_time": "2026-02-01T14:00:00Z",
+      "country": "GLOBAL"
+    },
+    {
+      "source": "metaculus",
+      "question_id": 41037,
+      "title": "Will the community prediction be higher than 80.00% on 2025-12-21 for the Metaculus question \"Will t",
+      "stated_confidence_pct": 50.0,
+      "hit": true,
+      "resolve_time": "2025-12-21T10:35:21Z",
+      "country": "GLOBAL"
+    },
+    {
+      "source": "metaculus",
+      "question_id": 40927,
+      "title": "Will Andr\u00e9 Ventura win Portugal's 2026 presidential election?",
+      "stated_confidence_pct": 50.0,
+      "hit": false,
+      "resolve_time": "2026-02-09T21:12:00Z",
+      "country": "GLOBAL"
+    },
+    {
+      "source": "metaculus",
+      "question_id": 40867,
+      "title": "Will the People's Party win an absolute majority in the next regional elections in Extremadura, Spai",
+      "stated_confidence_pct": 50.0,
+      "hit": false,
+      "resolve_time": "2025-12-24T16:33:00Z",
+      "country": "GLOBAL"
+    },
+    {
+      "source": "metaculus",
+      "question_id": 40807,
+      "title": "Will the community prediction be higher than 5.00% on 2025-12-02 for the Metaculus question \"Will th",
+      "stated_confidence_pct": 50.0,
+      "hit": false,
+      "resolve_time": "2025-12-02T06:53:37Z",
+      "country": "GLOBAL"
+    },
+    {
+      "source": "metaculus",
+      "question_id": 40751,
+      "title": "Will the US unemployment rate for December 2025 be higher than November 2025?",
+      "stated_confidence_pct": 50.0,
+      "hit": false,
+      "resolve_time": "2026-01-12T14:01:00Z",
+      "country": "GLOBAL"
+    },
+    {
+      "source": "metaculus",
+      "question_id": 40750,
+      "title": "Will the People's Party win an absolute majority in the next regional elections in Extremadura, Spai",
+      "stated_confidence_pct": 50.0,
+      "hit": false,
+      "resolve_time": "2025-12-24T16:33:00Z",
+      "country": "GLOBAL"
+    },
+    {
+      "source": "metaculus",
+      "question_id": 40658,
+      "title": "Will Mikie Sherrill be officially certified as the winner of New Jersey\u2019s 2025 gubernatorial electio",
+      "stated_confidence_pct": 50.0,
+      "hit": true,
+      "resolve_time": "2026-01-21T19:06:00Z",
+      "country": "GLOBAL"
+    },
+    {
+      "source": "metaculus",
+      "question_id": 40473,
+      "title": "Will the community prediction be higher than 15.00% on 2025-11-06 for the Metaculus question \"Will t",
+      "stated_confidence_pct": 50.0,
+      "hit": false,
+      "resolve_time": "2025-11-06T17:22:23Z",
+      "country": "GLOBAL"
+    },
+    {
+      "source": "metaculus",
+      "question_id": 40426,
+      "title": "Will Geert Wilders' Party for Freedom win 33 or more seats in the Netherlands House of Representativ",
+      "stated_confidence_pct": 50.0,
+      "hit": false,
+      "resolve_time": "2025-10-30T09:33:00Z",
+      "country": "GLOBAL"
+    },
+    {
+      "source": "metaculus",
+      "question_id": 40353,
+      "title": "Will the community prediction be higher than 31.00% on 2025-10-24 for the Metaculus question \"Will t",
+      "stated_confidence_pct": 50.0,
+      "hit": false,
+      "resolve_time": "2025-10-24T12:23:42Z",
+      "country": "GLOBAL"
+    },
+    {
+      "source": "metaculus",
+      "question_id": 40336,
+      "title": "Will Rodrigo Paz win the 2025 Bolivia presidential election?",
+      "stated_confidence_pct": 50.0,
+      "hit": true,
+      "resolve_time": "2025-10-20T08:10:19Z",
+      "country": "GLOBAL"
+    },
+    {
+      "source": "metaculus",
+      "question_id": 40326,
+      "title": "Will Jorge \u201cTuto\u201d Quiroga win the 2025 Bolivia presidential election?",
+      "stated_confidence_pct": 50.0,
+      "hit": false,
+      "resolve_time": "2025-10-20T20:10:19Z",
+      "country": "GLOBAL"
+    },
+    {
+      "source": "metaculus",
+      "question_id": 40284,
+      "title": "Will there be a political protest with at least 600,000 participants in France before 2026?",
+      "stated_confidence_pct": 50.0,
+      "hit": false,
+      "resolve_time": "2026-01-05T22:20:00Z",
+      "country": "GLOBAL"
+    },
+    {
+      "source": "metaculus",
+      "question_id": 40052,
+      "title": "Will there be a political protest with at least 600,000 participants in France before 2026?",
+      "stated_confidence_pct": 50.0,
+      "hit": false,
+      "resolve_time": "2026-01-05T22:20:00Z",
+      "country": "GLOBAL"
+    },
+    {
+      "source": "metaculus",
+      "question_id": 40039,
+      "title": "Will the Dutch unemployment rate rise above 5% in any month of 2025?",
+      "stated_confidence_pct": 50.0,
+      "hit": false,
+      "resolve_time": "2026-01-16T13:48:00Z",
+      "country": "GLOBAL"
+    },
+    {
+      "source": "metaculus",
+      "question_id": 39998,
+      "title": "Will California's Proposition 50 (allowing redistricting of House seats) pass in the 2025 election?",
+      "stated_confidence_pct": 50.0,
+      "hit": true,
+      "resolve_time": "2025-11-05T14:55:00Z",
+      "country": "GLOBAL"
+    },
+    {
+      "source": "metaculus",
+      "question_id": 39989,
+      "title": "Will California's Proposition 50 (allowing redistricting of House seats) pass in the 2025 election?",
+      "stated_confidence_pct": 50.0,
+      "hit": true,
+      "resolve_time": "2025-11-05T14:55:00Z",
+      "country": "GLOBAL"
+    },
+    {
+      "source": "metaculus",
+      "question_id": 39961,
+      "title": "Will Alassane Ouattara win 80% or more of the first round vote in the 2025 presidential election of ",
+      "stated_confidence_pct": 50.0,
+      "hit": true,
+      "resolve_time": "2025-11-02T21:01:00Z",
+      "country": "GLOBAL"
+    },
+    {
+      "source": "metaculus",
+      "question_id": 39891,
+      "title": "Will Alassane Ouattara win 80% or more of the first round vote in the 2025 presidential election of ",
+      "stated_confidence_pct": 50.0,
+      "hit": true,
+      "resolve_time": "2025-11-02T21:01:00Z",
+      "country": "GLOBAL"
+    },
+    {
+      "source": "metaculus",
+      "question_id": 39889,
+      "title": "Will the Dutch unemployment rate rise above 5% in any month of 2025?",
+      "stated_confidence_pct": 50.0,
+      "hit": false,
+      "resolve_time": "2026-01-16T13:48:00Z",
+      "country": "GLOBAL"
+    },
+    {
+      "source": "metaculus",
+      "question_id": 39697,
+      "title": "Will the interest in \"trump truth social\" be greater on 2025-09-08 than on 2025-09-01 according to G",
+      "stated_confidence_pct": 50.0,
+      "hit": false,
+      "resolve_time": "2025-09-08T23:59:59Z",
+      "country": "GLOBAL"
+    },
+    {
+      "source": "metaculus",
+      "question_id": 39688,
+      "title": "Will the Progress Party secure the runner-up position in seat count in Norway's 167th parliamentary ",
+      "stated_confidence_pct": 50.0,
+      "hit": true,
+      "resolve_time": "2025-09-09T16:10:34Z",
+      "country": "GLOBAL"
+    },
+    {
+      "source": "metaculus",
+      "question_id": 39679,
+      "title": "Will Ap achieve the second-largest seat total in Norway\u2019s 167th Storting following the 2025 election",
+      "stated_confidence_pct": 50.0,
+      "hit": false,
+      "resolve_time": "2025-09-10T00:10:33Z",
+      "country": "GLOBAL"
+    },
+    {
+      "source": "metaculus",
+      "question_id": 39675,
+      "title": "Will the community prediction be higher than 50.00% on 2025-09-11 for the Metaculus question \"Will F",
+      "stated_confidence_pct": 50.0,
+      "hit": false,
+      "resolve_time": "2025-09-11T20:49:42Z",
+      "country": "GLOBAL"
+    }
+  ]
+}

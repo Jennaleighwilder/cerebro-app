@@ -9,3 +9,4 @@ openpyxl>=3.0.0
 pyreadstat>=1.2.0
 pytrends>=5.0.0
 pycountry>=23.0.0
+flask>=2.0.0

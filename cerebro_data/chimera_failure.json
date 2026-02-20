@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "failure_mode": "OOD_Extrapolation",
+  "severity": 0.722,
+  "signals": {
+    "mean_n_eff": 10.0,
+    "coverage_80": 0.8182,
+    "disagreement_std": 0.47,
+    "ood_percentile": 0.9722,
+    "stress_stability": 1.0
+  }
+}

@@ -1,33 +1,38 @@
 {
-  "peak_year": 2021,
+  "peak_year": 2020,
   "window_start": 2019,
   "window_end": 2022,
-  "confidence_pct": 71,
+  "confidence_pct": 48,
+  "core_interval_width": 4,
+  "fused_interval_width": 3,
   "method": "honeycomb_ensemble",
+  "sister_trust_score": 0.3,
+  "effective_sister_weight": 0.0,
+  "fusion_mode": "excluded",
   "components": {
     "core": {
       "peak_year": 2020,
       "window_start": 2019,
       "window_end": 2023,
-      "confidence_pct": 88
+      "confidence_pct": 89
     },
     "sister": {
-      "peak_year": 2022,
-      "window_start": 2021,
+      "peak_year": 2021,
+      "window_start": 2020,
       "window_end": 2022,
-      "confidence_pct": 65
+      "confidence_pct": 67
     },
     "simulation": {
-      "peak_year": 2020,
+      "peak_year": 2019,
       "window_start": 2019,
-      "window_end": 2021
+      "window_end": 2020
     },
     "shift": {
-      "percentile": 0.4048,
-      "confidence_modifier": 1.0
+      "percentile": 0.9722,
+      "confidence_modifier": 0.65
     }
   },
-  "disagreement_std_years": 0.94,
+  "disagreement_std_years": 0.82,
   "window_label": "80% calibrated (honeycomb)",
   "conformal_applied": true,
   "conformal_s_hat": 0.0,

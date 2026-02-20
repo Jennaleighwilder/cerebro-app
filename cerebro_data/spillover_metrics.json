@@ -1,0 +1,11 @@
+{
+  "contagion_risk_index": 1.0,
+  "focal_country": "USA",
+  "base_risk": 0.8,
+  "spillover_contribution": 0.25,
+  "sources_used": [
+    "adjacency",
+    "trade_volume",
+    "linguistic_similarity"
+  ]
+}

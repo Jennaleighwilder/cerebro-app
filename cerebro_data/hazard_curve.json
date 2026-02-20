@@ -1,0 +1,10 @@
+{
+  "P_1yr": 0.0,
+  "P_3yr": 0.15,
+  "P_5yr": 0.31,
+  "P_10yr": 0.69,
+  "peak_year": 2005,
+  "window_start": 2000,
+  "window_end": 2013,
+  "now_year": 1999
+}

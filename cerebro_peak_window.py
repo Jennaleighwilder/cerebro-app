@@ -42,6 +42,7 @@ def compute_peak_window(
         ring_b_score, analogue_episodes, interval_alpha,
         vel_weight, acc_weight,
     )
+    out["ring_B_score"] = ring_b_score
     try:
         from chimera import chimera_confidence_calibrator
         out = chimera_confidence_calibrator.calibrate_peak_window(
@@ -52,6 +53,21 @@ def compute_peak_window(
         )
     except Exception:
         out["confidence_pct_raw"] = out.get("confidence_pct", 50)
+
+    # Wide-interval boost for fallback path (same as honeycomb) — ensure it fires when used as honeycomb fallback
+    try:
+        from chimera.chimera_confidence_calibrator import _wide_interval_accuracy_correction
+        ws, we = out.get("window_start"), out.get("window_end")
+        interval_width = (we - ws) if (ws is not None and we is not None) else None
+        conf_before = out.get("confidence_pct", 50)
+        out["confidence_pct"] = _wide_interval_accuracy_correction(
+            conf_before,
+            interval_width,
+            out.get("ring_B_score"),
+        )
+    except Exception:
+        pass
+
     # Contract windows (conformal v2): always attach status; widen if apply_conformal
     contract = None
     try:

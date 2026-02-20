@@ -1,0 +1,13 @@
+{
+  "sources": {
+    "clock_position_10pt": 0.73,
+    "velocity": 0.73,
+    "acceleration": 0.73,
+    "ring_B_score": 0.73,
+    "homicide_rate": 0.73,
+    "incarceration_rate_bjs": 0.73
+  },
+  "average_integrity": 0.73,
+  "confidence_cap": "HIGH",
+  "timestamp": "2026-02-20T22:48:16.294647Z"
+}

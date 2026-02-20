@@ -1,24 +1,24 @@
 {
   "evaluation_candidates": "expanded",
   "production_trigger": "core saddles only",
-  "n_episodes": 14,
+  "n_episodes": 11,
   "core": {
-    "mae": 1.43,
-    "coverage_80": 0.9286,
-    "brier_5yr": 0.0752,
-    "interval_width_mean": 3.57
+    "mae": 1.36,
+    "coverage_80": 0.8182,
+    "brier_5yr": 0.1604,
+    "interval_width_mean": 2.82
   },
   "sister": {
-    "mae": 2.14,
-    "coverage_80": 0.8571,
-    "brier_5yr": 0.1129,
-    "interval_width_mean": 8.21
+    "mae": 1.18,
+    "coverage_80": 0.6364,
+    "brier_5yr": 0.2356,
+    "interval_width_mean": 2.45
   },
   "honeycomb": {
     "mae": 1.36,
-    "coverage_80": 0.9286,
-    "brier_5yr": 0.0877,
-    "interval_width_mean": 5.43
+    "coverage_80": 0.8182,
+    "brier_5yr": 0.2207,
+    "interval_width_mean": 3.09
   },
-  "winner": "honeycomb"
+  "winner": "sister"
 }

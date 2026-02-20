@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "forward_event_entropy": 1.3683,
+  "regime_markov_10yr_entropy": 1.2501,
+  "analogue_weight_entropy": 2.3463,
+  "interpretation": "deterministic_drift"
+}

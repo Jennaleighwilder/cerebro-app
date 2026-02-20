@@ -1,0 +1,136 @@
+{
+  "version": 1,
+  "min_train": 5,
+  "n_used": 11,
+  "start_year": 1988,
+  "last_event_year": 2020,
+  "mae_mean": 1.364,
+  "coverage_80_mean": 0.8182,
+  "mae_trajectory": [
+    0,
+    0,
+    0,
+    3,
+    1,
+    1,
+    5,
+    3,
+    1,
+    1,
+    0
+  ],
+  "coverage_trajectory": [
+    true,
+    true,
+    true,
+    false,
+    true,
+    true,
+    false,
+    true,
+    true,
+    true,
+    true
+  ],
+  "records": [
+    {
+      "saddle_year": 1999,
+      "event_year": 2000,
+      "predicted_peak": 2000,
+      "error": 0,
+      "interval_hit": true,
+      "n_eff": 5,
+      "disagreement_std": 0.0
+    },
+    {
+      "saddle_year": 2000,
+      "event_year": 2001,
+      "predicted_peak": 2001,
+      "error": 0,
+      "interval_hit": true,
+      "n_eff": 6,
+      "disagreement_std": 0.0
+    },
+    {
+      "saddle_year": 2002,
+      "event_year": 2003,
+      "predicted_peak": 2003,
+      "error": 0,
+      "interval_hit": true,
+      "n_eff": 7,
+      "disagreement_std": 0.0
+    },
+    {
+      "saddle_year": 2004,
+      "event_year": 2008,
+      "predicted_peak": 2005,
+      "error": 3,
+      "interval_hit": false,
+      "n_eff": 8,
+      "disagreement_std": 0.0
+    },
+    {
+      "saddle_year": 2006,
+      "event_year": 2008,
+      "predicted_peak": 2007,
+      "error": 1,
+      "interval_hit": true,
+      "n_eff": 9,
+      "disagreement_std": 0.0
+    },
+    {
+      "saddle_year": 2008,
+      "event_year": 2010,
+      "predicted_peak": 2009,
+      "error": 1,
+      "interval_hit": true,
+      "n_eff": 10,
+      "disagreement_std": 0.47
+    },
+    {
+      "saddle_year": 2010,
+      "event_year": 2017,
+      "predicted_peak": 2012,
+      "error": 5,
+      "interval_hit": false,
+      "n_eff": 11,
+      "disagreement_std": 0.47
+    },
+    {
+      "saddle_year": 2012,
+      "event_year": 2017,
+      "predicted_peak": 2014,
+      "error": 3,
+      "interval_hit": true,
+      "n_eff": 12,
+      "disagreement_std": 0.47
+    },
+    {
+      "saddle_year": 2014,
+      "event_year": 2017,
+      "predicted_peak": 2016,
+      "error": 1,
+      "interval_hit": true,
+      "n_eff": 13,
+      "disagreement_std": 0.47
+    },
+    {
+      "saddle_year": 2016,
+      "event_year": 2017,
+      "predicted_peak": 2018,
+      "error": 1,
+      "interval_hit": true,
+      "n_eff": 14,
+      "disagreement_std": 0.47
+    },
+    {
+      "saddle_year": 2018,
+      "event_year": 2020,
+      "predicted_peak": 2020,
+      "error": 0,
+      "interval_hit": true,
+      "n_eff": 15,
+      "disagreement_std": 0.47
+    }
+  ]
+}

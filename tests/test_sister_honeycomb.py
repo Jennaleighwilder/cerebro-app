@@ -58,6 +58,33 @@ class TestEnsembleSchema(unittest.TestCase):
         self.assertIn(data["winner"], ["core", "sister", "honeycomb"])
 
 
+class TestHoneycombConditionalFusion(unittest.TestCase):
+    def test_honeycomb_output_has_trust_fields(self):
+        """Honeycomb fusion output includes sister_trust_score, effective_sister_weight, fusion_mode."""
+        from cerebro_calibration import _load_episodes
+        from cerebro_eval_utils import past_only_pool, walkforward_predictions
+        raw, _ = _load_episodes(score_threshold=2.0)
+        if len(raw) < 10:
+            self.skipTest("Insufficient episodes")
+        from cerebro_honeycomb import compute_component_mae_and_weights
+        mae_result = compute_component_mae_and_weights(raw, min_train=3)
+        if not mae_result.get("weights"):
+            self.skipTest("No component weights")
+        episodes = walkforward_predictions(
+            raw[:20], interval_alpha=0.8, min_train=3,
+            use_honeycomb=True, component_weights=mae_result["weights"],
+        )
+        if not episodes:
+            self.skipTest("No walkforward episodes")
+        ep = next((e for e in episodes if e.get("sister_trust_score") is not None), None)
+        if ep is None:
+            self.skipTest("No episode with sister_trust_score (all excluded)")
+        self.assertIn("sister_trust_score", ep)
+        self.assertIn("effective_sister_weight", ep)
+        self.assertIn("fusion_mode", ep)
+        self.assertIn(ep["fusion_mode"], ["conditional", "excluded"])
+
+
 class TestSisterLatestFile(unittest.TestCase):
     def test_sister_latest_file_schema(self):
         """sister_latest.json has peak_year, window, confidence."""

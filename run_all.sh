@@ -21,6 +21,15 @@ echo ""
 echo ">>> Running Phase 2 pipeline (PRIMARY→BACKUP chain)..."
 python3 cerebro_pipeline.py || python3 cerebro_trends_loader.py || true
 echo ""
+echo ">>> L1 Google Trends (leading indicator for harm clock)..."
+python3 cerebro_trends_loader.py || true
+echo ""
+echo ">>> UCDP GED protest/unrest aggregator..."
+python3 cerebro_ucdp_loader.py || true
+echo ""
+echo ">>> ACLED protest aggregator (if cerebro_data/ACLED_export.csv exists)..."
+python3 cerebro_acled_loader.py || true
+echo ""
 echo ">>> Running phase1 harm clock ingest..."
 python3 cerebro_phase1_ingest.py
 echo ""
@@ -79,4 +88,19 @@ echo ""
 echo ">>> Exporting UI data..."
 python3 cerebro_export_ui_data.py
 echo ""
+echo ">>> Live feedback (score closed windows)..."
+python3 cerebro_live_feedback.py
+echo ""
+echo ">>> Starting Cerebro API (live Oracle) in background..."
+python3 cerebro_api.py &
+API_PID=$!
+sleep 2
+if kill -0 $API_PID 2>/dev/null; then
+  echo "  Cerebro API running at http://localhost:5000 (PID $API_PID)"
+  echo "  GET /health | POST /oracle"
+else
+  echo "  API failed to start (check Flask: pip install flask)"
+fi
+echo ""
 echo "DONE. Output: cerebro_harm_clock_data.csv, cerebro_harm_clock_phase1.xlsx, public/index.html, public/cerebro_data.json"
+echo "Live Oracle: open http://localhost:5000 and ask a question."

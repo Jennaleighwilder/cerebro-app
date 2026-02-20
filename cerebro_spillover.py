@@ -44,6 +44,18 @@ def _link_strength(a: str, b: str) -> float:
     return 0.4 * geo + 0.35 * trade + 0.25 * ling
 
 
+def get_coupling_coefficients() -> dict:
+    """
+    Cross-dimensional coupling: degree to which movement in one dimension predicts another.
+    Dimensions: harm_tolerance, sexual_norms, class_permeability, good_vs_evil.
+    Returns 4x4 matrix {dim_i: {dim_j: coeff}} or empty if not computed.
+    NOTE: Current spillover models country-level contagion (adjacency/trade/linguistic),
+    not cross-dimensional coupling. Returns zeros as placeholder until multi-dimension data exists.
+    """
+    dims = ["harm_tolerance", "sexual_norms", "class_permeability", "good_vs_evil"]
+    return {d: {d2: 0.0 for d2 in dims if d2 != d} for d in dims}
+
+
 def compute_contagion_risk(
     focal_country: str,
     energy_score: float,

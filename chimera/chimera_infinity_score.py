@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-CHIMERA Infinity Score — Composite metric: is the system getting stronger over time?
-Geometric mean of normalized signals + penalties. 0–80 prototype, 80–140 operational, 140–200 strong, 200+ scary good.
+CHIMERA Infinity Score v2 — Ops-grade composite metric.
+Rewards: accuracy, calibration, coverage, support, robustness.
+Punishes: overconfidence, miscalibration, false positives, integrity degradation, parameter fragility.
 """
 
 import json
@@ -14,6 +15,25 @@ DATA_DIR = SCRIPT_DIR / "cerebro_data"
 OUTPUT_PATH = DATA_DIR / "infinity_score.json"
 
 
+def clamp01(x: float) -> float:
+    return max(0.0, min(1.0, x))
+
+
+def sigmoid(x: float) -> float:
+    return 1.0 / (1.0 + math.exp(-x))
+
+
+def safe_get(d: dict, path: str | list, default):
+    """Get nested key: safe_get(d, 'a.b.c', 0) or safe_get(d, ['a','b','c'], 0)."""
+    if isinstance(path, str):
+        path = path.split(".")
+    for k in path:
+        d = d.get(k) if isinstance(d, dict) else None
+        if d is None:
+            return default
+    return d
+
+
 def _load_json(path: Path, default: dict) -> dict:
     if not path.exists():
         return default
@@ -24,76 +44,125 @@ def _load_json(path: Path, default: dict) -> dict:
         return default
 
 
-def _clamp(x: float, lo: float, hi: float) -> float:
-    return max(lo, min(hi, x))
+def _compute_ece(bins: list[dict]) -> float:
+    """ECE = Σ (n_i/N) * |empirical_i - conf_i|. Uses calibrated_conf_mid when present (post-isotonic ECE)."""
+    valid = []
+    for b in bins:
+        c = b.get("calibrated_conf_mid") if b.get("calibrated_conf_mid") is not None else b.get("conf_mid")
+        e = b.get("empirical_hit_rate")
+        n = b.get("weighted_n") if b.get("weighted_n") is not None else b.get("n", 0)
+        if c is not None and e is not None and n > 0:
+            valid.append((c, e, float(n)))
+    if not valid:
+        return 0.0
+    N = sum(n for _, _, n in valid)
+    if N <= 0:
+        return 0.0
+    ece = sum((n / N) * abs(e - c) for c, e, n in valid)
+    return float(ece)
 
 
 def compute_infinity_score() -> dict:
-    """Compute Infinity Score from cerebro_data artifacts."""
+    """Compute Infinity Score v2 from cerebro_data artifacts."""
     cal = _load_json(DATA_DIR / "calibration_curve.json", {})
     wf = _load_json(DATA_DIR / "walkforward_metrics.json", {})
     bl = _load_json(DATA_DIR / "baseline_comparison.json", {})
     stress = _load_json(DATA_DIR / "stress_test.json", {})
     integrity = _load_json(DATA_DIR / "integrity_scores.json", {})
+    contract = _load_json(DATA_DIR / "contract_report.json", {})
     param_stab = _load_json(DATA_DIR / "parameter_stability.json", {})
+    synth = _load_json(DATA_DIR / "synthetic_worlds.json", {})
 
-    # Use operational or top-level
     cal_mode = cal.get("mode_operational") or cal
     brier = float(cal_mode.get("brier", cal.get("brier_score", 0.25)) or 0.25)
     coverage_80 = float(cal.get("coverage_80", cal_mode.get("coverage_80", 0.7)) or 0.7)
-    mean_n_eff = float(cal.get("mean_n_eff", 7) or 7)
-    interval_width_mean = float(cal.get("interval_width_mean", 5) or 5)
+    n_used = int(cal_mode.get("n_used", cal.get("n_used", 20)) or 20)
+    mean_n_eff = float(cal.get("mean_n_eff", n_used) or n_used)
+    interval_width_mean = float(cal.get("interval_width_mean", 5.0) or 5.0)
 
-    walkforward_mean_error = float(wf.get("mean_error", 5) or 5)
-    wf_coverage_80 = float(wf.get("coverage_80", 70) or 70) / 100.0 if wf.get("coverage_80") is not None else coverage_80
-
+    mae_walkforward = float(wf.get("mean_error", 5) or 5)
     cerebro_beats_all = bool(bl.get("cerebro_beats_all", False))
-    cerebro_mae = float(bl.get("cerebro_mae", 5) or 5)
 
-    peak_std = float(stress.get("peak_std", 2) or 2)
-    window_robustness = float(stress.get("window_robustness", 80) or 80)
-    instability_flag = bool(stress.get("instability_flag", False))
+    _ps = stress.get("peak_std")
+    peak_std = float(_ps) if _ps is not None else 2.0
+    _wr = stress.get("window_robustness")
+    window_robustness = float(_wr) if _wr is not None else 80.0
 
     average_integrity = float(integrity.get("average_integrity", 0.7) or 0.7)
-    confidence_cap = str(integrity.get("confidence_cap", "HIGH") or "HIGH")
-
     mae_surface_variance = float(param_stab.get("mae_surface_variance", 0.1) or 0.1)
-    cal_mode_strict = cal.get("mode_strict") or {}
-    n_used_strict = int(cal_mode_strict.get("n_used", 20) or 20)
 
-    # Normalize to [0,1]
-    S_skill = math.exp(-walkforward_mean_error / 2.0)
-    S_cal = math.exp(-brier / 0.20)
-    S_cov = _clamp((coverage_80 - 0.60) / 0.40, 0, 1)
-    S_neff = _clamp((mean_n_eff - 5) / 10, 0, 1)
-    S_stress = _clamp(window_robustness / 100, 0, 1) * math.exp(-peak_std / 2)
-    S_int = _clamp(average_integrity, 0, 1)
-    S_stab = math.exp(-mae_surface_variance / 0.25)
-    S_dom = 1.0 if cerebro_beats_all else 0.6
+    fp_rate = float(synth.get("false_positive_rate", 0) or 0)
+    high_noise = synth.get("worlds", {}).get("high_noise", {})
+    noise_conf_cal = float(
+        high_noise.get("confidence_mean_calibrated")
+        or synth.get("noise_world_confidence_mean_calibrated")
+        or synth.get("noise_world_confidence_mean", 0.5)
+        or 0.5
+    )
 
-    signals = {
-        "S_skill": round(S_skill, 4),
-        "S_cal": round(S_cal, 4),
-        "S_cov": round(S_cov, 4),
-        "S_neff": round(S_neff, 4),
-        "S_stress": round(S_stress, 4),
-        "S_int": round(S_int, 4),
-        "S_stab": round(S_stab, 4),
-        "S_dom": round(S_dom, 4),
+    # 1) S_acc — walkforward MAE
+    S_acc = clamp01(1.0 - mae_walkforward / 4.0)
+
+    # 2) S_cal — Brier + reliability (ECE)
+    S_brier = clamp01(1.0 - brier / 0.25)
+    ece = _compute_ece(cal.get("bins", []))
+    S_rel = clamp01(1.0 - ece / 0.20)
+    S_cal = math.sqrt(S_brier * S_rel) if (S_brier > 0 and S_rel > 0) else 0.0
+
+    # 3) S_int — coverage + window width (interval honesty)
+    S_cov = clamp01(1.0 - abs(coverage_80 - 0.80) / 0.30)
+    S_width = clamp01(1.0 - (interval_width_mean - 3.0) / 6.0) if interval_width_mean >= 3.0 else 1.0
+    S_int = math.sqrt(S_cov * S_width) if (S_cov > 0 and S_width > 0) else 0.0
+
+    # 4) S_sup — n_eff + integrity
+    S_neff = sigmoid((mean_n_eff - 10) / 2.0)
+    S_intg = clamp01(average_integrity)
+    S_sup = math.sqrt(S_neff * S_intg) if (S_neff > 0 and S_intg > 0) else 0.0
+
+    # 5) S_rob — synthetic + stability + stress
+    S_fp = clamp01(1.0 - fp_rate / 0.25)
+    S_noise = clamp01(1.0 - max(0, noise_conf_cal - 0.70) / 0.20)
+    S_stab = 1.0 / (1.0 + mae_surface_variance)
+    S_peak = clamp01(1.0 - peak_std / 2.0)
+    S_win = clamp01(window_robustness / 80.0)
+    S_stress = math.sqrt(S_peak * S_win) if (S_peak > 0 and S_win > 0) else 0.0
+    S_rob = (S_fp * S_noise * S_stab * S_stress) ** 0.25
+
+    # Core composite
+    subscores = [S_acc, S_cal, S_int, S_sup, S_rob]
+    G = (S_acc * S_cal * S_int * S_sup * S_rob) ** (1 / 5) if all(s > 0 for s in subscores) else 0.0
+    G = clamp01(G)
+
+    # Baseline dominance multiplier
+    M_dom = 1.05 if cerebro_beats_all else 0.90
+
+    # Hard penalties
+    P = 1.0
+    penalties = []
+    if average_integrity < 0.7:
+        P *= 0.85
+        penalties.append("integrity_low")
+    if mean_n_eff < 5:
+        P *= 0.80
+        penalties.append("n_eff_low")
+    if n_used < 30:
+        P *= 0.85
+        penalties.append("n_used_low")
+    if noise_conf_cal > 0.8:
+        P *= 0.75
+        penalties.append("noise_overconfident")
+
+    # Gates (compliance flags)
+    gates = {
+        "n_used_ge_30": n_used >= 30,
+        "mean_n_eff_ge_10": mean_n_eff >= 10,
+        "brier_le_020": brier <= 0.20,
+        "ece_le_010": ece <= 0.10,
+        "synthetic_noise_conf_cal_le_070": noise_conf_cal <= 0.70,
+        "fp_rate_le_025": fp_rate <= 0.25,
     }
 
-    G_raw = (S_skill * S_cal * S_cov * S_neff * S_stress * S_int * S_stab * S_dom) ** (1 / 8)
-    G = max(0, min(1, G_raw))
-
-    P = 1.0
-    if instability_flag:
-        P *= 0.85
-    if confidence_cap == "MEDIUM":
-        P *= 0.90
-    if n_used_strict < 10:
-        P *= 0.90
-
-    InfinityScore = 100 * math.log(1 + 25 * G * P)
+    InfinityScore = round(100 * math.log(1 + 25 * G * M_dom * P), 2)
 
     inputs_present = {
         "calibration_curve": (DATA_DIR / "calibration_curve.json").exists(),
@@ -102,13 +171,51 @@ def compute_infinity_score() -> dict:
         "stress_test": (DATA_DIR / "stress_test.json").exists(),
         "integrity_scores": (DATA_DIR / "integrity_scores.json").exists(),
         "parameter_stability": (DATA_DIR / "parameter_stability.json").exists(),
+        "synthetic_worlds": (DATA_DIR / "synthetic_worlds.json").exists(),
     }
 
     out = {
-        "infinity_score": round(InfinityScore, 1),
+        "version": 2,
+        "infinity_score": InfinityScore,
         "G": round(G, 4),
         "penalty": round(P, 4),
-        "signals": signals,
+        "signals": {
+            "accuracy": round(S_acc, 4),
+            "calibration": round(S_cal, 4),
+            "interval": round(S_int, 4),
+            "support": round(S_sup, 4),
+            "robustness": round(S_rob, 4),
+        },
+        "subscores": {
+            "accuracy": round(S_acc, 4),
+            "calibration": round(S_cal, 4),
+            "interval": round(S_int, 4),
+            "support": round(S_sup, 4),
+            "robustness": round(S_rob, 4),
+        },
+        "diagnostics": {
+            "brier": round(brier, 4),
+            "ece": round(ece, 4),
+            "n_used": n_used,
+            "coverage_80": round(coverage_80, 4),
+            "interval_width_mean": round(interval_width_mean, 2),
+            "mean_n_eff": round(mean_n_eff, 2),
+            "synthetic_fp_rate": round(fp_rate, 4),
+            "synthetic_noise_conf_cal": round(noise_conf_cal, 4),
+            "integrity": round(average_integrity, 4),
+            "mae_walkforward": round(mae_walkforward, 2),
+            "peak_std": round(peak_std, 2),
+            "window_robustness": round(window_robustness, 2),
+            "contract_status": contract.get("contract_status", "UNKNOWN"),
+            "contract_empirical_coverage": round(float(contract.get("empirical_coverage", 0) or 0), 4),
+            "contract_window_widen_factor": round(float(contract.get("window_widen_factor", 1) or 1), 4),
+        },
+        "multipliers": {
+            "dominance": M_dom,
+            "penalty_product": round(P, 4),
+        },
+        "penalties_applied": penalties,
+        "gates": gates,
         "inputs_present": inputs_present,
         "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
     }

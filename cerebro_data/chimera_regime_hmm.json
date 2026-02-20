@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "transition_matrix": {
+    "Stable": {
+      "Stable": 0.2,
+      "Redistribution": 0.2,
+      "Crackdown": 0.2,
+      "Reform": 0.2,
+      "Polarization": 0.2
+    },
+    "Redistribution": {
+      "Stable": 0.0238,
+      "Redistribution": 0.7857,
+      "Crackdown": 0.0238,
+      "Reform": 0.0238,
+      "Polarization": 0.1429
+    },
+    "Crackdown": {
+      "Stable": 0.2,
+      "Redistribution": 0.2,
+      "Crackdown": 0.2,
+      "Reform": 0.2,
+      "Polarization": 0.2
+    },
+    "Reform": {
+      "Stable": 0.2,
+      "Redistribution": 0.2,
+      "Crackdown": 0.2,
+      "Reform": 0.2,
+      "Polarization": 0.2
+    },
+    "Polarization": {
+      "Stable": 0.1111,
+      "Redistribution": 0.5556,
+      "Crackdown": 0.1111,
+      "Reform": 0.1111,
+      "Polarization": 0.1111
+    }
+  },
+  "entropy_per_row": {
+    "Stable": 1.6094,
+    "Redistribution": 0.7344,
+    "Crackdown": 1.6094,
+    "Reform": 1.6094,
+    "Polarization": 1.3031
+  },
+  "most_likely_next_regime": "Redistribution",
+  "n_years_used": 42
+}

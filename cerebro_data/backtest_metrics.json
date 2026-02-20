@@ -1,0 +1,31 @@
+{
+  "brier_walkforward": 0.1935,
+  "coverage_80_walkforward": 0.7586,
+  "coverage_80_ci_lower": 0.64,
+  "coverage_80_ci_upper": 0.87,
+  "interval_width_mean": 5.45,
+  "interval_width_std": 1.64,
+  "mean_n_eff": null,
+  "n_eff_interpretation": null,
+  "n_used": 45,
+  "min_train": 3,
+  "candidate_years_total": 16,
+  "candidate_years_used": 45,
+  "core_saddles_used": 5,
+  "score_saddles_used": 11,
+  "near_saddles_used": 0,
+  "mode_operational": {
+    "min_train": 3,
+    "brier": 0.1935,
+    "coverage_80": 0.7586,
+    "n_used": 45
+  },
+  "mode_strict": {
+    "min_train": 5,
+    "brier": 0.1674,
+    "coverage_80": 0.8182,
+    "n_used": 11
+  },
+  "method": "walkforward",
+  "stored_in": "/Users/jenniferwest/Downloads/files (88)/cerebro_data/backtest_metrics.json"
+}

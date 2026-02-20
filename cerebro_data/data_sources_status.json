@@ -90,9 +90,8 @@
       "ring": "C",
       "confidence": 92,
       "data": {
-        "source": "UCDP_ACD_annual",
-        "years": 79,
-        "expand": "GED at ucdp.uu.se/downloads"
+        "file": "ucdp_ged.zip",
+        "has_geolocation": true
       },
       "error": null,
       "clocks": [
@@ -104,8 +103,8 @@
       "ring": "C",
       "confidence": 88,
       "data": {
-        "rows": 3,
-        "file": "ACLED_sample_stub.csv"
+        "rows": 441,
+        "file": "ACLED_protest_annual.csv"
       },
       "error": null,
       "clocks": [

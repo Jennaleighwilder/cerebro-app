@@ -1,0 +1,35 @@
+{
+  "score_history": [
+    258.64,
+    263.9,
+    263.9,
+    272.97,
+    272.97,
+    272.97,
+    272.97,
+    0,
+    0,
+    0
+  ],
+  "last_run": "2026-02-20T22:49:56.473838Z",
+  "last_metrics": {
+    "brier": 0.1491,
+    "coverage_80": 0.8182,
+    "mae": 1.364,
+    "mean_n_eff": 10.0,
+    "n": 11,
+    "composite": 0.08539999999999992
+  },
+  "last_config": {
+    "vel_weight": 100,
+    "acc_weight": 2500,
+    "tau": 1.0,
+    "n_updates": 1,
+    "updated_at": "2026-02-20T22:48:59.198654Z",
+    "rolling_mae": 1.364,
+    "mae_before": 1.364,
+    "mae_after": 1.364,
+    "version": 1
+  },
+  "runs_since_promotion": 81
+}

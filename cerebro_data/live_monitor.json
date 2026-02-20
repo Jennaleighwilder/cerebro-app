@@ -1,0 +1,6 @@
+{
+  "predictions_active": 0,
+  "predictions_resolved": 0,
+  "rolling_mae_last_10": null,
+  "drift_detected": false
+}

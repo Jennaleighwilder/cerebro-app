@@ -1,9 +1,9 @@
 {
   "target_coverage": 0.8,
   "min_train": 5,
-  "n_used": 14,
+  "n_used": 11,
   "s_hat": 0.0,
-  "empirical_coverage": 0.86,
+  "empirical_coverage": 0.82,
   "method": "walkforward_conformal_interval",
   "version": 1
 }

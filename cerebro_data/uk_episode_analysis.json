@@ -1,0 +1,131 @@
+{
+  "n_candidates": 4,
+  "need_for_contribution": 5,
+  "gap": 1,
+  "candidates": [
+    {
+      "year": 1976,
+      "score": 2.0,
+      "qualifies_score": true,
+      "near_saddle": true,
+      "velocity": -0.0911,
+      "acceleration": 0.6915,
+      "event_year": 1979,
+      "years_to_event": 3
+    },
+    {
+      "year": 1982,
+      "score": 2.0,
+      "qualifies_score": true,
+      "near_saddle": true,
+      "velocity": 0.1584,
+      "acceleration": -0.8034,
+      "event_year": 1987,
+      "years_to_event": 5
+    },
+    {
+      "year": 2010,
+      "score": 2.0,
+      "qualifies_score": true,
+      "near_saddle": true,
+      "velocity": 0.1409,
+      "acceleration": -0.9497,
+      "event_year": 2016,
+      "years_to_event": 6
+    },
+    {
+      "year": 2018,
+      "score": 2.0,
+      "qualifies_score": true,
+      "near_saddle": true,
+      "velocity": -0.0106,
+      "acceleration": 0.1145,
+      "event_year": 2020,
+      "years_to_event": 2
+    }
+  ],
+  "era_distribution": {
+    "1974-1989": 2,
+    "1990-1999": 0,
+    "2000-2009": 0,
+    "2010-2024": 2
+  },
+  "era_detail": {
+    "1974-1989": [
+      [
+        1976,
+        2.0
+      ],
+      [
+        1982,
+        2.0
+      ]
+    ],
+    "1990-1999": [],
+    "2000-2009": [],
+    "2010-2024": [
+      [
+        2010,
+        2.0
+      ],
+      [
+        2018,
+        2.0
+      ]
+    ]
+  },
+  "spread": "spread",
+  "event_years": [
+    1979,
+    1997,
+    2008,
+    2016,
+    2020
+  ],
+  "event_tolerance": 13,
+  "max_event_excludes": "years >= 2020",
+  "almost_qualify_count": 13,
+  "almost_qualify_sample": [
+    {
+      "year": 1983,
+      "score": 1,
+      "velocity": -0.0884,
+      "acceleration": -0.2468,
+      "near_saddle": false
+    },
+    {
+      "year": 1988,
+      "score": 1,
+      "velocity": -0.0157,
+      "acceleration": -1.4197,
+      "near_saddle": false
+    },
+    {
+      "year": 1993,
+      "score": 1,
+      "velocity": 0.6986,
+      "acceleration": -0.9405,
+      "near_saddle": false
+    },
+    {
+      "year": 1996,
+      "score": 1,
+      "velocity": -0.5026,
+      "acceleration": 0.5751,
+      "near_saddle": false
+    },
+    {
+      "year": 1998,
+      "score": 1,
+      "velocity": 0.0851,
+      "acceleration": 0.6908,
+      "near_saddle": false
+    }
+  ],
+  "raw_diag": {
+    "candidate_years_total": 4,
+    "core_saddles_used": 0,
+    "score_saddles_used": 4,
+    "near_saddles_used": 0
+  }
+}

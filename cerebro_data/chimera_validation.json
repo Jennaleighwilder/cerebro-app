@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "model_brier": 0.1731,
+  "shuffle_baseline_brier": 0.6077,
+  "random_baseline_brier": 0.2156,
+  "skill_score": 0.7151,
+  "discrimination_vs_shuffle": 0.7151,
+  "n_predictions": 11
+}

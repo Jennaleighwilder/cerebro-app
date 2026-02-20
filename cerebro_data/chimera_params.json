@@ -1,0 +1,11 @@
+{
+  "vel_weight": 100,
+  "acc_weight": 2500,
+  "tau": 1.0,
+  "n_updates": 1,
+  "updated_at": "2026-02-20T22:48:59.198654Z",
+  "rolling_mae": 1.364,
+  "mae_before": 1.364,
+  "mae_after": 1.364,
+  "version": 1
+}

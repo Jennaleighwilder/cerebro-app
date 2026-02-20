@@ -1,0 +1,9 @@
+{
+  "peak_year": 2021,
+  "window_start": 2020,
+  "window_end": 2022,
+  "confidence_pct": 67,
+  "method": "sister_gpr",
+  "n_train": 15,
+  "residual_iqr": 0.78
+}

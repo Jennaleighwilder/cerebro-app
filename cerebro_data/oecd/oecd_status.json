@@ -1,0 +1,212 @@
+{
+  "UK": {
+    "rows": 57,
+    "homicide_n": 30,
+    "gini_n": 54,
+    "unemp_n": 34,
+    "status": "ok"
+  },
+  "DE": {
+    "rows": 35,
+    "homicide_n": 34,
+    "gini_n": 30,
+    "unemp_n": 34,
+    "status": "ok"
+  },
+  "FR": {
+    "rows": 39,
+    "homicide_n": 34,
+    "gini_n": 33,
+    "unemp_n": 34,
+    "status": "ok"
+  },
+  "JP": {
+    "rows": 35,
+    "homicide_n": 34,
+    "gini_n": 13,
+    "unemp_n": 34,
+    "status": "insufficient"
+  },
+  "CA": {
+    "rows": 48,
+    "homicide_n": 34,
+    "gini_n": 45,
+    "unemp_n": 34,
+    "status": "ok"
+  },
+  "AU": {
+    "rows": 38,
+    "homicide_n": 34,
+    "gini_n": 13,
+    "unemp_n": 34,
+    "status": "insufficient"
+  },
+  "SE": {
+    "rows": 38,
+    "homicide_n": 34,
+    "gini_n": 29,
+    "unemp_n": 34,
+    "status": "ok"
+  },
+  "BR": {
+    "rows": 44,
+    "homicide_n": 34,
+    "gini_n": 39,
+    "unemp_n": 34,
+    "status": "ok"
+  },
+  "IN": {
+    "rows": 38,
+    "homicide_n": 33,
+    "gini_n": 8,
+    "unemp_n": 34,
+    "status": "insufficient"
+  },
+  "ZA": {
+    "rows": 34,
+    "homicide_n": 29,
+    "gini_n": 6,
+    "unemp_n": 34,
+    "status": "insufficient"
+  },
+  "TR": {
+    "rows": 35,
+    "homicide_n": 18,
+    "gini_n": 23,
+    "unemp_n": 34,
+    "status": "insufficient"
+  },
+  "KR": {
+    "rows": 35,
+    "homicide_n": 34,
+    "gini_n": 11,
+    "unemp_n": 34,
+    "status": "insufficient"
+  },
+  "PL": {
+    "rows": 39,
+    "homicide_n": 29,
+    "gini_n": 34,
+    "unemp_n": 34,
+    "status": "ok"
+  },
+  "MX": {
+    "rows": 37,
+    "homicide_n": 34,
+    "gini_n": 19,
+    "unemp_n": 34,
+    "status": "insufficient"
+  },
+  "AR": {
+    "rows": 37,
+    "homicide_n": 23,
+    "gini_n": 36,
+    "unemp_n": 34,
+    "status": "insufficient"
+  },
+  "NG": {
+    "rows": 35,
+    "homicide_n": 3,
+    "gini_n": 9,
+    "unemp_n": 34,
+    "status": "insufficient"
+  },
+  "EG": {
+    "rows": 35,
+    "homicide_n": 19,
+    "gini_n": 11,
+    "unemp_n": 34,
+    "status": "insufficient"
+  },
+  "ID": {
+    "rows": 37,
+    "homicide_n": 6,
+    "gini_n": 32,
+    "unemp_n": 34,
+    "status": "insufficient"
+  },
+  "TH": {
+    "rows": 37,
+    "homicide_n": 22,
+    "gini_n": 29,
+    "unemp_n": 34,
+    "status": "insufficient"
+  },
+  "CO": {
+    "rows": 38,
+    "homicide_n": 34,
+    "gini_n": 29,
+    "unemp_n": 34,
+    "status": "ok"
+  },
+  "CL": {
+    "rows": 36,
+    "homicide_n": 20,
+    "gini_n": 16,
+    "unemp_n": 34,
+    "status": "insufficient"
+  },
+  "PE": {
+    "rows": 35,
+    "homicide_n": 11,
+    "gini_n": 30,
+    "unemp_n": 34,
+    "status": "insufficient"
+  },
+  "HU": {
+    "rows": 37,
+    "homicide_n": 34,
+    "gini_n": 25,
+    "unemp_n": 34,
+    "status": "ok"
+  },
+  "CZ": {
+    "rows": 34,
+    "homicide_n": 29,
+    "gini_n": 24,
+    "unemp_n": 34,
+    "status": "insufficient"
+  },
+  "GR": {
+    "rows": 35,
+    "homicide_n": 32,
+    "gini_n": 24,
+    "unemp_n": 34,
+    "status": "insufficient"
+  },
+  "PT": {
+    "rows": 35,
+    "homicide_n": 27,
+    "gini_n": 21,
+    "unemp_n": 34,
+    "status": "insufficient"
+  },
+  "NL": {
+    "rows": 37,
+    "homicide_n": 34,
+    "gini_n": 23,
+    "unemp_n": 34,
+    "status": "insufficient"
+  },
+  "BE": {
+    "rows": 37,
+    "homicide_n": 12,
+    "gini_n": 27,
+    "unemp_n": 34,
+    "status": "insufficient"
+  },
+  "ES": {
+    "rows": 37,
+    "homicide_n": 34,
+    "gini_n": 32,
+    "unemp_n": 34,
+    "status": "ok"
+  },
+  "IT": {
+    "rows": 46,
+    "homicide_n": 32,
+    "gini_n": 38,
+    "unemp_n": 34,
+    "status": "ok"
+  }
+}
