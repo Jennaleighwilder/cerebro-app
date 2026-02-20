@@ -317,25 +317,18 @@ NOTE: Ring B requires manual GSS/Gallup data. Placeholders marked.
       Run with real data once CSVs downloaded from GSS Data Explorer.
 """
 
-# NORMALIZE each indicator to [-1, +1]
+# NORMALIZE each indicator to [-1, +1] — CAUSAL (expanding min/max, no future leakage)
 # Convention: -1 = maximum harm / constraint pole; +1 = maximum safety/protection pole
 
-def norm(series_dict, invert=False):
-    """Normalize dict to [-1, +1]. invert=True flips direction."""
-    s = pd.Series(series_dict).reindex(years)
-    lo, hi = s.min(), s.max()
-    if hi == lo:
-        return pd.Series(0, index=years)
-    n = -1 + 2 * (s - lo) / (hi - lo)
-    return -n if invert else n
+from cerebro_causal_normalization import norm_causal
 
 # Ring C — Behavioral
 # Higher homicide = more harm = negative pole → invert
-rc1_homicide    = norm(dict(zip(df.index, df["homicide_rate"])), invert=True)
+rc1_homicide    = norm_causal(dict(zip(df.index, df["homicide_rate"])), invert=True)
 # Higher overdose = more harm = negative pole → invert
-rc2_overdose    = norm(dict(zip(df.index, df["overdose_death_rate_cdc"])), invert=True)
+rc2_overdose    = norm_causal(dict(zip(df.index, df["overdose_death_rate_cdc"])), invert=True)
 # Incarceration: dual signal. Very high = structural harm. For Phase 1, treat rising as HARM.
-rc3_incarcerate = norm(dict(zip(df.index, df["incarceration_rate_bjs"])), invert=True)
+rc3_incarcerate = norm_causal(dict(zip(df.index, df["incarceration_rate_bjs"])), invert=True)
 
 # Ring B — Normative: GSS attitudes + Pew trust
 # Load GSS Ring B if parsed (cerebro_data/GSS_RingB_annual.csv)
@@ -371,7 +364,7 @@ if os.path.exists(gss_path):
                 s = gss_df[col].dropna()
                 if len(s) > 5:
                     d = s.to_dict()
-                    components.append(norm(d, invert=inv))
+                    components.append(norm_causal(d, invert=inv))
         if components:
             rb_gss = sum(components) / len(components)
             gss_ringb = rb_gss.reindex(years)
@@ -383,11 +376,11 @@ if gss_ringb is not None and gss_ringb.notna().sum() > 10:
     df["ring_B_score"] = gss_ringb
     # Fill pre-1972 with Pew if available
     if pew_trust:
-        pew_series = norm(pew_trust, invert=False).reindex(years)
+        pew_series = norm_causal(pew_trust, invert=False).reindex(years)
         df["ring_B_score"] = df["ring_B_score"].fillna(pew_series)
     print("  ✓ Ring B: GSS attitudes (COURTS, CAPPUN, TRUST, FEAR, etc.) + Pew trust")
 elif pew_trust:
-    rb_pew = norm(pew_trust, invert=False)
+    rb_pew = norm_causal(pew_trust, invert=False)
     df["ring_B_score"] = rb_pew.reindex(years)
     print("  ✓ Ring B: Pew trust in government (1958–present)")
 else:
@@ -396,11 +389,11 @@ else:
 
 # Ring A — Structural
 # Higher unemployment = more harm loading = negative pole → invert
-ra1_unemployment = norm(dict(zip(df.index, df["unemployment_rate"])), invert=True)
+ra1_unemployment = norm_causal(dict(zip(df.index, df["unemployment_rate"])), invert=True)
 # Lower LFPR = more exclusion = harm = negative → invert
-ra2_lfpr         = norm(dict(zip(df.index, df["labor_force_part_rate"])), invert=False)
+ra2_lfpr         = norm_causal(dict(zip(df.index, df["labor_force_part_rate"])), invert=False)
 # Incarceration rate also as structural signal
-ra3_incarcerate_struct = norm(dict(zip(df.index, df["incarceration_rate_bjs"])), invert=True)
+ra3_incarcerate_struct = norm_causal(dict(zip(df.index, df["incarceration_rate_bjs"])), invert=True)
 
 # FRED available? Check if unemployment pulled successfully
 fred_available = ra1_unemployment.notna().sum() > 10

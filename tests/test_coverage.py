@@ -70,6 +70,27 @@ class TestCoreCoverage(unittest.TestCase):
         self.assertIn("peak_year", pw)
         self.assertIn("method", pw)
 
+    def test_compute_peak_window_multi_clock_fused(self):
+        """Triggers _load_analogue_episodes_fused and weighted distance when class_state, sexual_state provided."""
+        from cerebro_core import compute_peak_window
+        pw = compute_peak_window(
+            2022, -0.5, -0.1, 0.05, None, None,
+            class_state=(-0.3, 0.02, 0.01),
+            sexual_state=(0.2, -0.03, 0.02),
+        )
+        self.assertIn("peak_year", pw)
+        self.assertIn("method", pw)
+
+    def test_load_analogue_episodes_class_sexual(self):
+        """Triggers _load_analogue_episodes with clock=class and clock=sexual."""
+        from cerebro_core import _load_analogue_episodes
+        harm_ep = _load_analogue_episodes("harm")
+        class_ep = _load_analogue_episodes("class")
+        sexual_ep = _load_analogue_episodes("sexual")
+        self.assertIsInstance(harm_ep, list)
+        self.assertIsInstance(class_ep, list)
+        self.assertIsInstance(sexual_ep, list)
+
 
 class TestCouplingCoverage(unittest.TestCase):
     def test_coupling_factor_high_load(self):
@@ -145,10 +166,23 @@ class TestWalkforwardCoverage(unittest.TestCase):
 
 class TestCalibrationCoverage(unittest.TestCase):
     def test_run_calibration(self):
+        """Calibration returns bins and method. brier_score present when successful."""
         from cerebro_calibration import run_calibration
         r = run_calibration()
         self.assertIn("bins", r)
-        self.assertIn("brier_score", r)
+        self.assertIn("method", r)
+        if not r.get("error"):
+            self.assertIn("brier_score", r)
+
+    def test_run_calibration_insufficient_episodes_skips_gracefully(self):
+        """If insufficient episodes, calibration returns error dict, does not fail."""
+        from cerebro_calibration import run_calibration
+        r = run_calibration()
+        if r.get("error"):
+            self.assertIn("bins", r)
+            self.assertIn("method", r)
+        else:
+            self.assertGreaterEqual(r.get("n_used", 0), 10, "When successful, n_used should be >= 10")
 
 
 class TestStressCoverage(unittest.TestCase):

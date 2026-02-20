@@ -11,8 +11,12 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 OUTPUT_PATH = SCRIPT_DIR / "cerebro_data" / "rolling_origin_metrics.json"
 CSV_PATH = SCRIPT_DIR / "cerebro_harm_clock_data.csv"
 
-LABELED_EVENTS = [1933, 1935, 1965, 1981, 1994, 2008, 2020]
 EVENT_TOLERANCE = 10
+
+
+def _get_labeled_events():
+    from cerebro_event_loader import load_event_years
+    return load_event_years()
 MIN_TRAIN = 5
 ORIGIN_STEP_YEARS = 5
 
@@ -40,7 +44,7 @@ def _load_episodes():
             continue
         best_event = None
         best_d = 999
-        for ey in LABELED_EVENTS:
+        for ey in _get_labeled_events():
             if ey > yr and ey - yr <= EVENT_TOLERANCE and ey - yr < best_d:
                 best_d = ey - yr
                 best_event = ey

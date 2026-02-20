@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CEREBRO — Method Transparency</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500;600&family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--black:#000;--deep:#040608;--stone:#0A0D12;--panel:#0E1219;--border:#1E2530;--gold:#C9A84C;--gold2:#E8C96A;--red:#E63946;--green:#2ECC71;--amber:#FF9F1C;--blue:#4A90D9;--white:#F0F2F5;--muted:#8892A4;--dim:#3D4A5C}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--deep);color:var(--white);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 120% 60% at 50% -10%,rgba(201,168,76,0.06) 0%,transparent 60%),linear-gradient(180deg,#040608 0%,#060910 40%,#040608 100%);pointer-events:none}
+.everything{position:relative;z-index:1;max-width:800px;margin:0 auto;padding:48px 24px}
+h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,6vw,52px);letter-spacing:0.08em;color:var(--white);margin-bottom:24px}
+.method-block{background:var(--panel);border:1px solid var(--border);border-left:4px solid var(--gold);padding:24px 32px;margin-bottom:24px;border-radius:2px}
+.method-block p{line-height:1.6;color:var(--white);margin-bottom:12px}
+.method-block p:last-child{margin-bottom:0}
+.method-block strong{color:var(--gold2)}
+a{color:var(--gold);text-decoration:none}
+a:hover{text-decoration:underline}
+.back-link{display:inline-block;margin-bottom:32px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="everything">
+  <a href="index.html" class="back-link">← Back to Dashboard</a>
+  <h1>Method Transparency</h1>
+  <div class="method-block">
+    <p><strong>Calibration is computed walk-forward (past-only analogues).</strong> Each episode's prediction uses only episodes with earlier saddle years. No future leakage.</p>
+  </div>
+  <div class="method-block">
+    <p>Position normalization uses expanding min/max and z-scores: at year t, statistics are computed from data ≤ t only. Early years may be NaN until sufficient history exists.</p>
+  </div>
+  <div class="method-block">
+    <p>Analogue pools are strictly past-only: for an episode at year t, the analogue pool is limited to episodes with saddle_year &lt; t.</p>
+  </div>
+</div>
+</body>
+</html>
