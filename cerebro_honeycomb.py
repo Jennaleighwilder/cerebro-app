@@ -66,7 +66,20 @@ def _sim_q25_q75(sim: dict) -> tuple[float, float]:
 
 
 def _load_learned_weights() -> tuple[float | None, float | None]:
-    """Return (vel_weight, acc_weight) from distance_weights.json or (None, None)."""
+    """Return (vel_weight, acc_weight). Prefer chimera_params over distance_weights when learned."""
+    # CHIMERA adaptive: prefer chimera_params when it has updates
+    cp = SCRIPT_DIR / "cerebro_data" / "chimera_params.json"
+    if cp.exists():
+        try:
+            with open(cp) as f:
+                d = json.load(f)
+            if d.get("n_updates", 0) > 0:
+                vw, aw = d.get("vel_weight"), d.get("acc_weight")
+                if vw is not None and aw is not None:
+                    return float(vw), float(aw)
+        except Exception:
+            pass
+    # Fallback: distance_weights.json
     p = SCRIPT_DIR / "cerebro_data" / "distance_weights.json"
     if not p.exists():
         return None, None
@@ -76,6 +89,26 @@ def _load_learned_weights() -> tuple[float | None, float | None]:
         return float(d.get("vel_weight")), float(d.get("acc_weight"))
     except Exception:
         return None, None
+
+
+def _chimera_safety_gate() -> bool:
+    """True if any gate triggers: failure>0.8, OOD severe, coverage<0.6, stability<0.5."""
+    try:
+        for name, check in [
+            ("chimera_failure.json", lambda j: j.get("severity", 0) > 0.8),
+            ("distribution_shift.json", lambda j: j.get("ood_level") == "SEVERE"),
+            ("chimera_reconstruction.json", lambda j: j.get("coverage_80_mean") is not None and j.get("coverage_80_mean") < 0.6),
+            ("chimera_stress_matrix.json", lambda j: j.get("mean_stability") is not None and j.get("mean_stability") < 0.5),
+        ]:
+            p = SCRIPT_DIR / "cerebro_data" / name
+            if p.exists():
+                with open(p) as f:
+                    d = json.load(f)
+                if check(d):
+                    return True
+    except Exception:
+        pass
+    return False
 
 
 def _load_conformal() -> dict | None:
@@ -179,6 +212,10 @@ def compute_honeycomb_fusion(
     disp = float(np.std([core_peak, sis_peak, sim_peak]))
     base_conf -= min(25, int(disp * 6))
     confidence_pct = int(_clamp(base_conf, 40, 95))
+
+    # Hard safety gate (CHIMERA): clamp to 55 if structural instability
+    if _chimera_safety_gate():
+        confidence_pct = min(55, confidence_pct)
 
     out = {
         "peak_year": peak_year,

@@ -53,6 +53,11 @@ echo ">>> Figure-8 self-tune (distance weights, conformal, regime markov)..."
 python3 cerebro_fit_distance_weights.py || true
 python3 cerebro_honeycomb_conformal.py || true
 python3 cerebro_regime_markov.py || true
+echo ""
+echo ">>> CHIMERA (reconstruction, simulation, stress, coupling, evolution, entropy, validation, archive)..."
+python3 cerebro_chimera/chimera_engine.py || true
+echo ""
+echo ">>> Honeycomb (with CHIMERA safety gates)..."
 python3 cerebro_honeycomb.py || true
 echo ""
 echo ">>> Running tests..."

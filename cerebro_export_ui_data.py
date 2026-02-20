@@ -424,6 +424,18 @@ def _load_regime_markov():
         return {}
 
 
+def _load_chimera_master():
+    """Load CHIMERA master summary (reconstruction, stress, entropy, failure, validation, adaptive)."""
+    p = SCRIPT_DIR / "cerebro_data" / "chimera_master.json"
+    if not p.exists():
+        return {}
+    try:
+        with open(p) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
 def _load_systemic_instability(df):
     try:
         from cerebro_coupling import systemic_instability_index
@@ -626,6 +638,7 @@ def main():
             "forward_simulation": _load_forward_simulation(),
             "distribution_shift": _load_distribution_shift(),
             "historical_replay": _load_historical_replay(),
+            "chimera": _load_chimera_master(),
         },
         "systemic_instability_index": _load_systemic_instability(df),
         "math_state": _build_math_state(df),
