@@ -30,6 +30,10 @@ echo ""
 echo ">>> Running tests..."
 python3 test_data_gather.py
 python3 tests/test_oracle.py || true
+python3 tests/test_calibration.py || true
+echo ""
+echo ">>> Fitting distance weights (optional)..."
+python3 cerebro_fit_distance_weights.py || true
 echo ""
 echo ">>> Exporting UI data..."
 python3 cerebro_export_ui_data.py
