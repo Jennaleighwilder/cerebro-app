@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CEREBRO — Full Reference for Sharing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500;600&family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--black:#000;--deep:#040608;--stone:#0A0D12;--panel:#0E1219;--border:#1E2530;--gold:#C9A84C;--gold2:#E8C96A;--red:#E63946;--green:#2ECC71;--amber:#FF9F1C;--blue:#4A90D9;--white:#F0F2F5;--muted:#8892A4;--dim:#3D4A5C}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--deep);color:var(--white);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 120% 60% at 50% -10%,rgba(201,168,76,0.06) 0%,transparent 60%),linear-gradient(180deg,#040608 0%,#060910 40%,#040608 100%);pointer-events:none}
+body::after{content:'';position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(201,168,76,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.03) 1px,transparent 1px);background-size:48px 48px;pointer-events:none}
+.everything{position:relative;z-index:1}
+header{text-align:center;padding:32px 24px 0;position:relative}
+.arch-frame{position:absolute;top:0;left:50%;transform:translateX(-50%);width:min(900px,95vw);height:280px;border:1px solid rgba(201,168,76,0.12);border-bottom:none;border-radius:50% 50% 0 0/80px 80px 0 0;pointer-events:none}
+.ornament{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:8px}
+.ornament-line{height:1px;width:80px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.ornament-diamond{width:6px;height:6px;background:var(--gold);transform:rotate(45deg);box-shadow:0 0 8px var(--gold)}
+.institute-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.3em;color:var(--gold);opacity:0.7;text-transform:uppercase;margin-bottom:12px}
+h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(64px,10vw,110px);letter-spacing:0.08em;line-height:0.9;color:var(--white);text-shadow:0 0 80px rgba(201,168,76,0.3);margin-bottom:4px}
+.tagline{font-family:'Playfair Display',serif;font-size:clamp(13px,1.8vw,17px);font-style:italic;color:var(--gold);letter-spacing:0.05em;margin-bottom:24px}
+.arch-divider{max-width:1400px;margin:0 auto 24px;padding:0 24px;display:flex;align-items:center;gap:16px}
+.arch-divider-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--border))}
+.arch-divider-line.rev{background:linear-gradient(90deg,var(--border),transparent)}
+.arch-divider-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.35em;color:var(--dim);white-space:nowrap}
+.arch-divider-glyph{width:4px;height:4px;background:var(--gold);transform:rotate(45deg);box-shadow:0 0 6px var(--gold)}
+.ref-section{max-width:1400px;margin:0 auto 32px;padding:0 24px}
+.ref-card{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--gold);border-radius:2px;padding:28px 36px;overflow:hidden}
+.ref-card h2{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:0.08em;color:var(--gold);margin-bottom:16px}
+.ref-card p,.ref-card li{font-size:14px;line-height:1.65;color:var(--white);margin-bottom:10px}
+.ref-card ul{margin-left:20px;margin-bottom:12px}
+.ref-card table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+.ref-card th,.ref-card td{border:1px solid var(--border);padding:10px 14px;text-align:left}
+.ref-card th{background:rgba(201,168,76,0.08);color:var(--gold2);font-family:'IBM Plex Mono',monospace;font-weight:500;letter-spacing:0.06em}
+.ref-card tr:nth-child(even){background:rgba(255,255,255,0.02)}
+.code{font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--stone);padding:3px 8px;border-radius:2px;color:var(--gold2)}
+.live-link{color:var(--gold);text-decoration:none}
+.live-link:hover{text-decoration:underline}
+.clock-card{background:var(--panel);border:1px solid var(--border);border-radius:2px;padding:20px;position:relative}
+.clock-card::before,.clock-card::after{content:'';position:absolute;width:12px;height:12px;border-color:var(--gold);border-style:solid;opacity:0.4}
+.clock-card::before{top:6px;left:6px;border-width:1px 0 0 1px}
+.clock-card::after{bottom:6px;right:6px;border-width:0 1px 1px 0}
+.card-number{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.3em;color:var(--dim);text-transform:uppercase;margin-bottom:4px}
+.card-name{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:0.06em;color:var(--white);line-height:1.1}
+.clocks-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:0 auto 32px;padding:0 24px;max-width:1400px}
+@media(max-width:900px){.clocks-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.clocks-grid{grid-template-columns:1fr}}
+footer{max-width:1400px;margin:0 auto;padding:24px 24px 48px;border-top:1px solid var(--border);font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:0.1em}
+@media print{body{background:#0A0D12}body::before,body::after{opacity:0.5}.ref-card{break-inside:avoid}.no-print{display:none!important}}
+.print-hint{font-size:12px;color:var(--muted);margin:24px auto 24px;padding:12px 24px;max-width:900px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:4px}
+</style>
+</head>
+<body>
+<p class="print-hint no-print">To save as PDF: File &rarr; Print &rarr; Save as PDF (Cmd+P)</p>
+<div class="everything">
+  <header>
+    <div class="arch-frame"></div>
+    <div class="ornament"><div class="ornament-line"></div><div class="ornament-diamond"></div><div class="ornament-line"></div></div>
+    <div class="institute-label">The Forgotten Code Research Institute</div>
+    <h1>CEREBRO</h1>
+    <div class="tagline">Civilizational Dynamics Engine · Pendulum Physics Applied to History</div>
+  </header>
+
+  <div class="arch-divider"><div class="arch-divider-line rev"></div><div class="arch-divider-glyph"></div><div class="arch-divider-label">Live Site & Locations</div><div class="arch-divider-glyph"></div><div class="arch-divider-line"></div></div>
+  <div class="ref-section">
+    <div class="ref-card">
+      <h2>1. LIVE SITE & LOCATIONS</h2>
+      <table>
+        <tr><th>Live site (Vercel)</th><td><a href="https://cerebro-deploy.vercel.app/" class="live-link">https://cerebro-deploy.vercel.app/</a></td></tr>
+        <tr><th>Codebase</th><td>cerebro/</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="arch-divider"><div class="arch-divider-line rev"></div><div class="arch-divider-glyph"></div><div class="arch-divider-label">What It Is</div><div class="arch-divider-glyph"></div><div class="arch-divider-line"></div></div>
+  <div class="ref-section">
+    <div class="ref-card">
+      <h2>2. WHAT IT IS</h2>
+      <p>CEREBRO models four societal pendulums (clocks) and a <strong>Composite Pressure Index</strong> to quantify system state. Users ask plain-English predictive queries via the <strong>Oracle</strong> and read long-form dispatches in the <strong>Pendulum Gazette</strong>.</p>
+      <table>
+        <tr><th>Concept</th><th>Description</th></tr>
+        <tr><td>Four Clocks</td><td>Harm Tolerance, Class Permeability, Sexual Pendulum, Good vs. Evil</td></tr>
+        <tr><td>Composite Pressure Index</td><td>Weighted aggregate (−10 to +10); e.g. +0.8 = "SYSTEM SWINGING"</td></tr>
+        <tr><td>Saddle</td><td>Inflection point: low velocity, acceleration opposes direction; high policy-change risk</td></tr>
+        <tr><td>Oracle</td><td>Plain-English predictive query engine (GSS + Pew Ring B loaded)</td></tr>
+        <tr><td>Pendulum Gazette</td><td>Long-form dispatches for each clock</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="arch-divider"><div class="arch-divider-line rev"></div><div class="arch-divider-glyph"></div><div class="arch-divider-label">The Four Clocks</div><div class="arch-divider-glyph"></div><div class="arch-divider-line"></div></div>
+  <div class="clocks-grid">
+    <div class="clock-card"><div class="card-number">CLOCK 01</div><div class="card-name">HARM TOLERANCE</div><p style="font-size:10px;color:var(--muted);margin-top:8px">Maximum Harm ←→ Maximum Protection</p></div>
+    <div class="clock-card"><div class="card-number">CLOCK 02</div><div class="card-name">SEXUAL PENDULUM</div><p style="font-size:10px;color:var(--muted);margin-top:8px">Constraint ←→ Autonomy</p></div>
+    <div class="clock-card"><div class="card-number">CLOCK 03</div><div class="card-name">CLASS PERMEABILITY</div><p style="font-size:10px;color:var(--muted);margin-top:8px">Extraction ←→ Redistribution</p></div>
+    <div class="clock-card"><div class="card-number">CLOCK 04</div><div class="card-name">GOOD VS. EVIL</div><p style="font-size:10px;color:var(--muted);margin-top:8px">Cruelty ←→ Accountability</p></div>
+  </div>
+
+  <div class="arch-divider"><div class="arch-divider-line rev"></div><div class="arch-divider-glyph"></div><div class="arch-divider-label">Data Architecture — Ring System</div><div class="arch-divider-glyph"></div><div class="arch-divider-line"></div></div>
+  <div class="ref-section">
+    <div class="ref-card">
+      <h2>3. RING SYSTEM</h2>
+      <table>
+        <tr><th>Ring</th><th>Purpose</th><th>Data Type</th><th>Confidence</th></tr>
+        <tr><td>Ring A</td><td>Structural (behavioral, institutional)</td><td>FRED, BJS, FBI, CDC, World Bank</td><td>90%+</td></tr>
+        <tr><td>Ring B</td><td>Normative (attitudes, beliefs)</td><td>GSS, Pew, ISSP</td><td>94% (GSS)</td></tr>
+        <tr><td>Ring C</td><td>External pressure (geopolitical, environmental)</td><td>UCDP, ACLED, Freedom House, UNHCR</td><td>88–92%</td></tr>
+        <tr><td>L1</td><td>Leading indicators (search, attention)</td><td>Google Trends</td><td>85%</td></tr>
+        <tr><td>L2</td><td>Narrative intelligence (text, migration)</td><td>GBCD Corpus</td><td>82%</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="arch-divider"><div class="arch-divider-line rev"></div><div class="arch-divider-glyph"></div><div class="arch-divider-label">Saddle Detection</div><div class="arch-divider-glyph"></div><div class="arch-divider-line"></div></div>
+  <div class="ref-section">
+    <div class="ref-card">
+      <h2>4. PRODUCTION RULE</h2>
+      <p><code class="code">detect_saddle_canonical: |v| &lt; 0.15 AND sign(a) opposes sign(v)</code></p>
+      <p style="margin-top:12px"><strong>v</strong> = velocity (rate of change). <strong>a</strong> = acceleration. <strong>Opposes</strong> = (v&gt;0 and a&lt;0) or (v&lt;0 and a&gt;0). Calibration expands candidates for statistical power; production uses core saddles only.</p>
+    </div>
+  </div>
+
+  <div class="arch-divider"><div class="arch-divider-line rev"></div><div class="arch-divider-glyph"></div><div class="arch-divider-label">Key Metrics & File Locations</div><div class="arch-divider-glyph"></div><div class="arch-divider-line"></div></div>
+  <div class="ref-section">
+    <div class="ref-card">
+      <h2>5. KEY METRICS</h2>
+      <p><strong>Harm Clock:</strong> clock_position_10pt, velocity, acceleration, saddle_score (0–3), ring_B_pct, analogues, release_risk, energy_score.</p>
+      <p><strong>Composite Pressure Index:</strong> Weighted average of four clock positions. Phases: SYSTEM SWINGING, LOADING, RECOVERY.</p>
+      <p><strong>Country Risk:</strong> (Gini × 0.3) + (income polarization × 0.25) + (redistribution demand × 0.2) + (migration narrative × 0.15) + (UCDP trend × 0.1)</p>
+    </div>
+    <div class="ref-card" style="margin-top:16px">
+      <h2>6. KEY FILE LOCATIONS</h2>
+      <p><strong>Scripts:</strong> <code class="code">run_all.sh</code>, <code class="code">cerebro_export_ui_data.py</code>, <code class="code">cerebro_oracle_router.py</code>, <code class="code">cerebro_pipeline.py</code>, <code class="code">cerebro_calibration.py</code>, <code class="code">cerebro_risk_engine.py</code>, <code class="code">cerebro_core/__init__.py</code></p>
+      <p><strong>Data:</strong> <code class="code">cerebro_harm_clock_data.csv</code>, <code class="code">public/cerebro_data.json</code></p>
+      <p><strong>Docs:</strong> <code class="code">DATA_SOURCES_REGISTRY.md</code>, <code class="code">DATA_COLLECTION_STEPS.md</code>, <code class="code">DEPLOY.md</code></p>
+    </div>
+  </div>
+
+  <div class="arch-divider"><div class="arch-divider-line rev"></div><div class="arch-divider-glyph"></div><div class="arch-divider-label">Deploy & Oracle</div><div class="arch-divider-glyph"></div><div class="arch-divider-line"></div></div>
+  <div class="ref-section">
+    <div class="ref-card">
+      <h2>7. DEPLOY & REFRESH</h2>
+      <p><strong>Vercel:</strong> Output directory <code class="code">public/</code>. Build: <code class="code">python cerebro_export_ui_data.py</code>.</p>
+      <p><strong>Refresh:</strong> <code class="code">./run_all.sh</code> then <code class="code">python cerebro_export_ui_data.py</code>, then push.</p>
+    </div>
+    <div class="ref-card" style="margin-top:16px">
+      <h2>8. ORACLE QUERY TYPES</h2>
+      <table>
+        <tr><th>Intent</th><th>Example</th></tr>
+        <tr><td>METHOD</td><td>"What is the exact mathematical rule for saddle detection?"</td></tr>
+        <tr><td>era</td><td>"What historical era does 2022 most resemble?"</td></tr>
+        <tr><td>FORECAST</td><td>"When does the wealth redistribution crisis peak?"</td></tr>
+        <tr><td>country_unequal</td><td>"Top 10 most unequal countries"</td></tr>
+        <tr><td>country_risk</td><td>"Country risk of class-driven political violence before 2030"</td></tr>
+        <tr><td>apogee_multi</td><td>"Show all four apogees"</td></tr>
+        <tr><td>loaded</td><td>"How loaded is the system right now?"</td></tr>
+        <tr><td>trends</td><td>"Cultural velocity for 'defund the police' vs 'back the blue'"</td></tr>
+        <tr><td>punitive</td><td>"Are we heading into a punitive crime era?"</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="arch-divider"><div class="arch-divider-line rev"></div><div class="arch-divider-glyph"></div><div class="arch-divider-label">What Makes It Special</div><div class="arch-divider-glyph"></div><div class="arch-divider-line"></div></div>
+  <div class="ref-section">
+    <div class="ref-card">
+      <h2>9. WHAT MAKES IT SPECIAL</h2>
+      <ul>
+        <li>Pendulum physics applied to history — position, velocity, acceleration, saddle detection</li>
+        <li>Ring system — Structural (A), normative (B), external (C), leading (L1), narrative (L2)</li>
+        <li>Walk-forward calibration — past-only analogues; no future leakage</li>
+        <li>Redundant pipeline — PRIMARY (Trends) → BACKUP 1 (cache) → BACKUP 2 (GSS) → BACKUP 3 (static)</li>
+        <li>Oracle — plain-English queries routed to live engine</li>
+        <li>Country risk — Gini + polarization + redistribution + migration + UCDP</li>
+        <li>CHIMERA — synthetic adversarial worlds, stress-test saddle detection</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer>
+    THE FORGOTTEN CODE RESEARCH INSTITUTE · JENNIFER LEIGH WEST · CEREBRO v1.1<br>
+    Full spec: CEREBRO_SPEC_AND_REFERENCE.md · Print this page for PDF.
+  </footer>
+</div>
+</body>
+</html>
