@@ -60,4 +60,4 @@ Workflow **Cerebro data refresh** (`.github/workflows/cerebro-data-refresh.yml`)
 
 The static site calls **`POST /api/oracle`** (serverless function in `api/oracle.py`), with fallback to **`POST /oracle`** for local `python cerebro_api.py`. The router uses `cerebro_oracle_router.route_query` and reads `public/cerebro_data.json`.
 
-Vercel must install Python deps from **`requirements.txt`** (auto-detected for `/api` routes). If the function bundle is too large, trim optional packages in a branch or raise function memory in `vercel.json`.
+Vercel uses the slim **`requirements.txt`** (Flask + pandas + core) so the Flask bundle stays under platform limits. For local pipelines and GitHub Actions, use **`pip install -r requirements-full.txt`** (adds scipy, sklearn, pytest, pytrends, etc.).

@@ -18,7 +18,14 @@ except ImportError:
 SCRIPT_DIR = Path(__file__).resolve().parent
 PUBLIC_DIR = SCRIPT_DIR / "public"
 
-app = Flask(__name__, static_folder=str(PUBLIC_DIR), static_url_path="")
+# On Vercel, files in public/ are served by the CDN; do not register Flask static
+# routes (avoids shadowing CDN and matches Flask-on-Vercel guidance).
+_ON_VERCEL = os.environ.get("VERCEL") == "1"
+
+if _ON_VERCEL:
+    app = Flask(__name__)
+else:
+    app = Flask(__name__, static_folder=str(PUBLIC_DIR), static_url_path="")
 
 
 def _get_infinity_score() -> float:
@@ -46,24 +53,38 @@ def health():
     return jsonify({"status": "ok", "infinity_score": inf})
 
 
-@app.route("/oracle", methods=["POST"])
-def oracle():
-    """Handle Oracle query. Body: {"query": "..."}."""
+def _oracle_handler():
+    """Shared Oracle body for /oracle and /api/oracle."""
     try:
         body = request.get_json() or {}
         query = body.get("query", "").strip()
         if not query:
             return jsonify({"answer": "Please provide a query.", "data": {}, "confidence": 0, "timestamp": ""}), 400
         from cerebro_oracle_router import route_query
+
         result = route_query(query)
         return jsonify(result)
     except Exception as e:
-        return jsonify({
-            "answer": f"Oracle error: {e}",
-            "data": {},
-            "confidence": 0,
-            "timestamp": "",
-        }), 500
+        return jsonify(
+            {
+                "answer": f"Oracle error: {e}",
+                "data": {},
+                "confidence": 0,
+                "timestamp": "",
+            }
+        ), 500
+
+
+@app.route("/oracle", methods=["POST"])
+def oracle():
+    """Handle Oracle query. Body: {"query": "..."}."""
+    return _oracle_handler()
+
+
+@app.route("/api/oracle", methods=["POST"])
+def oracle_api_path():
+    """Same as /oracle (frontend tries this path on Vercel)."""
+    return _oracle_handler()
 
 
 @app.route("/feedback/run", methods=["POST"])
@@ -81,16 +102,17 @@ def run_feedback():
         return jsonify({"error": str(e), "scored_windows": 0}), 500
 
 
-@app.route("/")
-def index():
-    """Serve index.html."""
-    return send_from_directory(PUBLIC_DIR, "index.html")
+if not _ON_VERCEL:
 
+    @app.route("/")
+    def index():
+        """Serve index.html (local dev / non-Vercel)."""
+        return send_from_directory(PUBLIC_DIR, "index.html")
 
-@app.route("/<path:path>")
-def serve_static(path):
-    """Serve static files from public/."""
-    return send_from_directory(PUBLIC_DIR, path)
+    @app.route("/<path:path>")
+    def serve_static(path):
+        """Serve static files from public/ (local dev / non-Vercel)."""
+        return send_from_directory(PUBLIC_DIR, path)
 
 
 def main():

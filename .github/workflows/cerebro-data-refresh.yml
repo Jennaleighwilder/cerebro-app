@@ -27,7 +27,7 @@ jobs:
           cache: pip
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install -r requirements-full.txt
 
       - name: Phase1 ingest (optional, needs FRED_API_KEY)
         env:

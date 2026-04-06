@@ -1,12 +1,5 @@
 {
-  "outputDirectory": "public",
-  "rewrites": [
-    { "source": "/oracle", "destination": "/api/oracle" }
-  ],
-  "functions": {
-    "api/oracle.py": {
-      "memory": 1024,
-      "maxDuration": 60
-    }
-  }
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "flask",
+  "outputDirectory": null
 }
