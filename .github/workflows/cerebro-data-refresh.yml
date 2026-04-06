@@ -1,0 +1,55 @@
+# Rebuild public/cerebro_data.json on a schedule so the Vercel UI is not stuck on an old export.
+# Optional: set repo secret FRED_API_KEY so cerebro_phase1_ingest can pull fresh macro series first.
+
+name: Cerebro data refresh
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: cerebro-data-refresh
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Phase1 ingest (optional, needs FRED_API_KEY)
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: |
+          if [ -n "$FRED_API_KEY" ]; then
+            python cerebro_phase1_ingest.py
+          else
+            echo "FRED_API_KEY not set — skipping phase1 ingest; export uses existing CSVs."
+          fi
+
+      - name: Export UI JSON
+        run: python cerebro_export_ui_data.py
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/cerebro_data.json public/cerebro_offline.json || true
+          if git diff --staged --quiet; then
+            echo "No JSON changes."
+          else
+            git commit -m "chore: refresh cerebro_data.json"
+            git push
+          fi
