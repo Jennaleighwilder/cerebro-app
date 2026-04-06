@@ -1,5 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "flask",
-  "outputDirectory": null
+  "outputDirectory": "public",
+  "rewrites": [
+    { "source": "/oracle", "destination": "/api/oracle" },
+    { "source": "/health", "destination": "/api/health" }
+  ],
+  "functions": {
+    "api/oracle.py": { "maxDuration": 60 },
+    "api/health.py": { "maxDuration": 30 }
+  }
 }
