@@ -182,8 +182,8 @@
     "ucdp_conflicts": 61
   },
   "system": {
-    "export_ts": 1771630686,
-    "freshness_sec": 3008,
+    "export_ts": 1776068240,
+    "freshness_sec": 4440562,
     "data_source": "PRIMARY",
     "backup_active": false,
     "confidence_pct": 95,
@@ -196,7 +196,7 @@
       "anomaly_score": 26.4,
       "validation_ok": true,
       "suppress_display": false,
-      "timestamp": 1771630686
+      "timestamp": 1776068240
     },
     "deep_sources": {
       "glopop_s": {
