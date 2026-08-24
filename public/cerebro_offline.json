@@ -2018,8 +2018,8 @@
     "ucdp_conflicts": 61
   },
   "system": {
-    "export_ts": 1786950516,
-    "freshness_sec": 15322838,
+    "export_ts": 1787555501,
+    "freshness_sec": 15927823,
     "data_source": "PRIMARY",
     "backup_active": false,
     "confidence_pct": 95,
@@ -2032,7 +2032,7 @@
       "anomaly_score": 26.4,
       "validation_ok": true,
       "suppress_display": false,
-      "timestamp": 1786950516
+      "timestamp": 1787555501
     },
     "deep_sources": {
       "glopop_s": {
@@ -2101,5 +2101,5 @@
     "next_update_min": 4
   },
   "offline": true,
-  "export_ts": 1786950516
+  "export_ts": 1787555501
 }
