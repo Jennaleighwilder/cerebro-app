@@ -182,8 +182,8 @@
     "ucdp_conflicts": 61
   },
   "system": {
-    "export_ts": 1792414275,
-    "freshness_sec": 20786597,
+    "export_ts": 1793018632,
+    "freshness_sec": 21390954,
     "data_source": "PRIMARY",
     "backup_active": false,
     "confidence_pct": 95,
@@ -196,7 +196,7 @@
       "anomaly_score": 26.4,
       "validation_ok": true,
       "suppress_display": false,
-      "timestamp": 1792414275
+      "timestamp": 1793018632
     },
     "deep_sources": {
       "glopop_s": {
@@ -472,7 +472,7 @@
       "window_label": "80% window",
       "quantile_lo": 0.1,
       "quantile_hi": 0.9,
-      "ring_B_score": 0.3443961012991979,
+      "ring_B_score": 0.34439610129919795,
       "confidence_pct_raw": 61,
       "confidence_pct_calibrated": 78,
       "calibration_reason": "noise_cap",
