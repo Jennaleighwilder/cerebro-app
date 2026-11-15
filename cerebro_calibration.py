@@ -866,7 +866,7 @@ def main():
             "mode_operational": mo,
             "mode_strict": r.get("mode_strict", {}),
             "method": "walkforward",
-            "stored_in": str(bt_path),
+            "stored_in": "cerebro_data/backtest_metrics.json",
         }
         with open(bt_path, "w") as f:
             json.dump(bt, f, indent=2)

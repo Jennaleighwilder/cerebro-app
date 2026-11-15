@@ -27,5 +27,5 @@
     "n_used": 11
   },
   "method": "walkforward",
-  "stored_in": "/Users/jenniferwest/Downloads/files (88)/cerebro_data/backtest_metrics.json"
+  "stored_in": "cerebro_data/backtest_metrics.json"
 }

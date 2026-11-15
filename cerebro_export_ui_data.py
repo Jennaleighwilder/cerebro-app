@@ -199,7 +199,7 @@ def _load_backtest_metrics():
     bt_path = SCRIPT_DIR / "cerebro_data" / "backtest_metrics.json"
     if not bt_path.exists():
         return {"n_saddles_tested": 0, "mae_years": None, "median_absolute_error_years": None,
-                "coverage_50": None, "coverage_80": None, "event_library": "", "stored_in": str(bt_path)}
+                "coverage_50": None, "coverage_80": None, "event_library": "", "stored_in": "cerebro_data/backtest_metrics.json"}
     try:
         with open(bt_path) as f:
             return json.load(f)
