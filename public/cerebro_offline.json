@@ -425,15 +425,15 @@
       "winner": "sister"
     },
     "honeycomb_weights": {
-      "core_mae": 1.9302,
-      "sister_mae": 1.6279,
-      "sim_mae": 1.4651,
+      "core_mae": 2.0,
+      "sister_mae": 1.8571,
+      "sim_mae": 1.7143,
       "weights": {
-        "core": 0.2855,
-        "sister": 0.3385,
-        "simulation": 0.3761
+        "core": 0.3083,
+        "sister": 0.332,
+        "simulation": 0.3597
       },
-      "n_episodes": 43,
+      "n_episodes": 35,
       "worst_component": "core"
     }
   },
@@ -2102,8 +2102,8 @@
     "ucdp_conflicts": 61
   },
   "system": {
-    "export_ts": 1794791112,
-    "freshness_sec": 23163434,
+    "export_ts": 1794843035,
+    "freshness_sec": 23215357,
     "data_source": "PRIMARY",
     "backup_active": false,
     "confidence_pct": 95,
@@ -2116,7 +2116,7 @@
       "anomaly_score": 41.8,
       "validation_ok": true,
       "suppress_display": false,
-      "timestamp": 1794791112
+      "timestamp": 1794843035
     },
     "deep_sources": {
       "glopop_s": {
@@ -2185,5 +2185,5 @@
     "next_update_min": 4
   },
   "offline": true,
-  "export_ts": 1794791112
+  "export_ts": 1794843035
 }
