@@ -619,10 +619,10 @@ def main():
         },
         "raw_series": df[["clock_position_10pt", "velocity", "acceleration", "saddle_score"]].round(4).to_dict(orient="index"),
         "indicators": {
-            "unemployment": round(float(df["unemployment_rate"].iloc[-1]), 1) if "unemployment_rate" in df.columns else None,
-            "homicide_rate": round(float(df["homicide_rate"].iloc[-1]), 1) if "homicide_rate" in df.columns else None,
-            "incarceration": int(float(df["incarceration_rate_bjs"].iloc[-1])) if "incarceration_rate_bjs" in df.columns else None,
-            "overdose_rate": round(float(df["overdose_death_rate_cdc"].iloc[-1]), 1) if "overdose_death_rate_cdc" in df.columns else None,
+            "unemployment": (lambda s: round(float(s.dropna().iloc[-1]), 1) if s.dropna().size else None)(df["unemployment_rate"]) if "unemployment_rate" in df.columns else None,
+            "homicide_rate": (lambda s: round(float(s.dropna().iloc[-1]), 1) if s.dropna().size else None)(df["homicide_rate"]) if "homicide_rate" in df.columns else None,
+            "incarceration": (lambda s: int(float(s.dropna().iloc[-1])) if s.dropna().size else None)(df["incarceration_rate_bjs"]) if "incarceration_rate_bjs" in df.columns else None,
+            "overdose_rate": (lambda s: round(float(s.dropna().iloc[-1]), 1) if s.dropna().size else None)(df["overdose_death_rate_cdc"]) if "overdose_death_rate_cdc" in df.columns else None,
         },
         "ring_b_loaded": bool(df["ring_B_score"].notna().any() and df["ring_B_score"].notna().sum() > 10),
         "apogees": {

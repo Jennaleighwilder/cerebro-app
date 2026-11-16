@@ -1,30 +1,30 @@
 {
-  "brier_walkforward": 0.1709,
-  "coverage_80_walkforward": 0.8348,
-  "coverage_80_ci_lower": 0.71,
-  "coverage_80_ci_upper": 0.94,
-  "interval_width_mean": 5.41,
-  "interval_width_std": 1.72,
+  "brier_walkforward": 0.1693,
+  "coverage_80_walkforward": 0.88,
+  "coverage_80_ci_lower": null,
+  "coverage_80_ci_upper": null,
+  "interval_width_mean": 5.22,
+  "interval_width_std": 1.78,
   "mean_n_eff": null,
   "n_eff_interpretation": null,
-  "n_used": 35,
+  "n_used": 37,
   "min_train": 3,
-  "candidate_years_total": 16,
-  "candidate_years_used": 35,
-  "core_saddles_used": 5,
-  "score_saddles_used": 11,
+  "candidate_years_total": 24,
+  "candidate_years_used": 37,
+  "core_saddles_used": 9,
+  "score_saddles_used": 15,
   "near_saddles_used": 0,
   "mode_operational": {
     "min_train": 3,
-    "brier": 0.1709,
-    "coverage_80": 0.8348,
-    "n_used": 35
+    "brier": 0.1693,
+    "coverage_80": 0.88,
+    "n_used": 37
   },
   "mode_strict": {
     "min_train": 5,
-    "brier": 0.1674,
-    "coverage_80": 0.8182,
-    "n_used": 11
+    "brier": 0.0942,
+    "coverage_80": 0.8947,
+    "n_used": 19
   },
   "method": "walkforward",
   "stored_in": "cerebro_data/backtest_metrics.json"

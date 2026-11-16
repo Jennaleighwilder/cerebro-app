@@ -37,7 +37,7 @@ WB_BASE = "https://api.worldbank.org/v2"
 
 OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))
 YEARS_START = 1960
-YEARS_END = 2024
+YEARS_END = 2025
 
 print("=" * 60)
 print("CEREBRO PHASE 1: HARM TOLERANCE CLOCK — DATA INGESTION")
@@ -48,10 +48,53 @@ print("=" * 60)
 # HELPER FUNCTIONS
 # ─────────────────────────────────────────
 
+FRED_CSV_FALLBACK = {
+    "UNRATE": "unemployment_rate",
+    "CIVPART": "labor_force_participation",
+    "MEHOINUSA672N": "median_household_income",
+    "PSAVERT": "saving_rate",
+    "ECIALLCIV": "employment_cost_index",
+}
+
+def _fred_from_csv(series_id, start=YEARS_START, end=YEARS_END):
+    col = FRED_CSV_FALLBACK.get(series_id)
+    if not col:
+        return {}
+    path = SCRIPT_DIR / "cerebro_data" / "FRED_combined.csv" if "SCRIPT_DIR" in globals() else None
+    if path is None:
+        import pathlib
+        path = pathlib.Path(__file__).parent / "cerebro_data" / "FRED_combined.csv"
+    if not path.exists():
+        return {}
+    try:
+        import pandas as _pd
+        df = _pd.read_csv(path)
+        if "year" not in df.columns or col not in df.columns:
+            return {}
+        out = {}
+        for _, row in df.iterrows():
+            try:
+                y = int(row["year"])
+            except Exception:
+                continue
+            if y < start or y > end:
+                continue
+            v = row[col]
+            if _pd.notna(v):
+                out[y] = float(v)
+        return out
+    except Exception:
+        return {}
+
 def fred_series(series_id, api_key=FRED_API_KEY, start=str(YEARS_START), end=str(YEARS_END)):
-    """Pull annual data from FRED. Returns dict {year: value}."""
+    """Pull annual data from FRED. Returns dict {year: value}.
+    Falls back to cerebro_data/FRED_combined.csv when no API key is set."""
     if not api_key:
-        print(f"  ✗ FRED {series_id} failed: FRED_API_KEY not set")
+        fallback = _fred_from_csv(series_id, int(start), int(end))
+        if fallback:
+            print(f"  ✓ FRED {series_id} (CSV fallback): {len(fallback)} observations")
+            return fallback
+        print(f"  ✗ FRED {series_id} failed: FRED_API_KEY not set and no CSV fallback")
         return {}
     params = {
         "series_id": series_id,
@@ -420,8 +463,10 @@ ra3_incarcerate_struct = norm_causal(dict(zip(df.index, df["incarceration_rate_b
 fred_available = ra1_unemployment.notna().sum() > 10
 
 if fred_available:
-    df["ring_A_score"] = (ra1_unemployment + ra2_lfpr + ra3_incarcerate_struct) / 3
-    ring_a_note = "Ring A: Unemployment + LFPR + Incarceration"
+    df["ring_A_score"] = pd.concat(
+        [ra1_unemployment, ra2_lfpr, ra3_incarcerate_struct], axis=1
+    ).mean(axis=1)
+    ring_a_note = "Ring A: Unemployment + LFPR + Incarceration (nan-skip mean)"
 else:
     # FRED unavailable (no API key) — use incarceration only for Ring A
     df["ring_A_score"] = ra3_incarcerate_struct
@@ -430,8 +475,10 @@ else:
     print(f"    Get free key at: https://fred.stlouisfed.org/docs/api/api_key.html")
     print(f"    Ring A computed from BJS incarceration only for now.")
 
-# Ring C — available regardless (embedded)
-df["ring_C_score"] = (rc1_homicide + rc2_overdose + rc3_incarcerate) / 3
+# Ring C — nan-skip mean so recent years with partial series (e.g. WB homicide only) still score
+df["ring_C_score"] = pd.concat(
+    [rc1_homicide, rc2_overdose, rc3_incarcerate], axis=1
+).mean(axis=1)
 # Ring B set above (Pew trust or placeholder)
 
 # Leading component (signals precede saddle by 2–4 years)
@@ -463,30 +510,48 @@ else:
     leading_available = False
 
 # CLOCK POSITION SCORE
-# Leading indicators get 15% when available (path to Brier 0.077)
+# Weighted sum with per-row weight renormalization: a year with a missing ring
+# still scores from the components it has, rather than going NaN entirely.
+def _weighted_nan_mean(frame, weights):
+    import numpy as _np
+    w = _np.array(weights, dtype=float)
+    vals = frame.to_numpy(dtype=float)
+    mask = ~_np.isnan(vals)
+    w_broad = _np.tile(w, (vals.shape[0], 1))
+    w_eff = w_broad * mask
+    denom = w_eff.sum(axis=1)
+    num = _np.nansum(vals * w_broad, axis=1)
+    out = _np.where(denom > 0, num / denom, _np.nan)
+    return pd.Series(out, index=frame.index)
+
 if fred_available and leading_available:
-    df["clock_position"] = (
-        0.35 * df["ring_A_score"] +
-        0.25 * df["ring_B_score"] +
-        0.25 * df["ring_C_score"] +
-        0.15 * df["leading_score"]
+    _frame = pd.concat(
+        [df["ring_A_score"], df["ring_B_score"], df["ring_C_score"], df["leading_score"]],
+        axis=1,
     )
+    df["clock_position"] = _weighted_nan_mean(_frame, [0.35, 0.25, 0.25, 0.15])
 elif fred_available:
-    df["clock_position"] = (
-        0.40 * df["ring_A_score"] +
-        0.30 * df["ring_B_score"] +
-        0.30 * df["ring_C_score"]
+    _frame = pd.concat(
+        [df["ring_A_score"], df["ring_B_score"], df["ring_C_score"]], axis=1
     )
+    df["clock_position"] = _weighted_nan_mean(_frame, [0.40, 0.30, 0.30])
 else:
     # Without FRED, weight Ring A less, Ring C more
     w_lead = 0.15 if leading_available else 0
-    df["clock_position"] = (
-        (0.30 - w_lead * 0.5) * df["ring_A_score"] +
-        0.20 * df["ring_B_score"] +
-        (0.50 - w_lead * 0.5) * df["ring_C_score"]
-    )
     if leading_available:
-        df["clock_position"] = df["clock_position"] + w_lead * df["leading_score"]
+        _frame = pd.concat(
+            [df["ring_A_score"], df["ring_B_score"], df["ring_C_score"], df["leading_score"]],
+            axis=1,
+        )
+        df["clock_position"] = _weighted_nan_mean(
+            _frame,
+            [0.30 - w_lead * 0.5, 0.20, 0.50 - w_lead * 0.5, w_lead],
+        )
+    else:
+        _frame = pd.concat(
+            [df["ring_A_score"], df["ring_B_score"], df["ring_C_score"]], axis=1
+        )
+        df["clock_position"] = _weighted_nan_mean(_frame, [0.30, 0.20, 0.50])
     print(f"  Weights adjusted: Ring A 30%, Ring B 20%, Ring C 50% (add FRED for full weighting)")
 
 # Scale to -10 to +10 for readability

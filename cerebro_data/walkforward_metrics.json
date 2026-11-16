@@ -1,4 +1,9 @@
 {
-  "error": "No test predictions",
-  "windows_tested": 0
+  "windows_tested": 3,
+  "mean_error": 3.0,
+  "median_error": 4.0,
+  "std_error": 2.16,
+  "coverage_50": 33.3,
+  "coverage_80": 33.3,
+  "stability_score": 0.3164
 }
